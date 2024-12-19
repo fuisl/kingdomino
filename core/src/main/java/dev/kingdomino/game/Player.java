@@ -2,11 +2,11 @@ package dev.kingdomino.game;
 
 public class Player {
     private String name;
-    private int score;
+    private int point;
 
     public Player(String name) {
         this.name = name;
-        this.score = 0;
+        this.point = 0;
     }
 
     public String getName() {
@@ -14,6 +14,6 @@ public class Player {
     }
 
     public int getScore() {
-        return score;
+        return point;
     }
 }
