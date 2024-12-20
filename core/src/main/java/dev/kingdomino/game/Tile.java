@@ -1,26 +1,15 @@
 package dev.kingdomino.game;
 
-enum terrainType {
-    WHEATFIELD,
-    FOREST,
-    LAKE,
-    GRASSLAND,
-    SWAMP,
-    MINE,
-    MOUNTAIN,
-    DESERT
-}
-
 public class Tile {
-    private terrainType terrain;
+    private TerrainType terrain;
     private int crown;
 
-    public Tile(terrainType terrain, int crown) {
+    public Tile(TerrainType terrain, int crown) {
         this.terrain = terrain;
         this.crown = crown;
     }
 
-    public terrainType getTerrain() {
+    public TerrainType getTerrain() {
         return terrain;
     }
 

@@ -13,7 +13,7 @@ public class CardDeck {
         this.deck = new ArrayList<>();
         initializeDeck();
     }
-    
+
     public CardDeck(int seed) {
         this.seed = seed;
         this.deck = new ArrayList<>();
@@ -21,10 +21,9 @@ public class CardDeck {
     }
 
     protected void initializeDeck() {
-        for (int i = 0; i < 48; i++) {
-            // TODO: init the deck with the appropriate cards
-        }
-    }; // Initialize the deck with the appropriate cards
+        deck.clear();
+        deck = DominoDeck.getAllDominos();
+    };
 
     public void shuffle() {
         Collections.shuffle(deck, new java.util.Random(seed));
