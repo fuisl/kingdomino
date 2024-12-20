@@ -1,24 +1,58 @@
 package dev.kingdomino.game;
 
 public class TileValidator {
+    private final int CENTER = 4;
+    private int size; // size of the land (5x5 or 7x7)
+    private int minX, maxX, minY, maxY;
+    {
+        minX = CENTER;
+        maxX = CENTER;
+        minY = CENTER;
+        maxY = CENTER;
+    }
+
     private Tile[][] land;
 
-    public TileValidator(Tile[][] land) {
+    public TileValidator(Tile[][] land, int size) {
         this.land = land; // hold a reference to the board
+        this.size = size;
+    }
+
+    public TileValidator(Tile[][] land) {
+        this(land, 5); // default size is 5x5
     }
 
     public boolean isTilePlaceable(Tile tile, int x, int y) {
         return isTileFree(x, y) && isTileAdjacent(x, y)
-                && (isTileConnectable(tile, x, y) || isTileAdjacentCastle(x, y));
+                && (isTileConnectable(tile, x, y) || isTileAdjacentCastle(x, y))
+                && isTileWithinBound(x, y);
     }
 
     public boolean isTileWithinBound(int x, int y) {
-        // TODO: boundary check for size 5x5 and 7x7
-        return x >= 0 && x < land.length && y >= 0 && y < land[0].length;
+        // lock one axis if already spanned max
+        if (!((maxX - minX + 1) < size)) {
+            if (x < minX || x > maxX) {
+                return false;
+            }
+        }
+        if (!((maxY - minY + 1) < size)) {
+            if (y < minY || y > maxY) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    public boolean isTileWithinLand(int x, int y) {
+        return x >= 0 && x < (size * 2 - 1) && y >= 0 && y < (size * 2 - 1); // 5x5 or 7x7
     }
 
     public boolean isTileFree(int x, int y) {
-        return land[x][y] == null;
+        if (isTileWithinLand(x, y)) {
+            return land[x][y] == null;
+        }
+        return false;
     }
 
     public boolean isTileAdjacent(int x, int y) {
@@ -39,5 +73,12 @@ public class TileValidator {
     public boolean isTileAdjacentCastle(int x, int y) {
         // castle always in the middle (4, 4); magic numbers here.
         return (x == 4 && y == 3) || (x == 4 && y == 5) || (x == 3 && y == 4) || (x == 5 && y == 4);
+    }
+
+    public void updateSpanningTiles(int x, int y) {
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
     }
 }
