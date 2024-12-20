@@ -3,17 +3,29 @@ package dev.kingdomino.game;
 public class Board {
     private Tile[][] land;
     private Point point; // scores
+    private final TileValidator validator;
 
     public Board() {
         land = new Tile[9][9];
+        land[4][4] = new Tile(TerrainType.CASTLE, 0);
+        validator = new TileValidator(land);  
+    }
+
+    public boolean isTilePlaceable(Tile tile, int x, int y) {
+        return validator.isTilePlaceable(tile, x, y);
     }
 
     public void setTile(Tile tile, int x, int y) {
-        land[x][y] = tile; // TODO: boundary check
+        if (isTilePlaceable(tile, x, y)) {
+            land[x][y] = tile;
+        }
     }
 
     public Tile getTile(int x, int y) {
-        return land[x][y]; // TODO: boundary check
+        if (validator.isTileWithinBound(x, y)) {
+            return land[x][y];
+        }
+        return null;
     }
 
     // Point related methods

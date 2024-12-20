@@ -8,5 +8,6 @@ public enum TerrainType {
     SWAMP,
     MINE,
     MOUNTAIN,
-    DESERT
+    DESERT,
+    CASTLE
 }
