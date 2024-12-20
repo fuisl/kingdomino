@@ -2,36 +2,43 @@ package dev.kingdomino.game;
 
 public class Board {
     private Tile[][] land;
-    private int totalPoint;
-    private int additionalPoint;
+    private Point point; // scores
 
     public Board() {
         land = new Tile[9][9];
-        totalPoint = 0;
-        additionalPoint = 0;
     }
 
     public void setTile(Tile tile, int x, int y) {
-        land[x][y] = tile;
+        land[x][y] = tile; // TODO: boundary check
     }
 
     public Tile getTile(int x, int y) {
-        return land[x][y];
+        return land[x][y]; // TODO: boundary check
+    }
+
+    // Point related methods
+    public int getFinalPoint() {
+        return point.getFinalPoint();
     }
 
     public int getTotalPoint() {
-        return totalPoint;
-    }
-
-    public void setTotalPoint(int totalPoint) {
-        this.totalPoint = totalPoint;
+        return point.getTotalPoint();
     }
 
     public int getAdditionalPoint() {
-        return additionalPoint;
+        return point.getAdditionalPoint();
     }
 
-    public void setAdditionalPoint(int additionalPoint) {
-        this.additionalPoint = additionalPoint;
+    public void addTotalPoint(int totalPoint) {
+        point.addTotalPoint(totalPoint);
     }
+
+    public void addBonusPoint(int bonusPoint) {
+        point.addAdditionalPoint(bonusPoint);
+    }
+
+    public void reset() {
+        point.reset();
+    }
+
 }
