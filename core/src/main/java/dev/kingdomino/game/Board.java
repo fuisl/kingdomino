@@ -2,14 +2,14 @@ package dev.kingdomino.game;
 
 public class Board {
 
-    private final int CENTER = 4;
+    private final int CENTER = 4; // TODO: change this later for other game modes
     private Tile[][] land;
     private Point point; // scores
     private final TileValidator validator;
 
     public Board() {
         land = new Tile[9][9];
-        land[4][4] = new Tile(TerrainType.CASTLE, 0);
+        land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
         validator = new TileValidator(land);
     }
 
