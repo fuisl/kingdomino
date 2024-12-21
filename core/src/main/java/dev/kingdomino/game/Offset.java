@@ -15,4 +15,8 @@ public enum Offset {
     public Position get() {
         return position;
     }
+
+    public Position apply(Position pos) {
+        return pos.add(position);
+    }
 }

@@ -11,5 +11,5 @@ public interface IDominoController {
 
     void setPosTileB(Position posTileB);
 
-    void moveDomino(Position offset);
+    void moveDomino(Offset offset);
 }

@@ -61,7 +61,7 @@ public class Domino implements IDominoController {
     }
 
     @Override
-    public void moveDomino(Position offset) {
+    public void moveDomino(Offset offset) {
         dominoController.moveDomino(offset);
     }
 }

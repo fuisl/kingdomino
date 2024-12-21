@@ -11,7 +11,7 @@ public class DominoController implements IDominoController {
         this.rotationIndex = 0;
         this.isPlaced = false;
         this.posTileA = new Position(0, 0);
-        this.posTileB = new Position(1, 0);
+        this.posTileB = new Position(posTileA.x() + 1, posTileA.y());  // tileB is always at the right of tileA
         this.tileRotator = tileRotator;
     }
 
@@ -50,6 +50,27 @@ public class DominoController implements IDominoController {
         return posTileB;
     }
 
+    // helper functions
+    private Position getTileBOffset() {
+        switch (rotationIndex) {
+            case 0:
+                return new Position(1, 0);
+            case 1:
+                return new Position(0, 1);
+            case 2:
+                return new Position(-1, 0);
+            case 3:
+                return new Position(0, -1);
+            default:
+                return null;
+        }
+    }
+
+    private Position getTileBPos() {
+        return posTileA.add(getTileBOffset());
+    }
+
+    // setters
     @Override
     public void setPosTileA(Position posTileA) {
         posTileA.set(posTileA);
@@ -60,9 +81,18 @@ public class DominoController implements IDominoController {
         posTileB.set(posTileB);
     }
 
-    @Override
-    public void moveDomino(Position offset) {
-        posTileA.add(offset);
-        posTileB.add(offset);
+    /*
+     * Set the position of the 2nd tile relative to the 1st tile.
+     * 
+     * Will not place yet, only set the position.
+     */
+    public void setPosDomino(Position posTileA) {
+        this.posTileA.set(posTileA);
+        this.posTileB.set(getTileBPos());
+    }
+
+    public void moveDomino(Offset offset) {
+        Position posTileA = offset.apply(getPosTileA());
+        setPosDomino(posTileA);
     }
 }
