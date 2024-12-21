@@ -1,6 +1,6 @@
 package dev.kingdomino.game;
 
-public class TileRotator {
+public class TileRotator implements ITileRotator {
     private final Position[] offsets = {
             new Position(1, 0), // right
             new Position(0, 1), // down
@@ -8,6 +8,7 @@ public class TileRotator {
             new Position(0, -1) // up
     };
 
+    @Override
     public void rotate(Position center, Position tilePos, int rotationIndex) {
         Position newPos = center.add(offsets[rotationIndex]);
         tilePos.set(newPos);

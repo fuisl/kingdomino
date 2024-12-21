@@ -4,14 +4,18 @@ public class Domino {
     private int id;
     private Tile tileA;
     private Tile tileB;
-    private DominoController dominoController;
+    private IDominoController dominoController;
 
-    public Domino(int id, Tile tileA, Tile tileB) {
+    public Domino(int id, Tile tileA, Tile tileB, IDominoController dominoController) {
         this.id = id;
         this.tileA = tileA;
         this.tileB = tileB;
-        this.dominoController = new DominoController(this);
+        this.dominoController = dominoController;
     }
+
+    // public Domino(int id, Tile tileA, Tile tileB) {
+    //     this(id, tileA, tileB, new DominoController(new TileRotator()));
+    // }
 
     public int getId() {
         return id;
@@ -25,7 +29,7 @@ public class Domino {
         return tileB;
     }
 
-    public DominoController getDominoController() {
+    public IDominoController getDominoController() {
         return dominoController;
     }
 
