@@ -51,4 +51,20 @@ public class DominoController implements IDominoController {
     public Position getPosTileB() {
         return posTileB;
     }
+
+    @Override
+    public void setPosTileA(Position posTileA) {
+        posTileA.set(posTileA);
+    }
+
+    @Override
+    public void setPosTileB(Position posTileB) {
+        posTileB.set(posTileB);
+    }
+
+    @Override
+    public void moveDomino(Position offset) {
+        posTileA.add(offset);
+        posTileB.add(offset);
+    }
 }

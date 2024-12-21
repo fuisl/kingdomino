@@ -2,7 +2,7 @@ package dev.kingdomino.game;
 
 public class TestBoard {
     public static void main(String[] args) {
-        Board board = new Board();
+        IBoard board = new Board();
         Tile tile = new Tile(TerrainType.WHEATFIELD, 1);
         System.out.println(board.isTilePlaceable(tile, 4, 3));
         System.out.println(board.isTilePlaceable(tile, 4, 4));
@@ -31,7 +31,7 @@ public class TestBoard {
         // System.out.println(board.getTile(4, 5).getTerrain());
     }
 
-    public static void printBoard(Board board) {
+    public static void printBoard(IBoard board) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (board.getTile(j, i) != null) {

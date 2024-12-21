@@ -1,6 +1,6 @@
 package dev.kingdomino.game;
 
-public class TileValidator {
+public class TileValidator implements ITileValidator {
     private final int CENTER = 4;
     private int size; // size of the land (5x5 or 7x7)
     private int minX, maxX, minY, maxY;
@@ -22,12 +22,14 @@ public class TileValidator {
         this(land, 5); // default size is 5x5
     }
 
+    @Override
     public boolean isTilePlaceable(Tile tile, int x, int y) {
         return isTileFree(x, y) && isTileAdjacent(x, y)
                 && (isTileConnectable(tile, x, y) || isTileAdjacentCastle(x, y))
                 && isTileWithinBound(x, y);
     }
 
+    @Override
     public boolean isTileWithinBound(int x, int y) {
         // lock one axis if already spanned max
         if (!((maxX - minX + 1) < size)) {
@@ -44,10 +46,12 @@ public class TileValidator {
 
     }
 
+    @Override
     public boolean isTileWithinLand(int x, int y) {
         return x >= 0 && x < (size * 2 - 1) && y >= 0 && y < (size * 2 - 1); // 5x5 or 7x7
     }
 
+    @Override
     public boolean isTileFree(int x, int y) {
         if (isTileWithinLand(x, y)) {
             return land[x][y] == null;
@@ -55,6 +59,7 @@ public class TileValidator {
         return false;
     }
 
+    @Override
     public boolean isTileAdjacent(int x, int y) {
         return (x > 0 && land[x - 1][y] != null) ||
                 (x < land.length - 1 && land[x + 1][y] != null) ||
@@ -62,6 +67,7 @@ public class TileValidator {
                 (y < land[0].length - 1 && land[x][y + 1] != null);
     }
 
+    @Override
     public boolean isTileConnectable(Tile tile, int x, int y) {
         // check if adjacent tiles have the same terrain
         return (x > 0 && land[x - 1][y] != null && land[x - 1][y].getTerrain() == tile.getTerrain()) ||
@@ -70,6 +76,7 @@ public class TileValidator {
                 (y < land[0].length - 1 && land[x][y + 1] != null && land[x][y + 1].getTerrain() == tile.getTerrain());
     }
 
+    @Override
     public boolean isTileAdjacentCastle(int x, int y) {
         // castle always in the middle (4, 4); magic numbers here.
         return (x == 4 && y == 3) || (x == 4 && y == 5) || (x == 3 && y == 4) || (x == 5 && y == 4);
