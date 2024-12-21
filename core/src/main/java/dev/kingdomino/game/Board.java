@@ -1,6 +1,6 @@
 package dev.kingdomino.game;
 
-public class Board {
+public class Board implements IBoard {
 
     private final int CENTER = 4; // TODO: change this later for other game modes
     private Tile[][] land;
@@ -13,26 +13,42 @@ public class Board {
         validator = new TileValidator(land);
     }
 
+    @Override
     public boolean isTilePlaceable(Tile tile, int x, int y) {
+        // TODO: change x, y to Position
         return validator.isTilePlaceable(tile, x, y);
     }
 
+    @Override
     public void setTile(Tile tile, int x, int y) {
+        // TODO: change x, y to Position
+        land[x][y] = tile;
 
-        // TODO: maybe remove checking when DominoValidator is implemented.
-        if (isTilePlaceable(tile, x, y)) {
-            land[x][y] = tile;
-
-            // update spanning tiles if the tile is placed
-            validator.updateSpanningTiles(x, y);
-        }
+        // update spanning tiles if the tile is placed
+        validator.updateSpanningTiles(x, y);
     }
 
+    @Override
     public Tile getTile(int x, int y) {
         if (validator.isTileWithinLand(x, y)) {
             return land[x][y];
         }
         return null;
+    }
+
+    // Domino
+    @Override
+    public boolean isDominoPlaceable(Domino domino) {
+        return validator.isTilePlaceable(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y()) &&
+                validator.isTilePlaceable(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y());
+    }
+
+    @Override
+    public void setDomino(Domino domino) {
+        if (isDominoPlaceable(domino)) {
+            setTile(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y());
+            setTile(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y());
+        }
     }
 
     // Point related methods
