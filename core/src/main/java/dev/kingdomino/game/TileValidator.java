@@ -2,6 +2,7 @@ package dev.kingdomino.game;
 
 public class TileValidator implements ITileValidator {
     private final int CENTER = 4;
+    private Tile[][] land;
     private int size; // size of the land (5x5 or 7x7)
     private int minX, maxX, minY, maxY;
     {
@@ -11,8 +12,6 @@ public class TileValidator implements ITileValidator {
         maxY = CENTER;
     }
 
-    private Tile[][] land;
-
     public TileValidator(Tile[][] land, int size) {
         this.land = land; // hold a reference to the board
         this.size = size;
@@ -20,6 +19,13 @@ public class TileValidator implements ITileValidator {
 
     public TileValidator(Tile[][] land) {
         this(land, 5); // default size is 5x5
+    }
+
+    public void updateSpanningTiles(int x, int y) {
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
     }
 
     @Override
@@ -82,10 +88,4 @@ public class TileValidator implements ITileValidator {
         return (x == 4 && y == 3) || (x == 4 && y == 5) || (x == 3 && y == 4) || (x == 5 && y == 4);
     }
 
-    public void updateSpanningTiles(int x, int y) {
-        minX = Math.min(minX, x);
-        maxX = Math.max(maxX, x);
-        minY = Math.min(minY, y);
-        maxY = Math.max(maxY, y);
-    }
 }

@@ -21,7 +21,7 @@ public class DominoController implements IDominoController {
 
     @Override
     public void rotateDomino(boolean clockwise, boolean shouldOffset) {
-        int oldRotationIndex = rotationIndex;
+        // int oldRotationIndex = rotationIndex;
         rotationIndex = (rotationIndex + (clockwise ? 1 : 3)) % 4; // 0, 1, 2, 3 handle negative rotation
 
         // rotate the 2nd Tile with 1st Tile as center
@@ -32,12 +32,10 @@ public class DominoController implements IDominoController {
         // if shouldOffset is true, and the new rotation is invalid, revert the rotation
     }
 
-    @Override
     public boolean isPlaced() {
         return isPlaced;
     }
 
-    @Override
     public void setPlaced(boolean placed) {
         isPlaced = placed;
     }

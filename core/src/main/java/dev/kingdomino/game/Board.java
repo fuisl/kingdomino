@@ -52,32 +52,26 @@ public class Board implements IBoard {
     }
 
     // Point related methods
-    @Override
     public int getFinalPoint() {
         return point.getFinalPoint();
     }
 
-    @Override
     public int getTotalPoint() {
         return point.getTotalPoint();
     }
 
-    @Override
     public int getAdditionalPoint() {
         return point.getAdditionalPoint();
     }
 
-    @Override
     public void addTotalPoint(int totalPoint) {
         point.addTotalPoint(totalPoint);
     }
 
-    @Override
     public void addBonusPoint(int bonusPoint) {
         point.addAdditionalPoint(bonusPoint);
     }
 
-    @Override
     public void reset() {
         point.reset();
     }

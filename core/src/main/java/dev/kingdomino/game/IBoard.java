@@ -12,17 +12,4 @@ public interface IBoard {
     boolean isDominoPlaceable(Domino domino);
 
     void setDomino(Domino domino);
-
-    // Point related methods
-    int getFinalPoint();
-
-    int getTotalPoint();
-
-    int getAdditionalPoint();
-
-    void addTotalPoint(int totalPoint);
-
-    void addBonusPoint(int bonusPoint);
-
-    void reset();
 }
