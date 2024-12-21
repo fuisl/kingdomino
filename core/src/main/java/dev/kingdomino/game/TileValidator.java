@@ -30,9 +30,7 @@ public class TileValidator implements ITileValidator {
 
     @Override
     public boolean isTilePlaceable(Tile tile, int x, int y) {
-        return isTileFree(x, y) && isTileAdjacent(x, y)
-                && (isTileConnectable(tile, x, y) || isTileAdjacentCastle(x, y))
-                && isTileWithinBound(x, y);
+        return isTileFree(x, y) && isTileWithinBound(x, y);
     }
 
     @Override
@@ -66,15 +64,12 @@ public class TileValidator implements ITileValidator {
     }
 
     @Override
-    public boolean isTileAdjacent(int x, int y) {
-        return (x > 0 && land[x - 1][y] != null) ||
-                (x < land.length - 1 && land[x + 1][y] != null) ||
-                (y > 0 && land[x][y - 1] != null) ||
-                (y < land[0].length - 1 && land[x][y + 1] != null);
+    public boolean isTileConnectable(Tile tile, int x, int y) {
+        return isTileAdjacentSame(tile, x, y) || isTileAdjacentCastle(x, y);
     }
 
     @Override
-    public boolean isTileConnectable(Tile tile, int x, int y) {
+    public boolean isTileAdjacentSame(Tile tile, int x, int y) {
         // check if adjacent tiles have the same terrain
         return (x > 0 && land[x - 1][y] != null && land[x - 1][y].getTerrain() == tile.getTerrain()) ||
                 (x < land.length - 1 && land[x + 1][y] != null && land[x + 1][y].getTerrain() == tile.getTerrain()) ||

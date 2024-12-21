@@ -40,7 +40,9 @@ public class Board implements IBoard {
     @Override
     public boolean isDominoPlaceable(Domino domino) {
         return validator.isTilePlaceable(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y()) &&
-                validator.isTilePlaceable(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y());
+                validator.isTilePlaceable(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y()) &&
+                (validator.isTileConnectable(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y()) ||
+                        validator.isTileConnectable(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y()));
     }
 
     @Override
