@@ -1,23 +1,21 @@
 package dev.kingdomino.game;
 
-public class Domino {
+public class Domino implements IDominoController {
     private int id;
     private Tile tileA;
     private Tile tileB;
-    private int x;
-    private int y;
-    private int direction;
-    private boolean isPlaced;
+    private IDominoController dominoController;
 
-    public Domino(int id, Tile tileA, Tile tileB) {
+    public Domino(int id, Tile tileA, Tile tileB, IDominoController dominoController) {
         this.id = id;
         this.tileA = tileA;
         this.tileB = tileB;
-        this.x = 0;
-        this.y = 0;
-        this.direction = 0;  // 0: up, 1: right, 2: down, 3: left
-        this.isPlaced = false;
+        this.dominoController = dominoController;
     }
+
+    // public Domino(int id, Tile tileA, Tile tileB) {
+    // this(id, tileA, tileB, new DominoController(new TileRotator()));
+    // }
 
     public int getId() {
         return id;
@@ -31,35 +29,39 @@ public class Domino {
         return tileB;
     }
 
-    public int getX() {
-        return x;
+    public IDominoController getDominoController() {
+        return dominoController;
     }
 
-    public int getY() {
-        return y;
+    public Position getPosTileA() {
+        return dominoController.getPosTileA();
     }
 
-    public int getDirection() {
-        return direction;
+    public Position getPosTileB() {
+        return dominoController.getPosTileB();
     }
 
-    public boolean isPlaced() {
-        return isPlaced;
+    public void rotate(boolean clockwise) {
+        dominoController.rotateDomino(clockwise, true);
     }
 
-    public void setX(int x) {
-        this.x = x;
+    @Override
+    public void rotateDomino(boolean clockwise, boolean shouldOffset) {
+        dominoController.rotateDomino(clockwise, shouldOffset);
     }
 
-    public void setY(int y) {
-        this.y = y;
+    @Override
+    public void setPosTileA(Position posTileA) {
+        dominoController.setPosTileA(posTileA);
     }
 
-    public void setDirection(int direction) {
-        this.direction = direction;
+    @Override
+    public void setPosTileB(Position posTileB) {
+        dominoController.setPosTileB(posTileB);
     }
 
-    public void setPlaced(boolean placed) {
-        isPlaced = placed;
+    @Override
+    public void moveDomino(Offset offset) {
+        dominoController.moveDomino(offset);
     }
 }

@@ -56,7 +56,9 @@ public enum DominoDeck {
     private final Domino domino;
 
     DominoDeck(int id, Tile tileA, Tile tileB) {
-        this.domino = new Domino(id, tileA, tileB);
+        ITileRotator tileRotator = new TileRotator();
+        IDominoController dominoController = new DominoController(tileRotator);
+        this.domino = new Domino(id, tileA, tileB, dominoController);
     }
 
     public Domino getDomino() {
