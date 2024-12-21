@@ -1,6 +1,6 @@
 package dev.kingdomino.game;
 
-public class Domino {
+public class Domino implements IDominoController {
     private int id;
     private Tile tileA;
     private Tile tileB;
@@ -14,7 +14,7 @@ public class Domino {
     }
 
     // public Domino(int id, Tile tileA, Tile tileB) {
-    //     this(id, tileA, tileB, new DominoController(new TileRotator()));
+    // this(id, tileA, tileB, new DominoController(new TileRotator()));
     // }
 
     public int getId() {
@@ -43,5 +43,25 @@ public class Domino {
 
     public void rotate(boolean clockwise) {
         dominoController.rotateDomino(clockwise, true);
+    }
+
+    @Override
+    public void rotateDomino(boolean clockwise, boolean shouldOffset) {
+        dominoController.rotateDomino(clockwise, shouldOffset);
+    }
+
+    @Override
+    public void setPosTileA(Position posTileA) {
+        dominoController.setPosTileA(posTileA);
+    }
+
+    @Override
+    public void setPosTileB(Position posTileB) {
+        dominoController.setPosTileB(posTileB);
+    }
+
+    @Override
+    public void moveDomino(Offset offset) {
+        dominoController.moveDomino(offset);
     }
 }
