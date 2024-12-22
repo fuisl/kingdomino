@@ -3,6 +3,9 @@ package dev.kingdomino.game;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Enum representing the deck of dominos in the game.
+ */
 public enum DominoDeck {
     DOMINO_1(1, new Tile(TerrainType.WHEATFIELD, 0), new Tile(TerrainType.WHEATFIELD, 0)),
     DOMINO_2(2, new Tile(TerrainType.WHEATFIELD, 0), new Tile(TerrainType.WHEATFIELD, 0)),
@@ -55,16 +58,33 @@ public enum DominoDeck {
 
     private final Domino domino;
 
+    /**
+     * Constructs a DominoDeck with the specified id and tiles.
+     *
+     * @param id    the unique identifier of the domino
+     * @param tileA the first tile of the domino
+     * @param tileB the second tile of the domino
+     */
     DominoDeck(int id, Tile tileA, Tile tileB) {
         ITileRotator tileRotator = new TileRotator();
         IDominoController dominoController = new DominoController(tileRotator);
         this.domino = new Domino(id, tileA, tileB, dominoController);
     }
 
+    /**
+     * Returns the domino associated with this deck entry.
+     *
+     * @return the domino
+     */
     public Domino getDomino() {
         return domino;
     }
 
+    /**
+     * Returns a list of all dominos in the deck.
+     *
+     * @return a list of all dominos
+     */
     public static List<Domino> getAllDominos() {
         return Arrays.stream(values())
                 .map(DominoDeck::getDomino)

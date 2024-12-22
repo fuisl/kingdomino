@@ -1,5 +1,8 @@
 package dev.kingdomino.game;
 
+/**
+ * Controller for handling the rotation and placement of dominos in the game.
+ */
 public class DominoController implements IDominoController {
     private int rotationIndex;
     private Position posTileA; // tileA is always at the center
@@ -7,18 +10,37 @@ public class DominoController implements IDominoController {
     private boolean isPlaced;
     private ITileRotator tileRotator;
 
+    /**
+     * Constructs a new DominoController with the specified tile rotator.
+     *
+     * @param tileRotator the tile rotator to use for rotating tiles
+     */
     public DominoController(ITileRotator tileRotator) {
         this.rotationIndex = 0;
         this.isPlaced = false;
         this.posTileA = new Position(0, 0);
-        this.posTileB = new Position(posTileA.x() + 1, posTileA.y());  // tileB is always at the right of tileA
+        this.posTileB = new Position(posTileA.x() + 1, posTileA.y()); // tileB is always at the right of tileA
         this.tileRotator = tileRotator;
     }
 
+    /**
+     * Tests if the offset between the old and new rotation indices is valid.
+     *
+     * @param oldRotationIndex the old rotation index
+     * @param newRotationIndex the new rotation index
+     * @return true if the offset is valid, false otherwise
+     */
     boolean testOffset(int oldRotationIndex, int newRotationIndex) {
         return true; // true if test passed
     }
 
+    /**
+     * Rotates the domino either clockwise or counterclockwise.
+     *
+     * @param clockwise    true to rotate clockwise, false to rotate
+     *                     counterclockwise
+     * @param shouldOffset true to test if the new rotation is valid
+     */
     @Override
     public void rotateDomino(boolean clockwise, boolean shouldOffset) {
         // int oldRotationIndex = rotationIndex;
@@ -32,19 +54,39 @@ public class DominoController implements IDominoController {
         // if shouldOffset is true, and the new rotation is invalid, revert the rotation
     }
 
+    /**
+     * Checks if the domino is placed.
+     *
+     * @return true if the domino is placed, false otherwise
+     */
     public boolean isPlaced() {
         return isPlaced;
     }
 
+    /**
+     * Sets the placed status of the domino.
+     *
+     * @param placed true to mark the domino as placed, false otherwise
+     */
     public void setPlaced(boolean placed) {
         isPlaced = placed;
     }
 
+    /**
+     * Gets the position of tile A.
+     *
+     * @return the position of tile A
+     */
     @Override
     public Position getPosTileA() {
         return posTileA;
     }
 
+    /**
+     * Gets the position of tile B.
+     *
+     * @return the position of tile B
+     */
     @Override
     public Position getPosTileB() {
         return posTileB;
@@ -70,27 +112,42 @@ public class DominoController implements IDominoController {
         return posTileA.add(getTileBOffset());
     }
 
-    // setters
+    /**
+     * Sets the position of tile A.
+     *
+     * @param posTileA the new position of tile A
+     */
     @Override
     public void setPosTileA(Position posTileA) {
         posTileA.set(posTileA);
     }
 
+    /**
+     * Sets the position of tile B.
+     *
+     * @param posTileB the new position of tile B
+     */
     @Override
     public void setPosTileB(Position posTileB) {
         posTileB.set(posTileB);
     }
 
-    /*
-     * Set the position of the 2nd tile relative to the 1st tile.
-     * 
-     * Will not place yet, only set the position.
+    /**
+     * Sets the position of the domino relative to tile A.
+     *
+     * @param posTileA the new position of tile A
      */
     public void setPosDomino(Position posTileA) {
         this.posTileA.set(posTileA);
         this.posTileB.set(getTileBPos());
     }
 
+    /**
+     * Moves the domino by the specified offset.
+     *
+     * @param offset the offset to apply to the current position
+     * @see Offset
+     */
     public void moveDomino(Offset offset) {
         Position posTileA = offset.apply(getPosTileA());
         setPosDomino(posTileA);
