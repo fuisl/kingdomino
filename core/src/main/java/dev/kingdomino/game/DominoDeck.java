@@ -2,6 +2,7 @@ package dev.kingdomino.game;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Enum representing the deck of dominos in the game.
@@ -88,6 +89,6 @@ public enum DominoDeck {
     public static List<Domino> getAllDominos() {
         return Arrays.stream(values())
                 .map(DominoDeck::getDomino)
-                .toList();
+                .collect(Collectors.toList());
     }
 }
