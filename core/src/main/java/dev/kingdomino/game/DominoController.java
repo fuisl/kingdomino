@@ -118,8 +118,8 @@ public class DominoController implements IDominoController {
      * @param posTileA the new position of tile A
      */
     @Override
-    public void setPosTileA(Position posTileA) {
-        posTileA.set(posTileA);
+    public void setPosTileA(Position newPosTileA) {
+        this.posTileA.set(newPosTileA);
     }
 
     /**
@@ -128,8 +128,8 @@ public class DominoController implements IDominoController {
      * @param posTileB the new position of tile B
      */
     @Override
-    public void setPosTileB(Position posTileB) {
-        posTileB.set(posTileB);
+    public void setPosTileB(Position newPosTileB) {
+        this.posTileB.set(newPosTileB);
     }
 
     /**
