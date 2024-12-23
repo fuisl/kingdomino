@@ -104,13 +104,17 @@ public class Board implements IBoard {
      * Places a domino on the board if it is placeable.
      * 
      * @param domino the domino to place.
+     * @return 0 if the domino was successfully placed. Otherwise, return a non-zero
      */
     @Override
-    public void setDomino(Domino domino) {
+    public int setDomino(Domino domino) {
         if (isDominoPlaceable(domino)) {
             setTile(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y());
             setTile(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y());
+            return 0;
         }
+
+        return -1; // may use other return code to indicate the reason
     }
 
     // Point related methods

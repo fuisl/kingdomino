@@ -45,6 +45,8 @@ public interface IBoard {
      * Places a domino on the board.
      *
      * @param domino the domino to be placed
+     * @return 0 if the domino was successfully placed. Otherwise, return a non-zero
+     *         value.
      */
-    void setDomino(Domino domino);
+    int setDomino(Domino domino);
 }
