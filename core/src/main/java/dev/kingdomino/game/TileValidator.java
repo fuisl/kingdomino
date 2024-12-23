@@ -1,5 +1,7 @@
 package dev.kingdomino.game;
 
+import static java.lang.Math.abs;
+
 /**
  * Validates the placement of tiles on the game board.
  */
@@ -71,16 +73,28 @@ public class TileValidator implements ITileValidator {
     @Override
     public boolean isTileWithinBound(int x, int y) {
         // lock one axis if already spanned max
-        if (!((maxX - minX + 1) < size)) {
-            if (x < minX || x > maxX) {
+        if (x < minX || x > maxX) {
+            if (abs(x - minX) + 1 > size || abs(x - maxX) + 1 > size) {
                 return false;
             }
         }
-        if (!((maxY - minY + 1) < size)) {
-            if (y < minY || y > maxY) {
+
+        if (y < minY || y > maxY) {
+            if (abs(y - minY) + 1 > size || abs(y - maxY) + 1 > size) {
                 return false;
             }
         }
+
+        // if (!((maxX - minX + 1) < size)) {
+        //     if (x < minX || x > maxX) {
+        //         return false;
+        //     }
+        // }
+        // if (!((maxY - minY + 1) < size)) {
+        //     if (y < minY || y > maxY) {
+        //         return false;
+        //     }
+        // }
         return true;
 
     }
