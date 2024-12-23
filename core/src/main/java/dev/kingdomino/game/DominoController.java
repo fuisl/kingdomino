@@ -96,13 +96,13 @@ public class DominoController implements IDominoController {
     private Position getTileBOffset() {
         switch (rotationIndex) {
             case 0:
-                return new Position(1, 0);
+                return Offset.RIGHT.get();
             case 1:
-                return new Position(0, 1);
+                return Offset.DOWN.get();
             case 2:
-                return new Position(-1, 0);
+                return Offset.LEFT.get();
             case 3:
-                return new Position(0, -1);
+                return Offset.UP.get();
             default:
                 return null;
         }
