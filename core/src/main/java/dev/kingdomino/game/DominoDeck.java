@@ -58,7 +58,6 @@ public enum DominoDeck {
     DOMINO_48(48, new Tile(TerrainType.WHEATFIELD, 0), new Tile(TerrainType.MINE, 3));
 
     private final Domino domino;
-
     /**
      * Constructs a DominoDeck with the specified id and tiles.
      *

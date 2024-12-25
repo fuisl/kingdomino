@@ -45,10 +45,17 @@ public class TileValidator {
      * @param y the y-coordinate
      */
     public void updateSpanningTiles(int x, int y) {
-        minX = Math.min(minX, x);
-        maxX = Math.max(maxX, x);
-        minY = Math.min(minY, y);
-        maxY = Math.max(maxY, y);
+        if (x < minX) {
+            minX = x;
+        } else if (x > maxX) {
+            maxX = x;
+        }
+
+        if (y < minY) {
+            minY = y;
+        } else if (y > maxY) {
+            maxY = y;
+        }
     }
 
     /**

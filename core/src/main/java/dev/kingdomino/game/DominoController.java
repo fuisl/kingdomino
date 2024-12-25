@@ -44,7 +44,7 @@ public class DominoController {
         rotationIndex = (rotationIndex + (clockwise ? 1 : 3)) % 4; // 0, 1, 2, 3 handle negative rotation
 
         // rotate the 2nd Tile with 1st Tile as center
-        tileRotator.rotate(posTileA, posTileB, rotationIndex);
+        tileRotator.rotate(posTileA, posTileB, rotationIndex, shouldOffset);
 
         // if shouldOffset is true, test if the new rotation is valid
 

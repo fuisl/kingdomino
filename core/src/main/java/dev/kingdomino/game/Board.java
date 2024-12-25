@@ -10,6 +10,7 @@ public class Board {
     private Tile[][] land;
     private Point point; // scores
     private final TileValidator validator;
+    // private King king; // TODO: associate player with board
 
     /**
      * Initializes the game board with a castle at the center.
@@ -66,6 +67,10 @@ public class Board {
      * @param y    the y-coordinate.
      */
     public void setTile(Tile tile, int x, int y) {
+        if (!isTilePlaceable(tile, x, y)) {
+            throw new IllegalArgumentException("Invalid tile placement.");
+        }
+
         // TODO: change x, y to Position
         land[x][y] = tile;
 
