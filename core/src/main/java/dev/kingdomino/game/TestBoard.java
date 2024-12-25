@@ -9,54 +9,84 @@ public class TestBoard {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Board board = new Board();
-        Domino domino = DominoDeck.DOMINO_1.getDomino();
+        Deck deck = new Deck();
         boolean flag = false;
+        boolean update = true;
+        boolean invalid = false;
+        Domino domino = deck.drawCard();
 
         while (true) {
             if (reader.ready()) {
                 char key = (char) reader.read();
 
                 switch (key) {
-                    case 'e':
-                        domino.rotate(true);
+                    case 'e':    
+                        domino.rotateDomino(true);
+                        update = true;
                         break;
                     case 'q':
-                        domino.rotate(false);
+                        domino.rotateDomino(false);
+                        update = true;
                         break;
                     case 'w':
-                        domino.moveDomino(Offset.UP);
+                        domino.moveDomino(Direction.UP);
+                        update = true;
                         break;
                     case 's':
-                        domino.moveDomino(Offset.DOWN);
+                        domino.moveDomino(Direction.DOWN);
+                        update = true;
                         break;
                     case 'a':
-                        domino.moveDomino(Offset.LEFT);
+                        domino.moveDomino(Direction.LEFT);
+                        update = true;
                         break;
                     case 'd':
-                        domino.moveDomino(Offset.RIGHT);
+                        domino.moveDomino(Direction.RIGHT);
+                        update = true;
                         break;
                     case 'x':
-                        board.setDomino(domino);
-                        domino = DominoDeck.DOMINO_2.getDomino();
+                        if (board.setDomino(domino) != 0) {
+                            invalid = true;
+                            break;
+                        }
+                        domino = deck.drawCard();
+                        update = true;
                         break;
                     case 'c':
                         System.out.println("Exiting...");
                         flag = true;
+                        break;
                     default:
                         break;
                 }
             }
-            clearScreen();
 
-            if (flag) {
-                break;
+            if (update) {
+                update = false;
+                clearScreen();
+
+                if (flag) {
+                    break;
+                }
+
+                render(board, domino);
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
-            render(board, domino);
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (invalid) {
+                invalid = false;
+                Domino temp = new Domino(0, new Tile(TerrainType.CASTLE, 0), new Tile(TerrainType.CASTLE, 0),
+                        new DominoController());
+                System.out.println(domino.getPosTileA().x() + " " + domino.getPosTileA().y());
+                temp.setPosTileA(domino.getPosTileA());
+                temp.setPosTileB(domino.getPosTileB());
+                System.out.println(temp.getPosTileA().x() + " " + temp.getPosTileA().y());
+                clearScreen();
+                render(board, temp);
             }
         }
     }

@@ -7,12 +7,12 @@ public class TestRotation {
         System.out.println(domino.getPosTileA());
         System.out.println(domino.getPosTileB());
 
-        domino.rotate(true);
-        domino.rotate(true);
+        domino.rotateDomino(true);
+        domino.rotateDomino(true);
         System.out.println(domino.getPosTileA());
         System.out.println(domino.getPosTileB());
         
-        domino.rotate(false);
+        domino.rotateDomino(false);
         System.out.println(domino.getPosTileA());
         System.out.println(domino.getPosTileB());
     }
