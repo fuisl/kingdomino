@@ -12,5 +12,6 @@ public enum TerrainType {
     MINE,
     MOUNTAIN,
     DESERT,
-    CASTLE
+    CASTLE,
+    //ERROR,
 }

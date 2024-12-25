@@ -2,6 +2,7 @@ package dev.kingdomino.game;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Enum representing the deck of dominos in the game.
@@ -57,7 +58,6 @@ public enum DominoDeck {
     DOMINO_48(48, new Tile(TerrainType.WHEATFIELD, 0), new Tile(TerrainType.MINE, 3));
 
     private final Domino domino;
-
     /**
      * Constructs a DominoDeck with the specified id and tiles.
      *
@@ -66,8 +66,7 @@ public enum DominoDeck {
      * @param tileB the second tile of the domino
      */
     DominoDeck(int id, Tile tileA, Tile tileB) {
-        ITileRotator tileRotator = new TileRotator();
-        IDominoController dominoController = new DominoController(tileRotator);
+        DominoController dominoController = new DominoController();
         this.domino = new Domino(id, tileA, tileB, dominoController);
     }
 
@@ -88,6 +87,6 @@ public enum DominoDeck {
     public static List<Domino> getAllDominos() {
         return Arrays.stream(values())
                 .map(DominoDeck::getDomino)
-                .toList();
+                .collect(Collectors.toList());
     }
 }

@@ -1,10 +1,12 @@
 package dev.kingdomino.game;
 
+import static java.lang.Math.abs;
+
 /**
  * Validates the placement of tiles on the game board.
  */
-public class TileValidator implements ITileValidator {
-    private final int CENTER = 4;
+public class TileValidator {
+    private int CENTER = 4;
     private Tile[][] land;
     private int size; // size of the land (5x5 or 7x7)
     private int minX, maxX, minY, maxY;
@@ -24,6 +26,7 @@ public class TileValidator implements ITileValidator {
     public TileValidator(Tile[][] land, int size) {
         this.land = land; // hold a reference to the board
         this.size = size;
+        this.CENTER = size / 2;
     }
 
     /**
@@ -42,10 +45,17 @@ public class TileValidator implements ITileValidator {
      * @param y the y-coordinate
      */
     public void updateSpanningTiles(int x, int y) {
-        minX = Math.min(minX, x);
-        maxX = Math.max(maxX, x);
-        minY = Math.min(minY, y);
-        maxY = Math.max(maxY, y);
+        if (x < minX) {
+            minX = x;
+        } else if (x > maxX) {
+            maxX = x;
+        }
+
+        if (y < minY) {
+            minY = y;
+        } else if (y > maxY) {
+            maxY = y;
+        }
     }
 
     /**
@@ -56,7 +66,6 @@ public class TileValidator implements ITileValidator {
      * @param y    the y-coordinate
      * @return true if the tile can be placed, false otherwise
      */
-    @Override
     public boolean isTilePlaceable(Tile tile, int x, int y) {
         return isTileFree(x, y) && isTileWithinBound(x, y);
     }
@@ -68,19 +77,30 @@ public class TileValidator implements ITileValidator {
      * @param y the y-coordinate
      * @return true if the coordinates are within bounds, false otherwise
      */
-    @Override
     public boolean isTileWithinBound(int x, int y) {
         // lock one axis if already spanned max
-        if (!((maxX - minX + 1) < size)) {
-            if (x < minX || x > maxX) {
+        if (x < minX || x > maxX) {
+            if (abs(x - minX) + 1 > size || abs(x - maxX) + 1 > size) {
                 return false;
             }
         }
-        if (!((maxY - minY + 1) < size)) {
-            if (y < minY || y > maxY) {
+
+        if (y < minY || y > maxY) {
+            if (abs(y - minY) + 1 > size || abs(y - maxY) + 1 > size) {
                 return false;
             }
         }
+
+        // if (!((maxX - minX + 1) < size)) {
+        // if (x < minX || x > maxX) {
+        // return false;
+        // }
+        // }
+        // if (!((maxY - minY + 1) < size)) {
+        // if (y < minY || y > maxY) {
+        // return false;
+        // }
+        // }
         return true;
 
     }
@@ -92,7 +112,6 @@ public class TileValidator implements ITileValidator {
      * @param y the y-coordinate
      * @return true if the coordinates are within the land area, false otherwise
      */
-    @Override
     public boolean isTileWithinLand(int x, int y) {
         return x >= 0 && x < (size * 2 - 1) && y >= 0 && y < (size * 2 - 1); // 5x5 or 7x7
     }
@@ -104,7 +123,6 @@ public class TileValidator implements ITileValidator {
      * @param y the y-coordinate
      * @return true if the coordinates are free, false otherwise
      */
-    @Override
     public boolean isTileFree(int x, int y) {
         if (isTileWithinLand(x, y)) {
             return land[x][y] == null;
@@ -121,7 +139,6 @@ public class TileValidator implements ITileValidator {
      * @param y    the y-coordinate
      * @return true if the tile can be connected, false otherwise
      */
-    @Override
     public boolean isTileConnectable(Tile tile, int x, int y) {
         return isTileAdjacentSame(tile, x, y) || isTileAdjacentCastle(x, y);
     }
@@ -135,7 +152,6 @@ public class TileValidator implements ITileValidator {
      * @return true if the tile is adjacent to another tile with the same terrain
      *         type, false otherwise
      */
-    @Override
     public boolean isTileAdjacentSame(Tile tile, int x, int y) {
         // check if adjacent tiles have the same terrain
         return (x > 0 && land[x - 1][y] != null && land[x - 1][y].getTerrain() == tile.getTerrain()) ||
@@ -151,10 +167,10 @@ public class TileValidator implements ITileValidator {
      * @param y the y-coordinate
      * @return true if the tile is adjacent to the castle, false otherwise
      */
-    @Override
     public boolean isTileAdjacentCastle(int x, int y) {
-        // castle always in the middle (4, 4); magic numbers here.
-        return (x == 4 && y == 3) || (x == 4 && y == 5) || (x == 3 && y == 4) || (x == 5 && y == 4);
+        // Check 4 tiles adj to the center -> castle
+        return (x == CENTER && y == CENTER - 1) || (x == CENTER && y == CENTER + 1) ||
+                (x == CENTER - 1 && y == CENTER) || (x == CENTER + 1 && y == CENTER);
     }
 
 }

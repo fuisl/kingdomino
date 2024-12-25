@@ -3,21 +3,25 @@ package dev.kingdomino.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List; // TODO: use tools from LibGDX instead of Java Collections
+import java.util.Random;
 
 /**
- * Represents a deck of cards (dominos) in the game. This class should be using to get dominos for the game.
+ * Represents a deck of cards (dominos) in the game. This class should be using
+ * to get dominos for the game.
  */
-public class CardDeck {
+public class Deck {
     // Common properties and methods for all card decks
     protected List<Domino> deck;
     protected int seed;
+    protected Random random;
 
     /**
      * Constructs a CardDeck with a default seed.
      */
-    public CardDeck() {
+    public Deck() {
+        this.random = new Random();
         this.deck = new ArrayList<>();
-        initializeDeck();
+        this.initializeDeck();
     }
 
     /**
@@ -25,10 +29,11 @@ public class CardDeck {
      *
      * @param seed the seed for shuffling the deck
      */
-    public CardDeck(int seed) {
+    public Deck(int seed) {
         this.seed = seed;
+        this.random = new Random(seed);
         this.deck = new ArrayList<>();
-        initializeDeck();
+        this.initializeDeck();
     }
 
     /**
@@ -37,13 +42,14 @@ public class CardDeck {
     protected void initializeDeck() {
         deck.clear();
         deck = DominoDeck.getAllDominos();
+        this.shuffle();
     };
 
     /**
      * Shuffles the deck using the specified seed.
      */
     public void shuffle() {
-        Collections.shuffle(deck, new java.util.Random(seed));
+        Collections.shuffle(deck, random);
     }
 
     /**

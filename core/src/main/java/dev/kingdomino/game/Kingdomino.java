@@ -8,5 +8,5 @@ public class Kingdomino {
     public Kingdomino() {
     }
 
-    CardDeck deck = new CardDeck(0); // create a new deck of cards
+    Deck deck = new Deck(0); // create a new deck of cards
 }

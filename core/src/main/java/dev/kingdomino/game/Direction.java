@@ -3,7 +3,7 @@ package dev.kingdomino.game;
 /**
  * Enum representing the possible offsets for tile rotation.
  */
-public enum Offset {
+public enum Direction {
     RIGHT(1, 0),
     DOWN(0, 1),
     LEFT(-1, 0),
@@ -17,7 +17,7 @@ public enum Offset {
      * @param x the x offset
      * @param y the y offset
      */
-    Offset(int x, int y) {
+    Direction(int x, int y) {
         this.position = new Position(x, y);
     }
 

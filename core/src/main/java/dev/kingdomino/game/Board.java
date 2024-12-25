@@ -4,20 +4,26 @@ package dev.kingdomino.game;
  * Represents the game board for Kingdomino.
  * Manages the placement and validation of tiles and dominos.
  */
-public class Board implements IBoard {
+public class Board {
 
-    private final int CENTER = 4; // TODO: change this later for other game modes
+    private final int CENTER;
     private Tile[][] land;
     private Point point; // scores
     private final TileValidator validator;
+    // private King king; // TODO: associate player with board
 
     /**
      * Initializes the game board with a castle at the center.
      */
+    public Board(int size) {
+        this.CENTER = size / 2;
+        this.land = new Tile[size][size];
+        this.land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
+        this.validator = new TileValidator(land);
+    }
+
     public Board() {
-        land = new Tile[9][9];
-        land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
-        validator = new TileValidator(land);
+        this(9); // default size is 9x9
     }
 
     /**
@@ -48,7 +54,6 @@ public class Board implements IBoard {
      * @param y    the y-coordinate.
      * @return true if the tile can be placed, false otherwise.
      */
-    @Override
     public boolean isTilePlaceable(Tile tile, int x, int y) {
         // TODO: change x, y to Position
         return validator.isTilePlaceable(tile, x, y);
@@ -61,8 +66,11 @@ public class Board implements IBoard {
      * @param x    the x-coordinate.
      * @param y    the y-coordinate.
      */
-    @Override
     public void setTile(Tile tile, int x, int y) {
+        if (!isTilePlaceable(tile, x, y)) {
+            throw new IllegalArgumentException("Invalid tile placement.");
+        }
+
         // TODO: change x, y to Position
         land[x][y] = tile;
 
@@ -77,7 +85,6 @@ public class Board implements IBoard {
      * @param y the y-coordinate.
      * @return the tile at the specified coordinates, or null if out of bounds.
      */
-    @Override
     public Tile getTile(int x, int y) {
         if (validator.isTileWithinLand(x, y)) {
             return land[x][y];
@@ -91,7 +98,6 @@ public class Board implements IBoard {
      * @param domino the domino to place.
      * @return true if the domino can be placed, false otherwise.
      */
-    @Override
     public boolean isDominoPlaceable(Domino domino) {
         return validator.isTilePlaceable(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y()) &&
                 validator.isTilePlaceable(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y()) &&
@@ -104,13 +110,16 @@ public class Board implements IBoard {
      * Places a domino on the board if it is placeable.
      * 
      * @param domino the domino to place.
+     * @return 0 if the domino was successfully placed. Otherwise, return a non-zero
      */
-    @Override
-    public void setDomino(Domino domino) {
+    public int setDomino(Domino domino) {
         if (isDominoPlaceable(domino)) {
             setTile(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y());
             setTile(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y());
+            return 0;
         }
+
+        return -1; // may use other return code to indicate the reason
     }
 
     // Point related methods
