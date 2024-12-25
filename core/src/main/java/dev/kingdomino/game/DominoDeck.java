@@ -67,8 +67,7 @@ public enum DominoDeck {
      * @param tileB the second tile of the domino
      */
     DominoDeck(int id, Tile tileA, Tile tileB) {
-        ITileRotator tileRotator = new TileRotator();
-        IDominoController dominoController = new DominoController(tileRotator);
+        DominoController dominoController = new DominoController();
         this.domino = new Domino(id, tileA, tileB, dominoController);
     }
 

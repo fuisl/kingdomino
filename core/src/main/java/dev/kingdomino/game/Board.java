@@ -4,7 +4,7 @@ package dev.kingdomino.game;
  * Represents the game board for Kingdomino.
  * Manages the placement and validation of tiles and dominos.
  */
-public class Board implements IBoard {
+public class Board {
 
     private final int CENTER = 4; // TODO: change this later for other game modes
     private Tile[][] land;
@@ -48,7 +48,6 @@ public class Board implements IBoard {
      * @param y    the y-coordinate.
      * @return true if the tile can be placed, false otherwise.
      */
-    @Override
     public boolean isTilePlaceable(Tile tile, int x, int y) {
         // TODO: change x, y to Position
         return validator.isTilePlaceable(tile, x, y);
@@ -61,7 +60,6 @@ public class Board implements IBoard {
      * @param x    the x-coordinate.
      * @param y    the y-coordinate.
      */
-    @Override
     public void setTile(Tile tile, int x, int y) {
         // TODO: change x, y to Position
         land[x][y] = tile;
@@ -77,7 +75,6 @@ public class Board implements IBoard {
      * @param y the y-coordinate.
      * @return the tile at the specified coordinates, or null if out of bounds.
      */
-    @Override
     public Tile getTile(int x, int y) {
         if (validator.isTileWithinLand(x, y)) {
             return land[x][y];
@@ -91,7 +88,6 @@ public class Board implements IBoard {
      * @param domino the domino to place.
      * @return true if the domino can be placed, false otherwise.
      */
-    @Override
     public boolean isDominoPlaceable(Domino domino) {
         return validator.isTilePlaceable(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y()) &&
                 validator.isTilePlaceable(domino.getTileB(), domino.getPosTileB().x(), domino.getPosTileB().y()) &&
@@ -106,7 +102,6 @@ public class Board implements IBoard {
      * @param domino the domino to place.
      * @return 0 if the domino was successfully placed. Otherwise, return a non-zero
      */
-    @Override
     public int setDomino(Domino domino) {
         if (isDominoPlaceable(domino)) {
             setTile(domino.getTileA(), domino.getPosTileA().x(), domino.getPosTileA().y());

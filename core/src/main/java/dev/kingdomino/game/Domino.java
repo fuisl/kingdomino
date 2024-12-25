@@ -7,7 +7,7 @@ public class Domino implements IDominoController {
     private int id;
     private Tile tileA;
     private Tile tileB;
-    private IDominoController dominoController;
+    private DominoController dominoController;
 
     /**
      * Constructs a Domino with the specified id, tiles, and controller.
@@ -17,7 +17,7 @@ public class Domino implements IDominoController {
      * @param tileB            the second tile of the domino
      * @param dominoController the controller for the domino
      */
-    public Domino(int id, Tile tileA, Tile tileB, IDominoController dominoController) {
+    public Domino(int id, Tile tileA, Tile tileB, DominoController dominoController) {
         this.id = id;
         this.tileA = tileA;
         this.tileB = tileB;
@@ -60,7 +60,7 @@ public class Domino implements IDominoController {
      *
      * @return the domino controller
      */
-    public IDominoController getDominoController() {
+    public DominoController getDominoController() {
         return dominoController;
     }
 
@@ -87,27 +87,23 @@ public class Domino implements IDominoController {
      *
      * @param clockwise true to rotate clockwise, false to rotate counterclockwise
      */
-    public void rotate(boolean clockwise) {
+    public void rotateDomino(boolean clockwise) {
         dominoController.rotateDomino(clockwise, true);
     }
 
-    @Override
     public void rotateDomino(boolean clockwise, boolean shouldOffset) {
         dominoController.rotateDomino(clockwise, shouldOffset);
     }
 
-    @Override
     public void setPosTileA(Position posTileA) {
         dominoController.setPosTileA(posTileA);
     }
 
-    @Override
     public void setPosTileB(Position posTileB) {
         dominoController.setPosTileB(posTileB);
     }
 
-    @Override
-    public void moveDomino(Offset offset) {
+    public void moveDomino(Direction offset) {
         dominoController.moveDomino(offset);
     }
 }
