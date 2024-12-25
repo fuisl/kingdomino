@@ -18,7 +18,7 @@ public class DominoController {
         this.rotationIndex = 0;
         this.posTileA = new Position(0, 0);
         this.posTileB = new Position(posTileA.x() + 1, posTileA.y()); // tileB is always at the right of tileA
-        this.tileRotator = tileRotator;
+        this.tileRotator = new TileRotator();
     }
 
     /**

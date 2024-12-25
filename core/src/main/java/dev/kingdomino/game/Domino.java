@@ -3,7 +3,7 @@ package dev.kingdomino.game;
 /**
  * Represents a domino in the game, consisting of two tiles and a controller.
  */
-public class Domino implements IDominoController {
+public class Domino {
     private int id;
     private Tile tileA;
     private Tile tileB;

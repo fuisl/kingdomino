@@ -26,6 +26,7 @@ public class TileValidator {
     public TileValidator(Tile[][] land, int size) {
         this.land = land; // hold a reference to the board
         this.size = size;
+        this.CENTER = size / 2;
     }
 
     /**
@@ -160,8 +161,9 @@ public class TileValidator {
      * @return true if the tile is adjacent to the castle, false otherwise
      */
     public boolean isTileAdjacentCastle(int x, int y) {
-        // castle always in the middle (4, 4); magic numbers here.
-        return (x == 4 && y == 3) || (x == 4 && y == 5) || (x == 3 && y == 4) || (x == 5 && y == 4);
+        // Check 4 tiles adj to the center -> castle
+        return (x == CENTER && y == CENTER - 1) || (x == CENTER && y == CENTER + 1) ||
+                (x == CENTER - 1 && y == CENTER) || (x == CENTER + 1 && y == CENTER);
     }
 
 }

@@ -6,7 +6,7 @@ package dev.kingdomino.game;
  */
 public class Board {
 
-    private final int CENTER = 4; // TODO: change this later for other game modes
+    private final int CENTER;
     private Tile[][] land;
     private Point point; // scores
     private final TileValidator validator;
@@ -14,10 +14,15 @@ public class Board {
     /**
      * Initializes the game board with a castle at the center.
      */
+    public Board(int size) {
+        this.CENTER = size / 2;
+        this.land = new Tile[size][size];
+        this.land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
+        this.validator = new TileValidator(land);
+    }
+
     public Board() {
-        land = new Tile[9][9];
-        land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
-        validator = new TileValidator(land);
+        this(9); // default size is 9x9
     }
 
     /**
