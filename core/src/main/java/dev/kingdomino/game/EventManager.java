@@ -10,7 +10,8 @@ public class EventManager {
     private float queueTimer;
     private float queueDt; // e.g., process queue every 1/60th of a second
 
-    // private float queueLastProcessed; // tracks last time the update was processed
+    // private float queueLastProcessed; // tracks last time the update was
+    // processed
 
     // A reference to some timer system that your game uses
     @SuppressWarnings("unused")
@@ -82,6 +83,7 @@ public class EventManager {
     public void update(float dt, boolean forced) {
         // Accumulate queueTimer
         queueTimer += dt;
+        // System.out.println("queueTimer: " + queueTimer);
 
         // If not enough time has passed AND not forced, just return
         if (!forced && queueTimer < queueDt) {
@@ -102,13 +104,14 @@ public class EventManager {
 
             while (iterator.hasNext()) {
                 Event event = iterator.next();
+                // System.out.println("Handling event: " + event);
 
                 // If the queue is blocked, skip the next events that are blockable
                 if (blocked && event.isBlockable()) {
                     continue;
                 }
 
-                // Let the event handle itself (like Lua's event:handle)
+                // Let the event handle itself.
                 event.handle();
 
                 // If the event completed, remove it from the queue

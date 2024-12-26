@@ -95,12 +95,12 @@ public class Ease {
             // we can do either:
             // progress = (current_time - start_time) / (end_time - start_time)
             // or keep the original definition (which inverts the fraction).
-            float percentDone = (endTime - currentTime) / (endTime - startTime);
+            float percent = (endTime - currentTime) / (endTime - startTime); // percent_done
             float interpolatedValue;
 
             switch (easeType) {
                 case LERP:
-                    interpolatedValue = percentDone * startVal + (1 - percentDone) * endVal;
+                    interpolatedValue = percent * startVal + (1 - percent) * endVal;
                     break;
 
                 case ELASTIC:
@@ -109,8 +109,8 @@ public class Ease {
                     // 10.75)*2*pi/3) replicates an "elastic" easing.
                     // The snippet slightly modifies percent_done first, then uses it in a lerp-like
                     // expression.
-                    float tmpElastic = -(float) Math.pow(2, 10 * (percentDone - 1))
-                            * (float) Math.sin((percentDone * 10 - 10.75) * (2 * Math.PI / 3));
+                    float tmpElastic = -(float) Math.pow(2, 10 * (percent - 1))
+                            * (float) Math.sin((percent * 10 - 10.75) * (2 * Math.PI / 3));
                     interpolatedValue = tmpElastic * startVal + (1 - tmpElastic) * endVal;
                     break;
 
@@ -119,13 +119,13 @@ public class Ease {
                     // percent_done = percent_done * percent_done
                     // self.ease.ref_table[self.ease.ref_value] = self.func(percent_done*start_val +
                     // (1-percent_done)*end_val)
-                    float tmpQuad = percentDone * percentDone;
+                    float tmpQuad = percent * percent;
                     interpolatedValue = tmpQuad * startVal + (1 - tmpQuad) * endVal;
                     break;
 
                 default:
                     // Fallback to LERP or do nothing
-                    interpolatedValue = percentDone * startVal + (1 - percentDone) * endVal;
+                    interpolatedValue = percent * startVal + (1 - percent) * endVal;
             }
 
             // Apply the user-supplied function to the final result
@@ -169,5 +169,9 @@ public class Ease {
 
     public float getDelay() {
         return delay;
+    }
+
+    public EaseType getEaseType() {
+        return easeType;
     }
 }

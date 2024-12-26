@@ -27,16 +27,27 @@ public class Event {
 
     private GameTimer timer;
 
-    public Event(TriggerType trigger, boolean blocking, boolean blockable,
-            float delay, Runnable action, GameTimer timer, Condition condition, Ease ease) { // changed to float
-        this.trigger = trigger;
-        this.blocking = blocking;
-        this.blockable = blockable;
-        this.delay = delay;
+    public Event(TriggerType trigger, Boolean blocking, Boolean blockable,
+            Float delay, Runnable action, GameTimer timer, Condition condition, Ease ease) { // changed to float
+        // Set defaults
+        this.trigger = (trigger != null) ? trigger : TriggerType.IMMEDIATE;
+
+        // true by default
+        this.blocking = (blocking != null) ? blocking : true;
+        this.blockable = (blockable != null) ? blockable : true;
+
+        // float
+        this.delay = (delay != null) ? delay : 0f;
+
+        // init other variables
         this.complete = false;
         this.startTimer = false;
         this.action = action;
-        this.timer = timer;
+
+        // Get global timer
+        this.timer = GameTimer.getInstance();
+
+        // already
         this.condition = condition;
         this.ease = ease;
     }
@@ -54,24 +65,24 @@ public class Event {
                 break;
             case AFTER:
                 if (!startTimer) {
-                    startTime = timer.getCurrentTime(); // e.g. a method returning a float in ms
+                    startTime = timer.realTime; // e.g. a method returning a float in ms
                     startTimer = true;
                 }
-                if (timer.getCurrentTime() - startTime >= delay) { // changed to float
+                if (timer.realTime - startTime >= delay) { // changed to float
                     action.run();
                     complete = true;
                 }
                 break;
             case BEFORE:
-                // Possibly run the action once, then wait the delay
+                // run the action once, then wait the delay
                 if (!startTimer) {
                     // run the action immediately
                     action.run();
-                    startTime = timer.getCurrentTime();
+                    startTime = timer.realTime;
                     startTimer = true;
                 }
                 // Check if we are done waiting
-                if (timer.getCurrentTime() - startTime >= delay) { // changed to float
+                if (timer.realTime - startTime >= delay) { // changed to float
                     complete = true;
                 }
                 break;
@@ -85,7 +96,7 @@ public class Event {
             case EASE:
                 // For an 'ease', you might do something like:
                 if (ease != null) {
-                    ease.update(timer.getCurrentTime());
+                    ease.update(timer.realTime);
 
                     // If the ease is complete, run the action
                     if (ease.isComplete()) {
@@ -112,5 +123,13 @@ public class Event {
 
     public boolean isBlockable() {
         return blockable;
+    }
+
+    public TriggerType getTrigger() {
+        return trigger;
+    }
+
+    public Runnable getAction() {
+        return action;
     }
 }

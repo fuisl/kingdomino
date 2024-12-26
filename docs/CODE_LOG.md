@@ -25,3 +25,5 @@
 [26.12.2024]
 
 - Following Event-Driven Architecture to decouple the classes. This is found in other based code and at is implemented at the core of LibGDX.
+- Framerate Dependence.
+- I "accidentally" write my own game engine.
