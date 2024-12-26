@@ -21,3 +21,7 @@
 
 - refactoring this mess.
 - I could try using throw and catch exception to communicate between classes (maybe).
+
+[26.12.2024]
+
+- Following Event-Driven Architecture to decouple the classes. This is found in other based code and at is implemented at the core of LibGDX.
