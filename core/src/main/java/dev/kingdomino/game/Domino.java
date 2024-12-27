@@ -24,9 +24,16 @@ public class Domino {
         this.dominoController = dominoController;
     }
 
-    // public Domino(int id, Tile tileA, Tile tileB) {
-    // this(id, tileA, tileB, new DominoController(new TileRotator()));
-    // }
+    public Domino(Domino other) {
+        this.id = other.id;
+        this.tileA = other.tileA.copy();
+        this.tileB = other.tileB.copy();
+        this.dominoController = other.dominoController.copy();
+    }
+
+    public Domino copy() {
+        return new Domino(this);
+    }
 
     /**
      * Returns the unique identifier of the domino.
@@ -95,6 +102,11 @@ public class Domino {
         dominoController.rotateDomino(clockwise, shouldOffset);
     }
 
+    public void setPosDomino(Domino domino) {
+        setPosTileA(domino.getPosTileA());
+        setPosTileB(domino.getPosTileB());
+    }
+
     public void setPosTileA(Position posTileA) {
         dominoController.setPosTileA(posTileA);
     }
@@ -105,5 +117,13 @@ public class Domino {
 
     public void moveDomino(Direction offset) {
         dominoController.moveDomino(offset);
+    }
+
+    public void setTileA(Tile tileA) {
+        this.tileA = tileA;
+    }
+
+    public void setTileB(Tile tileB) {
+        this.tileB = tileB;
     }
 }

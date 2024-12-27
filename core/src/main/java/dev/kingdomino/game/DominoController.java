@@ -21,6 +21,17 @@ public class DominoController {
         this.tileRotator = new TileRotator();
     }
 
+    public DominoController(DominoController other) {
+        this.rotationIndex = other.rotationIndex;
+        this.posTileA = new Position(other.posTileA);
+        this.posTileB = new Position(other.posTileB);
+        this.tileRotator = new TileRotator();
+    }
+
+    public DominoController copy() {
+        return new DominoController(this);
+    }
+
     /**
      * Tests if the offset between the old and new rotation indices is valid.
      *

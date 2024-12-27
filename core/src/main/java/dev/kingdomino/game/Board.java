@@ -16,14 +16,14 @@ public class Board {
      * Initializes the game board with a castle at the center.
      */
     public Board(int size) {
-        this.CENTER = size / 2;
-        this.land = new Tile[size][size];
+        this.CENTER = size  - 1;
+        this.land = new Tile[(size * 2) - 1][(size * 2) -1];
         this.land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
-        this.validator = new TileValidator(land);
+        this.validator = new TileValidator(land, size);
     }
 
     public Board() {
-        this(9); // default size is 9x9
+        this(5); // default size is 5x5 (but data stored in 9x9 array)
     }
 
     /**

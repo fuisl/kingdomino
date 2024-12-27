@@ -18,6 +18,19 @@ public class Tile {
         this.crown = crown;
     }
 
+    public Tile(TerrainType terrain) {
+        this(terrain, 0);
+    }
+
+    public Tile(Tile other) {
+        this.terrain = other.terrain;
+        this.crown = other.crown;
+    }
+
+    public Tile copy() {
+        return new Tile(this);
+    }
+
     /**
      * Returns the terrain type of the tile.
      *

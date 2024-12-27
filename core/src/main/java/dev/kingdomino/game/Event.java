@@ -5,6 +5,8 @@ public class Event {
         IMMEDIATE, AFTER, BEFORE, CONDITION, EASE
     }
 
+    public String name = "unknown";
+
     private TriggerType trigger;
     private boolean blocking;
     private boolean blockable;
@@ -45,11 +47,30 @@ public class Event {
         this.action = action;
 
         // Get global timer
-        this.timer = GameTimer.getInstance();
+        this.timer = (timer != null) ? timer : GameTimer.getInstance();
 
         // already
         this.condition = condition;
         this.ease = ease;
+    }
+
+    public Event(Event event) {
+        this.name = event.name;
+        this.trigger = event.trigger;
+        this.blocking = event.blocking;
+        this.blockable = event.blockable;
+        this.complete = event.complete;
+        this.startTimer = event.startTimer;
+        this.delay = event.delay;
+        this.startTime = event.startTime;
+        this.ease = event.ease;
+        this.condition = event.condition;
+        this.action = event.action;
+        this.timer = event.timer;
+    }
+
+    public Event copy() {
+        return new Event(this);
     }
 
     public void handle() {
@@ -131,5 +152,12 @@ public class Event {
 
     public Runnable getAction() {
         return action;
+    }
+
+    @Override
+    public String toString() {
+        return "Event [name=" + name + ", trigger=" + trigger + ", blocking=" + blocking + ", blockable=" + blockable
+                + ", complete=" + complete + ", startTimer=" + startTimer + ", delay=" + delay + ", startTime="
+                + startTime + "]";
     }
 }
