@@ -1,36 +1,41 @@
 package dev.kingdomino.game;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EventManager {
-    // Each queue is a list of Events under a specific category/key
-    private Map<String, List<Event>> queues;
+    private static EventManager instance;
+    // Each queue is a ConcurrentLinkedQueue of Events under a specific category/key
+    private Map<String, ConcurrentLinkedQueue<Event>> queues;
 
     // For controlling how often to process event queues
     private float queueTimer;
     private float queueDt; // e.g., process queue every 1/60th of a second
 
-    // private float queueLastProcessed; // tracks last time the update was
-    // processed
-
     // A reference to some timer system that your game uses
     @SuppressWarnings("unused")
     private GameTimer timer;
 
-    public EventManager(GameTimer timer) {
-        this.timer = timer;
-        this.queues = new HashMap<>();
+    private EventManager() {
+        this.timer = GameTimer.getInstance();
+        this.queues = new ConcurrentHashMap<>();
 
         // Initialize default queues
-        this.queues.put("base", new LinkedList<>());
-        this.queues.put("tutorial", new LinkedList<>());
-        this.queues.put("achievement", new LinkedList<>());
-        this.queues.put("other", new LinkedList<>());
+        this.queues.put("base", new ConcurrentLinkedQueue<>());
+        this.queues.put("tutorial", new ConcurrentLinkedQueue<>());
+        this.queues.put("achievement", new ConcurrentLinkedQueue<>());
+        this.queues.put("other", new ConcurrentLinkedQueue<>());
 
-        // Example: process events about 60 times per second
         this.queueTimer = 0f;
         this.queueDt = 1f / 60f;
-        // this.queueLastProcessed = 0f;
+    }
+
+    public static synchronized EventManager getInstance() {
+        if (instance == null) {
+            instance = new EventManager();
+        }
+        return instance;
     }
 
     /**
@@ -42,12 +47,19 @@ public class EventManager {
      */
     public void addEvent(Event event, String queue, boolean front) {
         if (!queues.containsKey(queue)) {
-            queues.put(queue, new LinkedList<>());
+            queues.put(queue, new ConcurrentLinkedQueue<>());
         }
+
+        ConcurrentLinkedQueue<Event> queueList = queues.get(queue);
         if (front) {
-            queues.get(queue).add(0, event);
+            // ConcurrentLinkedQueue does not support adding to the front directly,
+            // so we need to create a new queue with the event at the front.
+            ConcurrentLinkedQueue<Event> newQueue = new ConcurrentLinkedQueue<>();
+            newQueue.add(event);
+            newQueue.addAll(queueList);
+            queues.put(queue, newQueue);
         } else {
-            queues.get(queue).add(event);
+            queueList.add(event);
         }
     }
 
@@ -63,12 +75,14 @@ public class EventManager {
         if (queue == null) {
             // Clear all queues
             for (String key : queues.keySet()) {
-                queues.get(key).clear();
+                ConcurrentLinkedQueue<Event> queueList = queues.get(key);
+                queueList.clear();
             }
         } else {
             // Clear only the specified queue
             if (queues.containsKey(queue)) {
-                queues.get(queue).clear();
+                ConcurrentLinkedQueue<Event> eventQueue = queues.get(queue);
+                eventQueue.clear();
             }
         }
     }
@@ -83,7 +97,6 @@ public class EventManager {
     public void update(float dt, boolean forced) {
         // Accumulate queueTimer
         queueTimer += dt;
-        // System.out.println("queueTimer: " + queueTimer);
 
         // If not enough time has passed AND not forced, just return
         if (!forced && queueTimer < queueDt) {
@@ -91,20 +104,17 @@ public class EventManager {
         }
 
         // Otherwise, reset queueTimer.
-        // The original code uses "queue_last_processed + queue_dt",
-        // but for simplicity we can just accumulate & subtract.
         queueTimer -= queueDt;
 
         // For each queue, handle events in order
-        for (Map.Entry<String, List<Event>> entry : queues.entrySet()) {
-            List<Event> eventQueue = entry.getValue();
+        for (ConcurrentHashMap.Entry<String, ConcurrentLinkedQueue<Event>> entry : queues.entrySet()) {
+            ConcurrentLinkedQueue<Event> eventQueue = entry.getValue();
 
             boolean blocked = false;
             Iterator<Event> iterator = eventQueue.iterator();
 
             while (iterator.hasNext()) {
                 Event event = iterator.next();
-                // System.out.println("Handling event: " + event);
 
                 // If the queue is blocked, skip the next events that are blockable
                 if (blocked && event.isBlockable()) {
@@ -115,12 +125,17 @@ public class EventManager {
                 event.handle();
 
                 // If the event completed, remove it from the queue
-                if (event.isComplete()) {
-                    iterator.remove();
-                }
-                // If the event is blocking, set blocked = true
-                else if (event.isBlocking()) {
-                    blocked = true;
+                try {
+                    if (event.isComplete()) {
+                        iterator.remove();
+                    } else if (event.isBlocking()) {
+                        // If the event is blocking, set blocked = true
+                        blocked = true;
+                    }
+                } catch (ConcurrentModificationException e) {
+                    // Handle exception
+                    System.out.println("Concurence exception: " + e.getMessage());
+                    throw e;
                 }
             }
         }
