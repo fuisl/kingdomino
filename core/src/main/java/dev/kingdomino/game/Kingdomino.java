@@ -1,12 +1,12 @@
 package dev.kingdomino.game;
 
-public class Kingdomino {
-    private int numberOfPlayers; // 2 - 4 players
-    private int numberOfTiles; // number of tiles in the game (4 players = 48, 3 players = 36, 2 players = 24)
+import com.badlogic.gdx.Game;
 
-    // setup
-    public Kingdomino() {
-    }
+public class Kingdomino extends Game {
 
-    Deck deck = new Deck(0); // create a new deck of cards
+    @Override
+    public void create() {
+        setScreen(new GameScreen());
+    }   
+
 }
