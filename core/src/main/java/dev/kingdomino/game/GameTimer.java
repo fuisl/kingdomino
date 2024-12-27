@@ -13,7 +13,7 @@ public class GameTimer {
     private GameTimer() {
     }
 
-    public static GameTimer getInstance() {
+    public static synchronized GameTimer getInstance() {
         if (instance == null) {
             instance = new GameTimer();
         }

@@ -6,7 +6,7 @@ public class TestEventManager {
         timer.realTime = 12f;
         timer.totalTime = 12f;
 
-        EventManager eventManager = new EventManager(GameTimer.getInstance());
+        EventManager eventManager = EventManager.getInstance();
 
         Event event = new Event(
                 Event.TriggerType.AFTER,
@@ -22,7 +22,7 @@ public class TestEventManager {
         Event event2 = new Event(
                 Event.TriggerType.BEFORE,
                 false, false,
-                15f,
+                10f,
                 () -> {
                     System.out.println("Hello, world! 2");
                 },
@@ -45,7 +45,9 @@ public class TestEventManager {
         eventManager.addEvent(event2, "base", false);
         eventManager.addEvent(event3, "base", false);
 
-        float dt = 0.000001f;
+        float currentTimeMillis = System.currentTimeMillis();
+        float dt = 1f / 60f;
+
         while (timer.realTime < 15f) {
             eventManager.update(dt, false);
             timer.realTime += dt;
