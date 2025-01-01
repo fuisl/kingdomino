@@ -1,42 +1,48 @@
 package dev.kingdomino.game;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameManager {
-    private Board board;
+    private int kingCount = 4;
     private Deck deck;
+    private Board currentBoard;
     private Domino currentDomino;
+    private Turn currentTurn;
+    private King currentKing;
+    private Turn nextTurn;
+
     private GameTimer gameTimer = GameTimer.getInstance();
+    private GameState currentState = GameState.SETUP;
 
     private EventManager eventManager;
     private BoardInputProcessor inputProcessor;
 
-    public GameManager() {
-        board = new Board();
-        deck = new Deck();
+    public enum GameState {
+        SETUP,
+        TURN, // placing domino
+        // TURN_CHOOSING, // choosing next domino
+        ROUND_END,
+        GAME_OVER,
+        RESULTS
+    }
 
+    public GameManager() {
+        // initialize game manager
         eventManager = EventManager.getInstance();
         inputProcessor = new BoardInputProcessor(this);
         Gdx.input.setInputProcessor(new InputMultiplexer(inputProcessor));
 
-        Event initDomino = new Event(
-                Event.TriggerType.IMMEDIATE,
-                false, false,
-                null,
-                () -> {
-                    currentDomino = deck.drawCard();
-                    inputProcessor.updated = true;
-                },
-                gameTimer,
-                null,
-                null);
-
-        eventManager.addEvent(initDomino, "base", false);
+        // initialize game components
+        deck = new Deck(0);
+        currentState = GameState.SETUP;
     }
 
     public void update(float dt) {
+        // Core game loop -- must update every frame
         gameTimer.update(dt);
         eventManager.update(dt, true);
 
@@ -44,17 +50,88 @@ public class GameManager {
             Gdx.app.exit();
         }
 
-        if (inputProcessor.updated && inputProcessor.valid) {
-            inputProcessor.valid = false;
-            currentDomino = deck.drawCard();
+        switch (currentState) {
+            case SETUP:
+                setup();
+                break;
+            case TURN:
+                turnPlacing();
+                break;
+            case ROUND_END:
+                round_end();
+                break;
+            case GAME_OVER:
+                System.out.println("Game Over");
+                game_over();
+                break;
+            case RESULTS:
+                System.out.println("Results");
+                System.out.println("Press \"c\" to exit.");
+                break;
+            default:
+                break;
         }
+    }
+
+    private void setup() {
+        Domino[] draft = new Domino[kingCount];
+
+        // draw dominos for each king
+        for (int i = 0; i < kingCount; i++) {
+            draft[i] = deck.drawCard();
+        }
+        currentTurn = new Turn(draft);
+
+        // setup next turn
+        if (deck.isEmpty()) {
+            nextTurn = null;
+        } else {
+            for (int i = 0; i < kingCount; i++) {
+                draft[i] = deck.drawCard();
+            }
+            nextTurn = new Turn(draft);
+        }
+
+        // setup the kings for the turn (without shuffling)
+        King[] kings = new King[kingCount];
+        for (int i = 0; i < kingCount; i++) {
+            kings[i] = new King(i);
+            currentTurn.setKing(kings[i], i);
+        }
+
+        // set game state to TURN
+        currentState = GameState.TURN;
+    }
+
+    private void turnPlacing() {
+        if (currentTurn.isOver()) {
+            currentState = GameState.ROUND_END;
+        } else {
+            currentDomino = currentTurn.getCurrentDomino();
+            currentKing = currentTurn.getCurrentKing();
+            currentTurn.next();
+        }
+    }
+
+    private void round_end() {
+        if (nextTurn == null) {
+            currentState = GameState.GAME_OVER;
+        } else {
+            currentTurn = nextTurn;
+            nextTurn = null;
+            currentState = GameState.TURN;
+        }
+    }
+
+    private void game_over() {
+        currentState = GameState.RESULTS;
     }
 
     public void render(SpriteBatch batch) {
         if (inputProcessor.updated) {
             inputProcessor.updated = false;
             clearScreen();
-            renderBoard(board, currentDomino);
+            renderBoard(currentBoard, currentDomino);
         }
     }
 
@@ -123,7 +200,7 @@ public class GameManager {
     }
 
     public Board getBoard() {
-        return this.board;
+        return this.currentBoard;
     }
 
     public Domino getCurrentDomino() {

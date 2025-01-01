@@ -32,56 +32,119 @@ public class BoardInputProcessor implements InputProcessor {
     public boolean keyDown(int keycode) {
         update(); // update states
 
+        Event e = null;
         switch (keycode) {
             case Keys.W: // 'w'
-                currentDomino.moveDomino(Direction.UP);
-                updated = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> currentDomino.moveDomino(Direction.UP),
+                        null,
+                        null,
+                        null);
                 break;
             case Keys.S: // 's'
-                currentDomino.moveDomino(Direction.DOWN);
-                updated = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> currentDomino.moveDomino(Direction.DOWN),
+                        null,
+                        null,
+                        null);
                 break;
             case Keys.A: // 'a'
-                currentDomino.moveDomino(Direction.LEFT);
-                updated = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> currentDomino.moveDomino(Direction.LEFT),
+                        null,
+                        null,
+                        null);
                 break;
             case Keys.D: // 'd'
-                currentDomino.moveDomino(Direction.RIGHT);
-                updated = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> currentDomino.moveDomino(Direction.RIGHT),
+                        null,
+                        null,
+                        null);
                 break;
             case Keys.E: // 'e'
-                currentDomino.rotateDomino(true);
-                updated = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> currentDomino.rotateDomino(true),
+                        null,
+                        null,
+                        null);
                 break;
             case Keys.Q: // 'q'
-                currentDomino.rotateDomino(false);
-                updated = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> currentDomino.rotateDomino(false),
+                        null,
+                        null,
+                        null);
                 break;
             case Keys.X: // 'x'
-                if (board.setDomino(currentDomino) == 0) {
-                    valid = true;
-                    updated = true;
-                    break;
-                } else {
-                    eventManager.addEvent(invalidEffect.copy(), "other", false);
-                    valid = false;
-                    updated = true;
-                    break;
-                }
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> {
+                            if (board.setDomino(currentDomino) == 0) {
+                                valid = true;
+                            } else {
+                                eventManager.addEvent(invalidEffect.copy(), "base", false);
+                                valid = false;
+                            }
+                        },
+                        null,
+                        null,
+                        null);
+                break;
             case Keys.C: // 'c'
-                System.out.println("Exiting game or returning to menu");
-                exit = true;
+                e = new Event(
+                        TriggerType.IMMEDIATE,
+                        false,
+                        true,
+                        null,
+                        () -> exit = true,
+                        null,
+                        null,
+                        null);
                 break;
             default:
                 break;
         }
+
+        if (e != null) {
+            eventManager.addEvent(e, "base", false);
+            updated = true;
+        }
+
         return true;
         // returning true indicates the event was handled
     }
 
-    Event invalidEffect = new Event(TriggerType.IMMEDIATE, false, false, null, () -> {
+    Event invalidEffect = new Event(TriggerType.BEFORE, true, false, 0.5f, () -> {
         Domino temp = currentDomino.copy();
-        Event blink_x = new Event(TriggerType.BEFORE, true, true, 1f, () -> {
+        Event blink_x = new Event(TriggerType.BEFORE, true, true, 0.5f, () -> {
             Tile invalidTile = new Tile(TerrainType.INVALID);
             Domino invalidDomino = new Domino(0, invalidTile, invalidTile,
                     new DominoController(currentDomino.getDominoController()));
@@ -96,8 +159,6 @@ public class BoardInputProcessor implements InputProcessor {
         }, null, null, null);
         blink_back.name = "blink_back";
 
-        // eventManager.addEvent(blink_x, "other", false);
-        // eventManager.addEvent(blink_back, "other", false);
         eventManager.addEvent(blink_x, "other", false);
         eventManager.addEvent(blink_back, "other", false);
     }, null, null, null);
