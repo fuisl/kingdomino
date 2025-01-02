@@ -1,31 +1,36 @@
 package dev.kingdomino.game;
 
-import java.util.Arrays;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameManager {
-    private int kingCount = 4;
+    private int kingCount = 2;
     private Deck deck;
+    private Board[] boards;
     private Board currentBoard;
     private Domino currentDomino;
     private Turn currentTurn;
+    private King[] kings;
     private King currentKing;
     private Turn nextTurn;
+    private boolean placingDomino = false;
+    private boolean choosingDomino = false;
 
     private GameTimer gameTimer = GameTimer.getInstance();
     private GameState currentState = GameState.SETUP;
 
     private EventManager eventManager;
-    private BoardInputProcessor inputProcessor;
+    private BoardInputProcessor boardInputProcessor;
+    private DraftInputProcessor draftInputProcessor;
 
     public enum GameState {
+        INIT,
         SETUP,
-        TURN, // placing domino
-        // TURN_CHOOSING, // choosing next domino
-        ROUND_END,
+        TURN_START, // turn manager state
+        TURN_PLACING, // placing domino
+        TURN_CHOOSING, // choosing next domino
+        TURN_END,
         GAME_OVER,
         RESULTS
     }
@@ -33,12 +38,22 @@ public class GameManager {
     public GameManager() {
         // initialize game manager
         eventManager = EventManager.getInstance();
-        inputProcessor = new BoardInputProcessor(this);
-        Gdx.input.setInputProcessor(new InputMultiplexer(inputProcessor));
+        boardInputProcessor = new BoardInputProcessor(this);
+        draftInputProcessor = new DraftInputProcessor(this);
+        Gdx.input.setInputProcessor(new InputMultiplexer(boardInputProcessor, draftInputProcessor));
 
         // initialize game components
         deck = new Deck(0);
-        currentState = GameState.SETUP;
+        kings = new King[kingCount];
+        boards = new Board[kingCount];
+
+        for (int i = 0; i < kingCount; i++) {
+            boards[i] = new Board();
+            kings[i] = new King(i, boards[i]);
+        }
+
+        // initialize game state
+        currentState = GameState.INIT;
     }
 
     public void update(float dt) {
@@ -46,98 +61,199 @@ public class GameManager {
         gameTimer.update(dt);
         eventManager.update(dt, true);
 
-        if (inputProcessor.exit) {
-            Gdx.app.exit();
-        }
+        // if (boardInputProcessor.exit) {
+        // Gdx.app.exit();
+        // }
 
         switch (currentState) {
+            case INIT:
+                init();
+                break;
             case SETUP:
                 setup();
                 break;
-            case TURN:
-                turnPlacing();
+            case TURN_START:
+                if (draftInputProcessor.show == false) {
+                    draftInputProcessor.show = true;
+                    updateTurn();
+                }
                 break;
-            case ROUND_END:
-                round_end();
+            case TURN_PLACING:
+                placeDomino();
+                break;
+            case TURN_CHOOSING:
+                chooseDomino();
+                break;
+            case TURN_END:
+                turnEnd();
                 break;
             case GAME_OVER:
-                System.out.println("Game Over");
                 game_over();
                 break;
             case RESULTS:
-                System.out.println("Results");
-                System.out.println("Press \"c\" to exit.");
                 break;
             default:
                 break;
         }
     }
 
-    private void setup() {
-        Domino[] draft = new Domino[kingCount];
+    // ---------------------GAME STATES---------------------
+
+    private void init() {
+        Domino[] draft_current = new Domino[kingCount];
 
         // draw dominos for each king
         for (int i = 0; i < kingCount; i++) {
-            draft[i] = deck.drawCard();
+            draft_current[i] = deck.drawCard();
         }
-        currentTurn = new Turn(draft);
+        currentTurn = new Turn(draft_current);
 
-        // setup next turn
-        if (deck.isEmpty()) {
-            nextTurn = null;
-        } else {
-            for (int i = 0; i < kingCount; i++) {
-                draft[i] = deck.drawCard();
-            }
-            nextTurn = new Turn(draft);
-        }
-
-        // setup the kings for the turn (without shuffling)
-        King[] kings = new King[kingCount];
+        // setup the kings for first turn
         for (int i = 0; i < kingCount; i++) {
-            kings[i] = new King(i);
-            currentTurn.setKing(kings[i], i);
+            currentTurn.selectDomino(kings[i], i);
+        }
+
+        // set game state to SETUP
+        currentState = GameState.SETUP;
+    }
+
+    private void setup() {
+        Domino[] draft_next = new Domino[kingCount];
+        // setup next turn
+        if (!deck.isEmpty()) {
+            for (int i = 0; i < kingCount; i++) {
+                draft_next[i] = deck.drawCard();
+            }
+            nextTurn = new Turn(draft_next);
         }
 
         // set game state to TURN
-        currentState = GameState.TURN;
+        currentState = GameState.TURN_START;
     }
 
-    private void turnPlacing() {
-        if (currentTurn.isOver()) {
-            currentState = GameState.ROUND_END;
-        } else {
+    private void updateTurn() {
+        if (!placingDomino && !choosingDomino) {
             currentDomino = currentTurn.getCurrentDomino();
             currentKing = currentTurn.getCurrentKing();
-            currentTurn.next();
+            currentBoard = currentKing.getBoard();
+            currentState = GameState.TURN_PLACING;
+
+            draftInputProcessor.reset();
+            boardInputProcessor.reset();
         }
     }
 
-    private void round_end() {
-        if (nextTurn == null) {
-            currentState = GameState.GAME_OVER;
-        } else {
-            currentTurn = nextTurn;
-            nextTurn = null;
-            currentState = GameState.TURN;
+    private void placeDomino() {
+        placingDomino = true;
+        if (boardInputProcessor.exit && boardInputProcessor.valid) {
+            currentState = GameState.TURN_CHOOSING;
+            placingDomino = false;
         }
+    }
+
+    private void chooseDomino() {
+        if (nextTurn == null) {
+            currentState = GameState.TURN_END;
+        }
+
+        choosingDomino = true;
+        if (draftInputProcessor.exit) {
+            currentState = GameState.TURN_END;
+            choosingDomino = false;
+        }
+    }
+
+    private void turnEnd() {
+        currentTurn.next();
+        currentState = GameState.TURN_START;
+
+        if (currentTurn.isOver()) {
+            if (nextTurn == null) {
+                currentState = GameState.GAME_OVER;
+            } else {
+                currentTurn = nextTurn.copy(); // weird
+                nextTurn = null;
+                currentState = GameState.SETUP;
+                return;
+            }
+        }
+
     }
 
     private void game_over() {
         currentState = GameState.RESULTS;
     }
 
+    // ---------------------RENDER---------------------
+
     public void render(SpriteBatch batch) {
-        if (inputProcessor.updated) {
-            inputProcessor.updated = false;
-            clearScreen();
-            renderBoard(currentBoard, currentDomino);
+        // render game components
+
+        // boolean updated is using for updating the screen only when the input
+        // processor is updated (key pressed)
+        switch (currentState) {
+            case SETUP:
+                break;
+            case TURN_START:
+                if (draftInputProcessor.updated) {
+                    draftInputProcessor.updated = false;
+                    clearScreen();
+                    renderQueueWithSelection(currentTurn.getDraft(), currentTurn.getCurrentIndex());
+                    System.out.println("Press any key to continue. Player: " + currentTurn.getCurrentKing());
+                }
+                break;
+            case TURN_PLACING:
+                if (boardInputProcessor.updated) {
+                    boardInputProcessor.updated = false;
+                    clearScreen();
+                    renderBoard(currentBoard, currentDomino);
+                }
+                break;
+            case TURN_CHOOSING:
+                if (draftInputProcessor.updated) {
+                    draftInputProcessor.updated = false;
+                    clearScreen();
+                    renderQueueWithSelection(nextTurn.getDraft(), draftInputProcessor.selectionIndex); // TODO: optimize
+                    System.out.println("Choosing domino "
+                            + getCharType(
+                                    nextTurn.getDomino(draftInputProcessor.selectionIndex).getTileA().getTerrain())
+                            + "|" + getCharType(
+                                    nextTurn.getDomino(draftInputProcessor.selectionIndex).getTileB().getTerrain()));
+                }
+                break;
+            case TURN_END:
+                clearScreen();
+                break;
+            case GAME_OVER:
+                break;
+            case RESULTS:
+                break;
+            default:
+                break;
         }
+        // if (boardInputProcessor.updated) {
+        // boardInputProcessor.updated = false;
+        // clearScreen();
+        // renderBoard(currentBoard, currentDomino);
+        // }
     }
 
     private static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    private static void renderQueueWithSelection(Domino[] draft, int index) {
+        for (int i = 0; i < draft.length; i++) {
+            // prinf not working.
+            if (i == index) {
+                System.out.println(draft[i].getId() + " " + getCharType(draft[i].getTileA().getTerrain()) + "|"
+                        + getCharType(draft[i].getTileB().getTerrain()) + " <");
+            } else {
+                System.out.println(draft[i].getId() + " " + getCharType(draft[i].getTileA().getTerrain()) + "|"
+                        + getCharType(draft[i].getTileB().getTerrain()));
+            }
+        }
     }
 
     private static void renderBoard(Board board, Domino domino) {
@@ -209,5 +325,23 @@ public class GameManager {
 
     public void setCurrentDomino(Domino domino) {
         this.currentDomino = domino;
+    }
+
+    public King getCurrentKing() {
+        return this.currentKing;
+    }
+
+    public void setCurrentKing(King king) {
+        this.currentKing = king;
+    }
+
+    public void selectDomino(int index) {
+        if (currentState == GameState.TURN_CHOOSING) {
+            nextTurn.selectDomino(currentKing, index);
+        }
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
     }
 }
