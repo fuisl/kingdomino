@@ -17,19 +17,28 @@ public class BoardInputProcessor implements InputProcessor {
 
     public BoardInputProcessor(GameManager gm) {
         this.gameManager = gm;
-        this.board = gm.getBoard();
         this.currentDomino = gm.getCurrentDomino();
         this.updated = true;
-        this.valid = true;
+        this.valid = false;
         this.exit = false;
     }
 
     public void update() {
         currentDomino = gameManager.getCurrentDomino();
+        board = gameManager.getBoard();
+    }
+
+    public void reset() {
+        this.updated = true;
+        this.exit = false;
+        this.valid = false;
     }
 
     @Override
     public boolean keyDown(int keycode) {
+        if (gameManager.getCurrentState() != GameManager.GameState.TURN_PLACING) {
+            return false;
+        }
         update(); // update states
 
         Event e = null;
@@ -109,6 +118,7 @@ public class BoardInputProcessor implements InputProcessor {
                         () -> {
                             if (board.setDomino(currentDomino) == 0) {
                                 valid = true;
+                                exit = true;
                             } else {
                                 eventManager.addEvent(invalidEffect.copy(), "base", false);
                                 valid = false;
@@ -124,7 +134,10 @@ public class BoardInputProcessor implements InputProcessor {
                         false,
                         true,
                         null,
-                        () -> exit = true,
+                        () -> {
+                            exit = true;
+                            valid = true;
+                        },
                         null,
                         null,
                         null);

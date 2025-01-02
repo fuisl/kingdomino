@@ -176,4 +176,9 @@ public class Board {
         point.reset();
     }
 
+    public Board copy() {
+        Board board = new Board();
+        board.land = getLand();
+        return board;
+    }
 }
