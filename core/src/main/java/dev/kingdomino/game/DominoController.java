@@ -8,6 +8,9 @@ public class DominoController {
     private Position posTileA; // tileA is always at the center
     private Position posTileB; // tileB is always at the right of tileA -> relative position
     private TileRotator tileRotator;
+    private Direction lastDirection; // last direction moved
+    private int lastRotationIndex;
+    private int lastAction; // last action performed {0: move, 1: rotate}
 
     /**
      * Constructs a new DominoController with the specified tile rotator.
@@ -51,15 +54,18 @@ public class DominoController {
      * @param shouldOffset true to test if the new rotation is valid
      */
     public void rotateDomino(boolean clockwise, boolean shouldOffset) {
-        // int oldRotationIndex = rotationIndex;
+        lastRotationIndex = rotationIndex;
         rotationIndex = (rotationIndex + (clockwise ? 1 : 3)) % 4; // 0, 1, 2, 3 handle negative rotation
 
         // rotate the 2nd Tile with 1st Tile as center
         tileRotator.rotate(posTileA, posTileB, rotationIndex, shouldOffset);
 
-        // if shouldOffset is true, test if the new rotation is valid
+        lastAction = 1; // last action is rotate
+    }
 
-        // if shouldOffset is true, and the new rotation is invalid, revert the rotation
+    public void undoRotateDomino() {
+        rotationIndex = lastRotationIndex;
+        tileRotator.rotate(posTileA, posTileB, rotationIndex, true);
     }
 
     /**
@@ -137,5 +143,27 @@ public class DominoController {
     public void moveDomino(Direction direction) {
         Position posTileA = direction.apply(getPosTileA());
         setPosDomino(posTileA);
+        lastDirection = direction;
+        lastAction = 0;
+    }
+
+    public void moveDomino(Direction direction, boolean opposite) {
+        Position posTileA = opposite ? direction.opposite().apply(getPosTileA())
+                : direction.apply(getPosTileA());
+        setPosDomino(posTileA);
+        lastDirection = direction;
+        lastAction = 0;
+    }
+
+    public void undoMoveDomino() {
+        moveDomino(lastDirection, true);
+    }
+
+    public void undo() {
+        if (lastAction == 0) {
+            undoMoveDomino();
+        } else if (lastAction == 1) {
+            undoRotateDomino();
+        }
     }
 }

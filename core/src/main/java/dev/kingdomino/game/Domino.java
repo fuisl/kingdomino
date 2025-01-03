@@ -126,4 +126,8 @@ public class Domino {
     public void setTileB(Tile tileB) {
         this.tileB = tileB;
     }
+
+    public void undo() {
+        dominoController.undo();
+    }
 }

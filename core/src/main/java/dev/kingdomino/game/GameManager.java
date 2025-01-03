@@ -324,8 +324,19 @@ public class GameManager {
             Tile tile2 = domino.getTileB();
             Position pos1 = domino.getPosTileA();
             Position pos2 = domino.getPosTileB();
-            land[(pos1.x())][(pos1.y())] = tile1;
-            land[(pos2.x())][(pos2.y())] = tile2;
+
+            try {
+                land[pos1.x()][pos1.y()] = tile1;
+                land[pos2.x()][pos2.y()] = tile2;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                domino.undo();
+                tile1 = domino.getTileA();
+                tile2 = domino.getTileB();
+                pos1 = domino.getPosTileA();
+                pos2 = domino.getPosTileB();
+                land[pos1.x()][pos1.y()] = tile1;
+                land[pos2.x()][pos2.y()] = tile2;
+            }
         }
 
         for (int i = 0; i < 9; i++) {
