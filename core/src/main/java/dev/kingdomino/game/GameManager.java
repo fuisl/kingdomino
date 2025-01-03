@@ -163,6 +163,7 @@ public class GameManager {
     private void placeDomino() {
         placingDomino = true;
         if (boardInputProcessor.exit && boardInputProcessor.valid) {
+            currentBoard.getScoringSystem().calculateLandScore();
             currentState = GameState.TURN_CHOOSING;
             placingDomino = false;
         }
@@ -215,23 +216,22 @@ public class GameManager {
                 if (draftInputProcessor.updated) {
                     draftInputProcessor.updated = false;
                     clearScreen();
+                    System.out.printf("TURN NUMBER: %d\n\n", currentTurn.getTurnId());
                     renderKingQueueWithSelection(currentTurn.getKings(), currentTurn.getCurrentKing());
                     System.out.println();
-                    System.out.println("CURRENT TURN. (press any key to continue)");
+                    System.out.println("(press any key to continue)");
                 }
                 break;
             case TURN_PLACING:
                 if (boardInputProcessor.updated) {
                     boardInputProcessor.updated = false;
                     clearScreen();
+                    System.out.printf("PLACE DOMINO\n\n");
                     renderBoard(currentBoard, currentDomino);
+                    renderStatusPlacing(currentTurn);
                     System.out.println();
-                    System.out.printf("KING %d's LAND | CURRENT DOMINO %c%d|%c%d",
-                            currentTurn.getCurrentKing().getId(),
-                            getCharType(currentTurn.getCurrentDomino().getTileA().getTerrain()),
-                            currentTurn.getCurrentDomino().getTileA().getCrown(),
-                            getCharType(currentTurn.getCurrentDomino().getTileB().getTerrain()),
-                            currentTurn.getCurrentDomino().getTileB().getCrown());
+                    System.out.println(
+                            "([X] confirm | [C] discard | [Q] counter-clockwise | [E] clockwise | [WASD] move)");
                 }
                 break;
             case TURN_CHOOSING:
@@ -239,15 +239,14 @@ public class GameManager {
                     draftInputProcessor.updated = false;
                     clearScreen();
 
+                    System.out.printf("CHOOSE NEXT DOMINO\n\n");
                     Domino[] nextRemainingDraft = nextTurn.getRemainingDraft();
                     draftInputProcessor.remainingDrafts = nextRemainingDraft.length;
                     renderQueueWithSelection(nextRemainingDraft, draftInputProcessor.selectionIndex); // TODO: optimize
+                    renderStatusChoosing(currentTurn);
+
                     System.out.println();
-                    System.out.println("KING " + currentTurn.getCurrentKing().getId() + " NEXT DOMINO: "
-                            + getCharType(
-                                    nextTurn.getDomino(draftInputProcessor.selectionIndex).getTileA().getTerrain())
-                            + "|" + getCharType(
-                                    nextTurn.getDomino(draftInputProcessor.selectionIndex).getTileB().getTerrain()));
+                    renderBoard(currentBoard, currentDomino);
                 }
                 break;
             case TURN_END:
@@ -270,6 +269,26 @@ public class GameManager {
     private static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    private static void renderStatusChoosing(Turn currentTurn) {
+        System.out.println();
+        System.out.println("KING " + currentTurn.getCurrentKing().getId() + " PREVIOUS DOMINO: "
+                + getCharType(
+                        currentTurn.getCurrentDomino().getTileA().getTerrain())
+                + "|" + getCharType(
+                        currentTurn.getCurrentDomino().getTileB().getTerrain()));
+    }
+
+    private static void renderStatusPlacing(Turn currentTurn) {
+        System.out.println();
+        System.out.printf("KING %d's LAND | CURRENT DOMINO [%c%d|%c%d] | CURRENT SCORE: %d\n",
+                currentTurn.getCurrentKing().getId(),
+                getCharType(currentTurn.getCurrentDomino().getTileA().getTerrain()),
+                currentTurn.getCurrentDomino().getTileA().getCrown(),
+                getCharType(currentTurn.getCurrentDomino().getTileB().getTerrain()),
+                currentTurn.getCurrentDomino().getTileB().getCrown(),
+                currentTurn.getCurrentKing().getBoard().getScoringSystem().getLandTotal());
     }
 
     private static void renderQueueWithSelection(Domino[] draft, int index) {
@@ -305,8 +324,19 @@ public class GameManager {
             Tile tile2 = domino.getTileB();
             Position pos1 = domino.getPosTileA();
             Position pos2 = domino.getPosTileB();
-            land[(pos1.x())][(pos1.y())] = tile1;
-            land[(pos2.x())][(pos2.y())] = tile2;
+
+            try {
+                land[pos1.x()][pos1.y()] = tile1;
+                land[pos2.x()][pos2.y()] = tile2;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                domino.undo();
+                tile1 = domino.getTileA();
+                tile2 = domino.getTileB();
+                pos1 = domino.getPosTileA();
+                pos2 = domino.getPosTileB();
+                land[pos1.x()][pos1.y()] = tile1;
+                land[pos2.x()][pos2.y()] = tile2;
+            }
         }
 
         for (int i = 0; i < 9; i++) {

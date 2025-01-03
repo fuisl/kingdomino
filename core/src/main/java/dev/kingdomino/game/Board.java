@@ -9,6 +9,7 @@ public class Board {
     private final int CENTER;
     private Tile[][] land;
     private final TileValidator validator;
+    private final ScoringSystem score;
     // private King king; // TODO: associate player with board
 
     /**
@@ -19,6 +20,7 @@ public class Board {
         this.land = new Tile[(size * 2) - 1][(size * 2) - 1];
         this.land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
         this.validator = new TileValidator(land, size);
+        this.score = new ScoringSystem(land, size);
     }
 
     public Board() {
@@ -125,5 +127,9 @@ public class Board {
         Board board = new Board();
         board.land = getLand();
         return board;
+    }
+
+    public ScoringSystem getScoringSystem() {
+        return score;
     }
 }
