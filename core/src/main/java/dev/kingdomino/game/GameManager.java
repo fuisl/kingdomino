@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+// import dev.kingdomino.game.Event.TriggerType;
+
 public class GameManager {
-    private int kingCount = 2;
+    private int kingCount = 4;
     private Deck deck;
     private Board[] boards;
     private Board currentBoard;
@@ -73,6 +75,14 @@ public class GameManager {
                 setup();
                 break;
             case TURN_START:
+                // Event autoContinue = new Event(
+                // TriggerType.AFTER, false, true, 2.0f, () -> {
+                // updateTurn();
+                // draftInputProcessor.show = false;
+                // }, null, null, null);
+
+                // eventManager.addEvent(autoContinue.copy(), "base", false);
+
                 if (draftInputProcessor.show == false) {
                     draftInputProcessor.show = true;
                     updateTurn();
@@ -100,6 +110,13 @@ public class GameManager {
     // ---------------------GAME STATES---------------------
 
     private void init() {
+
+        // game init for 3 kings (removing 12 dominos)
+        if (kingCount == 3) {
+            for (int i = 0; i < 12; i++)
+                deck.drawCard();
+        }
+
         Domino[] draft_current = new Domino[kingCount];
 
         // draw dominos for each king
@@ -108,7 +125,7 @@ public class GameManager {
         }
         currentTurn = new Turn(draft_current);
 
-        // setup the kings for first turn
+        // setup the kings for first turn. TODO: add random later.
         for (int i = 0; i < kingCount; i++) {
             currentTurn.selectDomino(kings[i], i);
         }
@@ -198,8 +215,9 @@ public class GameManager {
                 if (draftInputProcessor.updated) {
                     draftInputProcessor.updated = false;
                     clearScreen();
-                    renderQueueWithSelection(currentTurn.getDraft(), currentTurn.getCurrentIndex());
-                    System.out.println("Press any key to continue. Player: " + currentTurn.getCurrentKing());
+                    renderKingQueueWithSelection(currentTurn.getKings(), currentTurn.getCurrentKing());
+                    System.out.println();
+                    System.out.println("CURRENT TURN. (press any key to continue)");
                 }
                 break;
             case TURN_PLACING:
@@ -207,14 +225,20 @@ public class GameManager {
                     boardInputProcessor.updated = false;
                     clearScreen();
                     renderBoard(currentBoard, currentDomino);
+                    System.out.println();
+                    System.out.printf("KING %d's LAND", currentTurn.getCurrentKing().getId());
                 }
                 break;
             case TURN_CHOOSING:
                 if (draftInputProcessor.updated) {
                     draftInputProcessor.updated = false;
                     clearScreen();
-                    renderQueueWithSelection(nextTurn.getDraft(), draftInputProcessor.selectionIndex); // TODO: optimize
-                    System.out.println("Choosing domino "
+
+                    Domino[] nextRemainingDraft = nextTurn.getRemainingDraft();
+                    draftInputProcessor.remainingDrafts = nextRemainingDraft.length;
+                    renderQueueWithSelection(nextRemainingDraft, draftInputProcessor.selectionIndex); // TODO: optimize
+                    System.out.println();
+                    System.out.println("KING " + currentTurn.getCurrentKing().getId() + " NEXT DOMINO: "
                             + getCharType(
                                     nextTurn.getDomino(draftInputProcessor.selectionIndex).getTileA().getTerrain())
                             + "|" + getCharType(
@@ -247,11 +271,21 @@ public class GameManager {
         for (int i = 0; i < draft.length; i++) {
             // prinf not working.
             if (i == index) {
-                System.out.println(draft[i].getId() + " " + getCharType(draft[i].getTileA().getTerrain()) + "|"
+                System.out.println(getCharType(draft[i].getTileA().getTerrain()) + "|"
                         + getCharType(draft[i].getTileB().getTerrain()) + " <");
             } else {
-                System.out.println(draft[i].getId() + " " + getCharType(draft[i].getTileA().getTerrain()) + "|"
+                System.out.println(getCharType(draft[i].getTileA().getTerrain()) + "|"
                         + getCharType(draft[i].getTileB().getTerrain()));
+            }
+        }
+    }
+
+    private static void renderKingQueueWithSelection(King[] kings, King currentKing) {
+        for (int i = 0; i < kings.length; i++) {
+            if (kings[i] == currentKing) {
+                System.out.println(kings[i] + " <");
+            } else {
+                System.out.println(kings[i]);
             }
         }
     }

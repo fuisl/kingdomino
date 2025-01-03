@@ -7,19 +7,34 @@ public class Turn {
     static int turnId = 0;
     private King[] kings;
     private Domino[] draft;
+    private boolean[] selected;
 
+    private int countRemaining;
     private int currentIndex;
 
     public Turn(Domino[] draft) {
         this.draft = draft;
         this.currentIndex = 0;
         this.kings = new King[draft.length];
+
+        this.selected = new boolean[draft.length];
+        Arrays.fill(this.selected, false);
+
+        this.countRemaining = selected.length;
+
         this.sortDraft();
         turnId++;
     }
 
     public void selectDomino(King king, int index) {
+        while (selected[index]) {
+            index++;
+        }
+
+        selected[index] = true;
         kings[index] = king;
+
+        countRemaining--;
     }
 
     public void next() {
@@ -55,6 +70,17 @@ public class Turn {
         return draft;
     }
 
+    public Domino[] getRemainingDraft() {
+        Domino[] remainingDraft = new Domino[countRemaining];
+        for (int i = 0, j = 0; i < draft.length; i++) {
+            if (!selected[i]) {
+                remainingDraft[j++] = draft[i];
+            }
+        }
+
+        return remainingDraft;
+    }
+
     public int getCurrentIndex() {
         return currentIndex;
     }
@@ -75,5 +101,13 @@ public class Turn {
 
     public Turn copy() {
         return new Turn(this);
+    }
+
+    public boolean isSelected(int index) {
+        return selected[index];
+    }
+
+    public int getCountRemaining() {
+        return countRemaining;
     }
 }

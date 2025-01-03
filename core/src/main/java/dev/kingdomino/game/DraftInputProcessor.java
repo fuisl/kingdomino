@@ -9,6 +9,7 @@ public class DraftInputProcessor implements InputProcessor {
     private EventManager eventManager = EventManager.getInstance();
     private GameManager gameManager;
     public int selectionIndex;
+    public int remainingDrafts;
 
     public boolean updated;
     public boolean exit;
@@ -50,7 +51,7 @@ public class DraftInputProcessor implements InputProcessor {
                         false,
                         true,
                         null,
-                        () -> selectionIndex = (selectionIndex += 3) % 4,
+                        () -> selectionIndex = (selectionIndex += remainingDrafts - 1) % remainingDrafts,
                         null,
                         null,
                         null);
@@ -63,7 +64,7 @@ public class DraftInputProcessor implements InputProcessor {
                         false,
                         true,
                         null,
-                        () -> selectionIndex = (selectionIndex += 1) % 4,
+                        () -> selectionIndex = (selectionIndex += 1) % remainingDrafts,
                         null,
                         null,
                         null);
