@@ -226,7 +226,12 @@ public class GameManager {
                     clearScreen();
                     renderBoard(currentBoard, currentDomino);
                     System.out.println();
-                    System.out.printf("KING %d's LAND", currentTurn.getCurrentKing().getId());
+                    System.out.printf("KING %d's LAND | CURRENT DOMINO %c%d|%c%d",
+                            currentTurn.getCurrentKing().getId(),
+                            getCharType(currentTurn.getCurrentDomino().getTileA().getTerrain()),
+                            currentTurn.getCurrentDomino().getTileA().getCrown(),
+                            getCharType(currentTurn.getCurrentDomino().getTileB().getTerrain()),
+                            currentTurn.getCurrentDomino().getTileB().getCrown());
                 }
                 break;
             case TURN_CHOOSING:
@@ -269,13 +274,15 @@ public class GameManager {
 
     private static void renderQueueWithSelection(Domino[] draft, int index) {
         for (int i = 0; i < draft.length; i++) {
-            // prinf not working.
+            int crownA = draft[i].getTileA().getCrown();
+            int crownB = draft[i].getTileB().getCrown();
+            char charA = getCharType(draft[i].getTileA().getTerrain());
+            char charB = getCharType(draft[i].getTileB().getTerrain());
+
             if (i == index) {
-                System.out.println(getCharType(draft[i].getTileA().getTerrain()) + "|"
-                        + getCharType(draft[i].getTileB().getTerrain()) + " <");
+                System.out.printf("%c%d|%c%d <\n", charA, crownA, charB, crownB);
             } else {
-                System.out.println(getCharType(draft[i].getTileA().getTerrain()) + "|"
-                        + getCharType(draft[i].getTileB().getTerrain()));
+                System.out.printf("%c%d|%c%d\n", charA, crownA, charB, crownB);
             }
         }
     }
