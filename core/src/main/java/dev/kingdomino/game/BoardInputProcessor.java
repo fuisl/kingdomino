@@ -14,6 +14,7 @@ public class BoardInputProcessor implements InputProcessor {
     public boolean updated;
     public boolean exit;
     public boolean valid;
+    public boolean keylocked = false;
 
     public BoardInputProcessor(GameManager gm) {
         this.gameManager = gm;
@@ -110,6 +111,9 @@ public class BoardInputProcessor implements InputProcessor {
                         null);
                 break;
             case Keys.X: // 'x'
+                if (keylocked) {
+                    break;
+                }
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -122,6 +126,7 @@ public class BoardInputProcessor implements InputProcessor {
                             } else {
                                 eventManager.addEvent(invalidEffect.copy(), "base", false);
                                 valid = false;
+                                keylocked = true;
                             }
                         },
                         null,
@@ -169,6 +174,7 @@ public class BoardInputProcessor implements InputProcessor {
         Event blink_back = new Event(TriggerType.IMMEDIATE, false, true, null, () -> {
             gameManager.setCurrentDomino(temp);
             updated = true;
+            keylocked = false;
         }, null, null, null);
         blink_back.name = "blink_back";
 
