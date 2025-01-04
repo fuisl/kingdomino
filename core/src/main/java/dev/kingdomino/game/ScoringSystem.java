@@ -92,8 +92,13 @@ public class ScoringSystem {
         }
 
         // middle kingdom
-        if (land[(maxY + minY) / 2][(maxX + minX) / 2].getTerrain() == TerrainType.CASTLE) {
-            tempBonus += 10;
+        try {
+            if (land[(maxY + minY) / 2][(maxX + minX) / 2].getTerrain() == TerrainType.CASTLE) {
+                tempBonus += 10;
+            }
+        } catch (Exception e) {
+            // do nothing
+            // System.out.println("null tile");
         }
 
         landBonus = tempBonus;

@@ -1,5 +1,9 @@
 package dev.kingdomino.game;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +22,9 @@ public class GameManager {
     private Turn nextTurn;
     private boolean placingDomino = false;
     private boolean choosingDomino = false;
+    private Map<King, int[]> scores;
+    private boolean finalTurn = false; // set true for debugging
+    private boolean resultsRendered = false;
 
     private GameTimer gameTimer = GameTimer.getInstance();
     private GameState currentState = GameState.SETUP;
@@ -48,6 +55,8 @@ public class GameManager {
         deck = new Deck(0);
         kings = new King[kingCount];
         boards = new Board[kingCount];
+        currentTurn = null;
+        nextTurn = null;
 
         for (int i = 0; i < kingCount; i++) {
             boards[i] = new Board();
@@ -101,6 +110,7 @@ public class GameManager {
                 game_over();
                 break;
             case RESULTS:
+                results();
                 break;
             default:
                 break;
@@ -110,6 +120,11 @@ public class GameManager {
     // ---------------------GAME STATES---------------------
 
     private void init() {
+
+        // // test end game
+        // for (int i = 0; i < 44; i++) {
+        //     deck.drawCard();
+        // }
 
         // game init for 3 kings (removing 12 dominos)
         if (kingCount == 3) {
@@ -142,6 +157,8 @@ public class GameManager {
                 draft_next[i] = deck.drawCard();
             }
             nextTurn = new Turn(draft_next);
+        } else {
+            finalTurn = true;
         }
 
         // set game state to TURN
@@ -164,15 +181,19 @@ public class GameManager {
         placingDomino = true;
         if (boardInputProcessor.exit && boardInputProcessor.valid) {
             currentBoard.getScoringSystem().calculateLandScore();
-            currentState = GameState.TURN_CHOOSING;
+            if (finalTurn) {
+                currentState = GameState.TURN_END;
+            } else {
+                currentState = GameState.TURN_CHOOSING;
+            }
             placingDomino = false;
         }
     }
 
     private void chooseDomino() {
-        if (nextTurn == null) {
-            currentState = GameState.TURN_END;
-        }
+        // if (nextTurn == null) {
+        // currentState = GameState.TURN_END;
+        // }
 
         choosingDomino = true;
         if (draftInputProcessor.exit) {
@@ -199,7 +220,35 @@ public class GameManager {
     }
 
     private void game_over() {
+        // recalculate scores for every kings
+        for (King k : kings) {
+            k.getBoard().getScoringSystem().calculateScore();
+        }
+
+        // TODO: clean up
+
         currentState = GameState.RESULTS;
+    }
+
+    private void results() {
+        scores = new LinkedHashMap<King, int[]>();
+
+        // get scores for render
+        for (King k : kings) {
+            int landScore = k.getBoard().getScoringSystem().getLandTotal();
+            int bonusScore = k.getBoard().getScoringSystem().getLandBonus();
+            int totalScore = k.getBoard().getScoringSystem().getBoardTotal();
+            scores.put(k, new int[] { landScore, bonusScore, totalScore });
+        }
+
+        scores = sortScores(scores, 2); // sort by total
+    }
+
+    private Map<King, int[]> sortScores(Map<King, int[]> scores, int sortIndex) {
+        LinkedHashMap<King, int[]> sortedScores = scores.entrySet().stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue()[sortIndex], entry1.getValue()[sortIndex]))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        return sortedScores;
     }
 
     // ---------------------RENDER---------------------
@@ -216,7 +265,11 @@ public class GameManager {
                 if (draftInputProcessor.updated) {
                     draftInputProcessor.updated = false;
                     clearScreen();
-                    System.out.printf("TURN NUMBER: %d\n\n", currentTurn.getTurnId());
+                    if (!finalTurn) {
+                        System.out.printf("TURN: %d\n\n", currentTurn.getTurnId() - 1);
+                    } else {
+                        System.out.printf("FINAL TURN! ONLY PLACING DOMINO! \n\n");
+                    }
                     renderKingQueueWithSelection(currentTurn.getKings(), currentTurn.getCurrentKing());
                     System.out.println();
                     System.out.println("(press any key to continue)");
@@ -246,7 +299,7 @@ public class GameManager {
                     renderStatusChoosing(currentTurn);
 
                     System.out.println();
-                    renderBoard(currentBoard, currentDomino);
+                    renderBoard(currentBoard, null);
                 }
                 break;
             case TURN_END:
@@ -255,6 +308,10 @@ public class GameManager {
             case GAME_OVER:
                 break;
             case RESULTS:
+                if (scores != null && !resultsRendered) {
+                    renderResults(scores);
+                    resultsRendered = true;
+                }
                 break;
             default:
                 break;
@@ -378,6 +435,17 @@ public class GameManager {
                 return 'X';
             default:
                 return ' ';
+        }
+    }
+
+    private static void renderResults(Map<King, int[]> scores) {
+        System.out.printf("RESULTS \n(TOTAL | LAND | BONUS)\n\n");
+        int rank = 1;
+        for (Map.Entry<King, int[]> entry : scores.entrySet()) {
+            King king = entry.getKey();
+            int[] score = entry.getValue();
+            System.out.printf("%d       King %d\n        %d|%d|%d\n\n",
+                    rank++, king.getId(), score[2], score[0], score[1]);
         }
     }
 
