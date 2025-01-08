@@ -26,7 +26,7 @@ public class TileValidator {
     public TileValidator(Tile[][] land, int size) {
         this.land = land; // hold a reference to the board
         this.size = size;
-        this.CENTER = size / 2;
+        this.CENTER = size - 1;
     }
 
     /**

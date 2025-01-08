@@ -11,11 +11,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
+    private EventManager eventManager;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         image = new Texture("libgdx.png");
+        eventManager = EventManager.getInstance();
     }
 
     @Override
@@ -24,6 +26,7 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         batch.draw(image, 140, 210);
         batch.end();
+        eventManager.update(Gdx.graphics.getDeltaTime(), false);
     }
 
     @Override

@@ -8,22 +8,23 @@ public class Board {
 
     private final int CENTER;
     private Tile[][] land;
-    private Point point; // scores
     private final TileValidator validator;
+    private final ScoringSystem score;
     // private King king; // TODO: associate player with board
 
     /**
      * Initializes the game board with a castle at the center.
      */
     public Board(int size) {
-        this.CENTER = size / 2;
-        this.land = new Tile[size][size];
+        this.CENTER = size - 1;
+        this.land = new Tile[(size * 2) - 1][(size * 2) - 1];
         this.land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
-        this.validator = new TileValidator(land);
+        this.validator = new TileValidator(land, size);
+        this.score = new ScoringSystem(land, size);
     }
 
     public Board() {
-        this(9); // default size is 9x9
+        this(5); // default size is 5x5 (but data stored in 9x9 array)
     }
 
     /**
@@ -122,58 +123,13 @@ public class Board {
         return -1; // may use other return code to indicate the reason
     }
 
-    // Point related methods
-
-    /**
-     * Gets the final point score.
-     * 
-     * @return the final point score.
-     */
-    public int getFinalPoint() {
-        return point.getFinalPoint();
+    public Board copy() {
+        Board board = new Board();
+        board.land = getLand();
+        return board;
     }
 
-    /**
-     * Gets the total point score.
-     * 
-     * @return the total point score.
-     */
-    public int getTotalPoint() {
-        return point.getTotalPoint();
+    public ScoringSystem getScoringSystem() {
+        return score;
     }
-
-    /**
-     * Gets the additional point score.
-     * 
-     * @return the additional point score.
-     */
-    public int getAdditionalPoint() {
-        return point.getAdditionalPoint();
-    }
-
-    /**
-     * Adds to the total point score.
-     * 
-     * @param totalPoint the points to add.
-     */
-    public void addTotalPoint(int totalPoint) {
-        point.addTotalPoint(totalPoint);
-    }
-
-    /**
-     * Adds bonus points.
-     * 
-     * @param bonusPoint the bonus points to add.
-     */
-    public void addBonusPoint(int bonusPoint) {
-        point.addAdditionalPoint(bonusPoint);
-    }
-
-    /**
-     * Resets the point scores.
-     */
-    public void reset() {
-        point.reset();
-    }
-
 }

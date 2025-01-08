@@ -13,5 +13,6 @@ public enum TerrainType {
     MOUNTAIN,
     DESERT,
     CASTLE,
+    INVALID
     //ERROR,
 }

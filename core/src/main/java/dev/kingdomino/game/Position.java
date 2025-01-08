@@ -25,6 +25,10 @@ public class Position {
         this(-1, -1);
     }
 
+    public Position(Position other) {
+        this(other.x, other.y);
+    }
+
     /**
      * Returns the x-coordinate of this position.
      *

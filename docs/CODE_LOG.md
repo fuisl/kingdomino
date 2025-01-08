@@ -21,3 +21,15 @@
 
 - refactoring this mess.
 - I could try using throw and catch exception to communicate between classes (maybe).
+
+[26.12.2024]
+
+- Following Event-Driven Architecture to decouple the classes. This is found in other based code and at is implemented at the core of LibGDX.
+- Framerate Dependence.
+- I "accidentally" write my own game engine.
+
+[1.1.2025 - 2.1.2025]
+
+- Happy New Year.
+- gotta be really careful about local variable and passing objects around.
+- I'm suck at memory management.

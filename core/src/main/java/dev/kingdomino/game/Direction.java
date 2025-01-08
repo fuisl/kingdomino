@@ -39,4 +39,24 @@ public enum Direction {
     public Position apply(Position pos) {
         return pos.add(position);
     }
+
+    /**
+     * Returns the opposite offset.
+     *
+     * @return the opposite offset
+     */
+    public Direction opposite() {
+        switch (this) {
+            case RIGHT:
+                return LEFT;
+            case DOWN:
+                return UP;
+            case LEFT:
+                return RIGHT;
+            case UP:
+                return DOWN;
+            default:
+                return null;
+        }
+    }
 }
