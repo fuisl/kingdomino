@@ -1,19 +1,21 @@
-package dev.kingdomino.game;
+package dev.kingdomino.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class GameScreen implements Screen {
+import dev.kingdomino.game.GameManager;
 
-    private SpriteBatch batch;
+public class GameScreen extends AbstractScreen {
+
     private GameManager gameManager;
+
+    protected GameScreen(SpriteBatch spriteBatch) {
+        super(spriteBatch);
+    }
 
     @Override
     public void show() {
-
-        batch = new SpriteBatch();
         gameManager = new GameManager();
     }
 
@@ -24,9 +26,9 @@ public class GameScreen implements Screen {
 
         gameManager.update(delta);
 
-        batch.begin();
-        gameManager.render(batch);
-        batch.end();
+        spriteBatch.begin();
+        gameManager.render(spriteBatch);
+        spriteBatch.end();
     }
 
     @Override
