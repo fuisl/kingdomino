@@ -14,10 +14,6 @@ public abstract class AbstractScreen extends Stage implements Screen {
         this.spriteBatch = spriteBatch;
     }
 
-    @Override public void show() {}
-    @Override public void hide() {}
-    @Override public void resume() {}
-    @Override public void pause() {}
-    @Override public void resize(int width, int height) {}
-    @Override public void render(float delta) {}
+    // All screen will build their Stage in here.
+    public abstract void buildStage();
 }

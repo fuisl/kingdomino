@@ -15,6 +15,9 @@ public class GameScreen extends AbstractScreen {
     }
 
     @Override
+    public void buildStage() {};
+
+    @Override
     public void show() {
         gameManager = new GameManager();
     }
@@ -56,7 +59,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'dispose'");
+        super.dispose();
+        // dispose all used texture as well.
     }
 }
