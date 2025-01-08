@@ -1,17 +1,22 @@
 package dev.kingdomino.screen;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public abstract class AbstractScreen extends Stage implements Screen {
+public abstract class AbstractScreen implements Screen {
     protected SpriteBatch spriteBatch;
+    protected AssetManager assetManager;
 
     // TODO: populate with basic works shared by all screen
-    protected AbstractScreen(SpriteBatch spriteBatch) {
+
+    // TODO: convert this into variable Object parameter as it is only getting worse hardcoding EVERYTHING
+    // I have to update like 3 different file to pass the assetManager in...
+    protected AbstractScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
         // sharing a SpriteBatch instead of each screen creating their own;
         // SpriteBatch is expensive!
         this.spriteBatch = spriteBatch;
+        this.assetManager = assetManager;
     }
 
     // All screen will build their Stage in here.

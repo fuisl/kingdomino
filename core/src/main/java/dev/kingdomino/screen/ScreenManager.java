@@ -2,6 +2,7 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ScreenManager {
@@ -30,10 +31,10 @@ public class ScreenManager {
         this.game = game;
     }
 
-    public void showScreen(ScreenEnum screenEnum, SpriteBatch spriteBatch) {
+    public void showScreen(ScreenEnum screenEnum, SpriteBatch spriteBatch, AssetManager assetManager) {
         Screen currentScreen = game.getScreen();
 
-        AbstractScreen newScreen = screenEnum.getScreen(spriteBatch);
+        AbstractScreen newScreen = screenEnum.getScreen(spriteBatch, assetManager);
         newScreen.buildStage();
         game.setScreen(newScreen);
 

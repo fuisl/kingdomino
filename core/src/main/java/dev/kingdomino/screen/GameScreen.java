@@ -1,21 +1,37 @@
 package dev.kingdomino.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.TerrainType;
 
 public class GameScreen extends AbstractScreen {
-
     private GameManager gameManager;
+    private TextureRegion[] crownOverlay;
 
-    protected GameScreen(SpriteBatch spriteBatch) {
-        super(spriteBatch);
+    protected GameScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
+        super(spriteBatch, assetManager);
     }
 
     @Override
-    public void buildStage() {};
+    public void buildStage() {
+        TextureAtlas atlas = assetManager.get("tileTextures.atlas");
+
+        for (TerrainType name : TerrainType.values()) {
+            name.setTexture(atlas.findRegion(name.name().toLowerCase()));
+        }
+
+        crownOverlay = new TextureRegion[4];
+        crownOverlay[0] = atlas.findRegion("nocrown");
+        crownOverlay[1] = atlas.findRegion("onecrown");
+        crownOverlay[2] = atlas.findRegion("twocrown");
+        crownOverlay[3] = atlas.findRegion("threecrown");
+    };
 
     @Override
     public void show() {
@@ -30,7 +46,10 @@ public class GameScreen extends AbstractScreen {
         gameManager.update(delta);
 
         spriteBatch.begin();
+        // TODO remove this as we are now rendering from the UI
+        // keep for debugging purpose only.
         gameManager.render(spriteBatch);
+        spriteBatch.draw(TerrainType.WHEATFIELD.getTexture(), 10, 10);
         spriteBatch.end();
     }
 
@@ -58,8 +77,6 @@ public class GameScreen extends AbstractScreen {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        // dispose all used texture as well.
-    }
+    // we keep this method empty because ALL asset are managed via AssetManager.
+    public void dispose() {}
 }
