@@ -125,7 +125,7 @@ public class TileValidator {
      */
     public boolean isTileFree(int x, int y) {
         if (isTileWithinLand(x, y)) {
-            return land[x][y] == null;
+            return land[y][x] == null;
         }
         return false;
     }

@@ -73,7 +73,7 @@ public class Board {
         }
 
         // TODO: change x, y to Position
-        land[x][y] = tile;
+        land[y][x] = tile;
 
         // update spanning tiles if the tile is placed
         validator.updateSpanningTiles(x, y);
@@ -82,13 +82,13 @@ public class Board {
     /**
      * Retrieves the tile at the specified coordinates.
      * 
-     * @param x the x-coordinate.
-     * @param y the y-coordinate.
+     * @param x the x-coordinate (column).
+     * @param y the y-coordinate (row).
      * @return the tile at the specified coordinates, or null if out of bounds.
      */
     public Tile getTile(int x, int y) {
         if (validator.isTileWithinLand(x, y)) {
-            return land[x][y];
+            return land[y][x];
         }
         return null;
     }

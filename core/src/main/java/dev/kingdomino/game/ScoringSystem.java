@@ -56,11 +56,11 @@ public class ScoringSystem {
             return 0;
         }
 
-        if (land[x][y] == null || visited[x][y] || land[x][y].getTerrain() != terrain) {
+        if (land[y][x] == null || visited[x][y] || land[y][x].getTerrain() != terrain) {
             return 0;
         }
 
-        totalCrown += land[x][y].getCrown();
+        totalCrown += land[y][x].getCrown();
         visited[x][y] = true;
 
         return 1 +
