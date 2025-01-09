@@ -383,23 +383,23 @@ public class GameManager {
             Position pos2 = domino.getPosTileB();
 
             try {
-                land[pos1.x()][pos1.y()] = tile1;
-                land[pos2.x()][pos2.y()] = tile2;
+                land[pos1.y()][pos1.x()] = tile1;
+                land[pos2.y()][pos2.x()] = tile2;
             } catch (ArrayIndexOutOfBoundsException e) {
                 domino.undo();
                 tile1 = domino.getTileA();
                 tile2 = domino.getTileB();
                 pos1 = domino.getPosTileA();
                 pos2 = domino.getPosTileB();
-                land[pos1.x()][pos1.y()] = tile1;
-                land[pos2.x()][pos2.y()] = tile2;
+                land[pos1.y()][pos1.x()] = tile1;
+                land[pos2.y()][pos2.x()] = tile2;
             }
         }
 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (land[j][i] != null) {
-                    System.out.print(getCharType(land[j][i].getTerrain()) + " ");
+                if (land[i][j] != null) {
+                    System.out.print(getCharType(land[i][j].getTerrain()) + " ");
                 } else {
                     System.out.print("  ");
                 }
@@ -407,8 +407,8 @@ public class GameManager {
             System.out.println();
         }
 
-        // land[pos1.x()][pos1.y()] = null;
-        // land[pos2.x()][pos2.y()] = null;
+        // land[pos1.y()][pos1.x()] = null;
+        // land[pos2.y()][pos2.x()] = null;
     }
 
     private static char getCharType(TerrainType type) {

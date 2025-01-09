@@ -91,18 +91,7 @@ public class TileValidator {
             }
         }
 
-        // if (!((maxX - minX + 1) < size)) {
-        // if (x < minX || x > maxX) {
-        // return false;
-        // }
-        // }
-        // if (!((maxY - minY + 1) < size)) {
-        // if (y < minY || y > maxY) {
-        // return false;
-        // }
-        // }
         return true;
-
     }
 
     /**
@@ -125,7 +114,7 @@ public class TileValidator {
      */
     public boolean isTileFree(int x, int y) {
         if (isTileWithinLand(x, y)) {
-            return land[x][y] == null;
+            return land[y][x] == null;
         }
         return false;
     }
@@ -154,10 +143,10 @@ public class TileValidator {
      */
     public boolean isTileAdjacentSame(Tile tile, int x, int y) {
         // check if adjacent tiles have the same terrain
-        return (x > 0 && land[x - 1][y] != null && land[x - 1][y].getTerrain() == tile.getTerrain()) ||
-                (x < land.length - 1 && land[x + 1][y] != null && land[x + 1][y].getTerrain() == tile.getTerrain()) ||
-                (y > 0 && land[x][y - 1] != null && land[x][y - 1].getTerrain() == tile.getTerrain()) ||
-                (y < land[0].length - 1 && land[x][y + 1] != null && land[x][y + 1].getTerrain() == tile.getTerrain());
+        return (x > 0 && land[y][x - 1] != null && land[y][x - 1].getTerrain() == tile.getTerrain()) ||
+                (x < land[0].length - 1 && land[y][x + 1] != null && land[y][x + 1].getTerrain() == tile.getTerrain()) ||
+                (y > 0 && land[y - 1][x] != null && land[y - 1][x].getTerrain() == tile.getTerrain()) ||
+                (y < land.length - 1 && land[y + 1][x] != null && land[y + 1][x].getTerrain() == tile.getTerrain());
     }
 
     /**
