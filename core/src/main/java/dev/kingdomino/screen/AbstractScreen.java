@@ -20,5 +20,11 @@ public abstract class AbstractScreen implements Screen {
     }
 
     // All screen will build their Stage in here.
-    public abstract void buildStage();
+    public abstract void initScreen();
+
+    @Override
+    public void dispose() {}
+
+    @Override
+    public void show() {}
 }

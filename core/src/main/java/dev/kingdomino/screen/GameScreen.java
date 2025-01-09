@@ -2,24 +2,34 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import dev.kingdomino.game.Board;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.TerrainType;
+import dev.kingdomino.game.Tile;
 
 public class GameScreen extends AbstractScreen {
     private GameManager gameManager;
     private TextureRegion[] crownOverlay;
+    private FitViewport tableView;
+    private OrthographicCamera tableCamera;
 
     protected GameScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
         super(spriteBatch, assetManager);
     }
 
     @Override
-    public void buildStage() {
+    public void initScreen() {
+        gameManager = new GameManager();
+
         TextureAtlas atlas = assetManager.get("tileTextures.atlas");
 
         for (TerrainType name : TerrainType.values()) {
@@ -31,12 +41,11 @@ public class GameScreen extends AbstractScreen {
         crownOverlay[1] = atlas.findRegion("onecrown");
         crownOverlay[2] = atlas.findRegion("twocrown");
         crownOverlay[3] = atlas.findRegion("threecrown");
-    };
 
-    @Override
-    public void show() {
-        gameManager = new GameManager();
-    }
+        tableCamera = new OrthographicCamera();
+        tableView = new FitViewport(9, 9, tableCamera);
+        tableView.getCamera().position.set(4, 4, 0);
+    };
 
     @Override
     public void render(float delta) {
@@ -44,18 +53,40 @@ public class GameScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         gameManager.update(delta);
-
-        spriteBatch.begin();
         // TODO remove this as we are now rendering from the UI
         // keep for debugging purpose only.
         gameManager.render(spriteBatch);
-        spriteBatch.draw(TerrainType.WHEATFIELD.getTexture(), 10, 10);
+
+        // TODO remove this hack once we got the other screens
+        // this right now immediately crash the game due to the board... not existing.
+        Board gameBoard = gameManager.getBoard();
+        if (gameBoard == null) return;
+
+        // Drag this entire thing into a helper function/class?
+        ScreenUtils.clear(Color.WHITE);
+        // pass in the size of the viewport here, in pixels
+        tableView.update(400, 400);
+        tableView.apply();
+        spriteBatch.setProjectionMatrix(tableView.getCamera().combined);
+        spriteBatch.begin();
+        drawGameBoard(gameManager.getBoard().getLand(), spriteBatch);
         spriteBatch.end();
+    }
+
+    private void drawGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = boardTiles[0].length - 1; j >= 0; j--) {
+                if (boardTiles[i][j] != null) {
+                    // the coordinate system of the screen has origin at bottom left instead of top left
+                    spriteBatch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length-i-1, 1, 1);
+                }
+            }
+        }
     }
 
     @Override
     public void resize(int width, int height) {
-
+        // TODO add resizing logic
     }
 
     @Override
@@ -75,8 +106,4 @@ public class GameScreen extends AbstractScreen {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hide'");
     }
-
-    @Override
-    // we keep this method empty because ALL asset are managed via AssetManager.
-    public void dispose() {}
 }

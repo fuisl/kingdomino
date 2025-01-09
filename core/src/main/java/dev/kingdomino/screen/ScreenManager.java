@@ -35,7 +35,7 @@ public class ScreenManager {
         Screen currentScreen = game.getScreen();
 
         AbstractScreen newScreen = screenEnum.getScreen(spriteBatch, assetManager);
-        newScreen.buildStage();
+        newScreen.initScreen();
         game.setScreen(newScreen);
 
         if (currentScreen != null) currentScreen.dispose();
