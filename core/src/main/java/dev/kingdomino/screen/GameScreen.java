@@ -1,9 +1,7 @@
 package dev.kingdomino.screen;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,7 +10,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import dev.kingdomino.game.Board;
+import dev.kingdomino.game.Domino;
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.Position;
 import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
 
@@ -36,6 +36,7 @@ public class GameScreen extends AbstractScreen {
             name.setTexture(atlas.findRegion(name.name().toLowerCase()));
         }
 
+        // FIXME this is rendered as broken texture for some reason
         crownOverlay = new TextureRegion[4];
         crownOverlay[0] = atlas.findRegion("nocrown");
         crownOverlay[1] = atlas.findRegion("onecrown");
@@ -49,9 +50,6 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         gameManager.update(delta);
         // TODO remove this as we are now rendering from the UI
         // keep for debugging purpose only.
@@ -62,15 +60,33 @@ public class GameScreen extends AbstractScreen {
         Board gameBoard = gameManager.getBoard();
         if (gameBoard == null) return;
 
+        // What monstrosity am I creating here
+
         // Drag this entire thing into a helper function/class?
         ScreenUtils.clear(Color.WHITE);
         // pass in the size of the viewport here, in pixels
+        // FIXME clipping texture, setting it to multiple of 64 did not work
         tableView.update(400, 400);
         tableView.apply();
         spriteBatch.setProjectionMatrix(tableView.getCamera().combined);
         spriteBatch.begin();
         drawGameBoard(gameManager.getBoard().getLand(), spriteBatch);
+        spriteBatch.setColor(1f, 1f, 1f, 0.5f);
+        drawDominoHover(gameManager.getCurrentDomino(), spriteBatch);
+        spriteBatch.setColor(1f, 1f, 1f, 1f);
         spriteBatch.end();
+    }
+
+    private void drawDominoHover(Domino currentDomino, SpriteBatch spriteBatch) {
+        Tile tileA = currentDomino.getTileA();
+        Tile tileB = currentDomino.getTileB();
+        Position tileAPosition = currentDomino.getPosTileA();
+        Position tileBPosition = currentDomino.getPosTileB();
+
+        spriteBatch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+        spriteBatch.draw(crownOverlay[tileA.getCrown()].getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+        spriteBatch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+        spriteBatch.draw(crownOverlay[tileB.getCrown()].getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
     }
 
     private void drawGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
@@ -79,6 +95,7 @@ public class GameScreen extends AbstractScreen {
                 if (boardTiles[i][j] != null) {
                     // the coordinate system of the screen has origin at bottom left instead of top left
                     spriteBatch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length-i-1, 1, 1);
+                    spriteBatch.draw(crownOverlay[boardTiles[i][j].getCrown()].getTexture(), j, boardTiles[0].length-i-1, 1, 1);
                 }
             }
         }
