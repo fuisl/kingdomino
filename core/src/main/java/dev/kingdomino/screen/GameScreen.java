@@ -36,7 +36,6 @@ public class GameScreen extends AbstractScreen {
             name.setTexture(atlas.findRegion(name.name().toLowerCase()));
         }
 
-        // FIXME this is rendered as broken texture for some reason
         crownOverlay = new TextureRegion[4];
         crownOverlay[0] = atlas.findRegion("nocrown");
         crownOverlay[1] = atlas.findRegion("onecrown");
@@ -84,9 +83,9 @@ public class GameScreen extends AbstractScreen {
         Position tileBPosition = currentDomino.getPosTileB();
 
         spriteBatch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-        spriteBatch.draw(crownOverlay[tileA.getCrown()].getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+        spriteBatch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
         spriteBatch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
-        spriteBatch.draw(crownOverlay[tileB.getCrown()].getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+        spriteBatch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
     }
 
     private void drawGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
@@ -95,7 +94,7 @@ public class GameScreen extends AbstractScreen {
                 if (boardTiles[i][j] != null) {
                     // the coordinate system of the screen has origin at bottom left instead of top left
                     spriteBatch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length-i-1, 1, 1);
-                    spriteBatch.draw(crownOverlay[boardTiles[i][j].getCrown()].getTexture(), j, boardTiles[0].length-i-1, 1, 1);
+                    spriteBatch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length-i-1, 1, 1);
                 }
             }
         }
