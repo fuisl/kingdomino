@@ -64,12 +64,12 @@ public class GameScreen extends AbstractScreen {
         // Drag this entire thing into a helper function/class?
         ScreenUtils.clear(Color.WHITE);
         // pass in the size of the viewport here, in pixels
-        // FIXME clipping texture, setting it to multiple of 64 did not work
         tableView.update(400, 400);
+        tableView.setScreenPosition(100, 100);
         tableView.apply();
         spriteBatch.setProjectionMatrix(tableView.getCamera().combined);
         spriteBatch.begin();
-        drawGameBoard(gameManager.getBoard().getLand(), spriteBatch);
+        drawFocusedGameBoard(gameManager.getBoard().getLand(), spriteBatch);
         spriteBatch.setColor(1f, 1f, 1f, 0.5f);
         drawDominoHover(gameManager.getCurrentDomino(), spriteBatch);
         spriteBatch.setColor(1f, 1f, 1f, 1f);
@@ -77,7 +77,13 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void drawDominoHover(Domino currentDomino, SpriteBatch spriteBatch) {
+        // TODO hover have blinking effect instead of 50% opacity
         Tile tileA = currentDomino.getTileA();
+
+        // TODO render a failed placement attempt instead
+        // without this game crash on placing tile at invalid position.
+        if (tileA == null) return;
+
         Tile tileB = currentDomino.getTileB();
         Position tileAPosition = currentDomino.getPosTileA();
         Position tileBPosition = currentDomino.getPosTileB();
@@ -88,7 +94,7 @@ public class GameScreen extends AbstractScreen {
         spriteBatch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
     }
 
-    private void drawGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
+    private void drawFocusedGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
         for (int i = 0; i < 9; i++) {
             for (int j = boardTiles[0].length - 1; j >= 0; j--) {
                 if (boardTiles[i][j] != null) {
