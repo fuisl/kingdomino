@@ -43,7 +43,7 @@ public class GameScreen extends AbstractScreen {
         crownOverlay[3] = atlas.findRegion("threecrown");
 
         tableCamera = new OrthographicCamera();
-        tableView = new FitViewport(9, 9, tableCamera);
+        tableView = new FitViewport(10, 10, tableCamera);
         tableView.getCamera().position.set(4, 4, 0);
     };
 

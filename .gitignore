@@ -2,6 +2,7 @@
 .devcontainer/
 .github/
 .vscode
+*.tpproj
 
 ## Gradle:
 .gradle/
