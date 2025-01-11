@@ -486,6 +486,10 @@ public class GameManager {
         return this.kings;
     }
 
+    public int getKingCount() {
+        return this.kingCount;
+    }
+
     public GameState getCurrentState() {
         return currentState;
     }
