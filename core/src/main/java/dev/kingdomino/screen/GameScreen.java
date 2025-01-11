@@ -102,19 +102,13 @@ public class GameScreen extends AbstractScreen {
         Tile tileB = currentDomino.getTileB();
         Position tileAPosition = currentDomino.getPosTileA();
         Position tileBPosition = currentDomino.getPosTileB();
-        try {
-            spriteBatch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-            spriteBatch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-            spriteBatch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
-            spriteBatch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
-        } catch (Exception e) {
-            // Potentially that we got a tile placement rejection here
-            // Log and continue, just in case.
-            // TODO handle this mess better, maybe rewrite input handling here.
 
-            System.out.println("Exception: " + e.getMessage());
-            e.printStackTrace();
-        }
+        if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID) return;
+
+        spriteBatch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+        spriteBatch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+        spriteBatch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+        spriteBatch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
     }
 
     private void drawGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
