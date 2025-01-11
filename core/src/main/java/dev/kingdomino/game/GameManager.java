@@ -480,6 +480,10 @@ public class GameManager {
         }
     }
 
+    public King[] getAllKing() {
+        return this.kings;
+    }
+
     public GameState getCurrentState() {
         return currentState;
     }

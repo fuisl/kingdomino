@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import dev.kingdomino.game.Board;
 import dev.kingdomino.game.Domino;
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.King;
 import dev.kingdomino.game.Position;
 import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
@@ -21,6 +22,7 @@ public class GameScreen extends AbstractScreen {
     private TextureRegion[] crownOverlay;
     private FitViewport tableView;
     private OrthographicCamera tableCamera;
+    private BoardRenderHelper boardRenderHelper;
 
     protected GameScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
         super(spriteBatch, assetManager);
@@ -29,6 +31,9 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void initScreen() {
         gameManager = new GameManager();
+        
+        // TODO update with correct King count once we have other screen
+        boardRenderHelper = new BoardRenderHelper(4);
 
         TextureAtlas atlas = assetManager.get("tileTextures.atlas");
 
@@ -68,33 +73,49 @@ public class GameScreen extends AbstractScreen {
         tableView.setScreenPosition(100, 100);
         tableView.apply();
         spriteBatch.setProjectionMatrix(tableView.getCamera().combined);
+
+        // draw focused game board
         spriteBatch.begin();
-        drawFocusedGameBoard(gameManager.getBoard().getLand(), spriteBatch);
+        drawGameBoard(gameManager.getBoard().getLand(), spriteBatch);
         spriteBatch.setColor(1f, 1f, 1f, 0.5f);
         drawDominoHover(gameManager.getCurrentDomino(), spriteBatch);
         spriteBatch.setColor(1f, 1f, 1f, 1f);
         spriteBatch.end();
+
+        // draw other game boards
+        for (King king : gameManager.getAllKing()) {
+            if (king == gameManager.getCurrentKing()) continue;
+            boardRenderHelper.updateViewport(tableView);
+            boardRenderHelper.setViewportPosition(tableView);
+            tableView.apply();
+            spriteBatch.begin();
+            drawGameBoard(king.getBoard().getLand(), spriteBatch);
+            spriteBatch.end();
+        }
     }
 
     private void drawDominoHover(Domino currentDomino, SpriteBatch spriteBatch) {
         // TODO hover have blinking effect instead of 50% opacity
         Tile tileA = currentDomino.getTileA();
-
-        // TODO render a failed placement attempt instead
-        // without this game crash on placing tile at invalid position.
-        if (tileA == null) return;
-
         Tile tileB = currentDomino.getTileB();
         Position tileAPosition = currentDomino.getPosTileA();
         Position tileBPosition = currentDomino.getPosTileB();
+        try {
+            spriteBatch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+            spriteBatch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
+            spriteBatch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+            spriteBatch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+        } catch (Exception e) {
+            // Potentially that we got a tile placement rejection here
+            // Log and continue, just in case.
+            // TODO handle this mess better, maybe rewrite input handling here.
 
-        spriteBatch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-        spriteBatch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-        spriteBatch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
-        spriteBatch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+            System.out.println("Exception: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    private void drawFocusedGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
+    private void drawGameBoard(Tile[][] boardTiles, SpriteBatch spriteBatch) {
         for (int i = 0; i < 9; i++) {
             for (int j = boardTiles[0].length - 1; j >= 0; j--) {
                 if (boardTiles[i][j] != null) {
