@@ -83,6 +83,8 @@ public class GameScreen extends AbstractScreen {
         spriteBatch.end();
 
         // draw other game boards
+        // NOTE if we want to create screen effect ie. screenshaking
+        // This will have to get its own viewport/camera instead of recycling the main one
         for (King king : gameManager.getAllKing()) {
             if (king == gameManager.getCurrentKing()) continue;
             boardRenderHelper.updateViewport(tableView);
