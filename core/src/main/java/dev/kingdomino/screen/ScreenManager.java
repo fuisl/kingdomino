@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ScreenManager {
     // Handles the switching and construction of screens.
-
     private Game game;
 
     // Only a single ScreenManager may exists.
@@ -26,7 +25,6 @@ public class ScreenManager {
     }
 
     // Initialize with instance of Game
-
     public void initialize(Game game) {
         this.game = game;
     }
@@ -34,6 +32,8 @@ public class ScreenManager {
     public void showScreen(ScreenEnum screenEnum, SpriteBatch spriteBatch, AssetManager assetManager) {
         Screen currentScreen = game.getScreen();
 
+        // screenEnum.getScreen() create a new instance of Screen
+        // which mean dispose must be implemented.
         AbstractScreen newScreen = screenEnum.getScreen(spriteBatch, assetManager);
         newScreen.initScreen();
         game.setScreen(newScreen);

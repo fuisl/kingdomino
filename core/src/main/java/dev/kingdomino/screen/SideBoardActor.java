@@ -26,7 +26,7 @@ public class SideBoardActor extends Actor {
         batch.end();
 
         tableViewport.setScreenPosition(round(getX()), round(getY()));
-        tableViewport.setScreenSize(300, 300);
+        tableViewport.setScreenSize(round(getWidth()), round(getHeight()));
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();

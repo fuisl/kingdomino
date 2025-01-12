@@ -1,5 +1,7 @@
 package dev.kingdomino.screen;
 
+import static java.lang.Math.round;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -28,8 +30,8 @@ public class MainBoardActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
 
-        tableViewport.setScreenPosition(100, 100);
-        tableViewport.setScreenSize(600, 600);
+        tableViewport.setScreenPosition(round(getX()), round(getY()));
+        tableViewport.setScreenSize(round(getWidth()), round(getHeight()));
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();

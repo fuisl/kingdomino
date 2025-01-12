@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import dev.kingdomino.screen.ScreenEnum;
 import dev.kingdomino.screen.ScreenManager;
@@ -36,6 +37,7 @@ public class Kingdomino extends Game {
          * At least, hopefully, I dont want to deal with that mess
          */
         assetManager.load("tileTextures.atlas", TextureAtlas.class);
+        assetManager.load("skin/uiskin.json", Skin.class);
     }
 
     @Override
