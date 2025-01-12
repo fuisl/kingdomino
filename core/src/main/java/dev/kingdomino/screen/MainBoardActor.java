@@ -21,7 +21,7 @@ public class MainBoardActor extends Actor {
     public MainBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport) {
         this.crownOverlay = crownOverlay;
         this.gameViewport = screenViewport;
-        tableViewport = new FitViewport(9, 9);
+        tableViewport = new FitViewport(10, 10);
         tableViewport.getCamera().position.set(4, 4, 0);
     }
 
@@ -43,13 +43,15 @@ public class MainBoardActor extends Actor {
                 }
             }
         }
-        batch.setColor(1f, 1f, 1f, 0.5f);
+
         Tile tileA = currentDomino.getTileA();
         Tile tileB = currentDomino.getTileB();
         Position tileAPosition = currentDomino.getPosTileA();
         Position tileBPosition = currentDomino.getPosTileB();
 
         if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID) return;
+
+        batch.setColor(1f, 1f, 1f, 0.5f);
 
         batch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
         batch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);

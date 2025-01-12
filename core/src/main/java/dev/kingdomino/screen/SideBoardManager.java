@@ -23,7 +23,7 @@ public class SideBoardManager {
         kingCount -= 1;
 
         sideBoardActors = new SideBoardActor[kingCount];
-        tableViewport = new FitViewport(9, 9);
+        tableViewport = new FitViewport(10, 10);
         tableViewport.getCamera().position.set(4, 4, 0);
 
         for (int i = 0; i < kingCount; i++) {
@@ -31,13 +31,13 @@ public class SideBoardManager {
         }
 
         if (kingCount == 2) {
-            sideBoardActors[0].setPosition(1500, 450);
-            sideBoardActors[1].setPosition(1500, 0);
+            sideBoardActors[0].setPosition(1600, 450);
+            sideBoardActors[1].setPosition(1600, 0);
         }
         else {
-            sideBoardActors[0].setPosition(1500, 600);
-            sideBoardActors[1].setPosition(1500, 300);
-            sideBoardActors[2].setPosition(1500, 0);
+            sideBoardActors[0].setPosition(1600, 600);
+            sideBoardActors[1].setPosition(1600, 300);
+            sideBoardActors[2].setPosition(1600, 0);
         }
     }
 
