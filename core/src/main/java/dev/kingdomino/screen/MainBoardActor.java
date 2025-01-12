@@ -23,15 +23,19 @@ public class MainBoardActor extends Actor {
     public MainBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport) {
         this.crownOverlay = crownOverlay;
         this.gameViewport = screenViewport;
-        tableViewport = new FitViewport(10, 10);
-        tableViewport.getCamera().position.set(4, 4, 0);
+        tableViewport = new FitViewport(9, 9);
+        tableViewport.getCamera().position.set(4.5f, 4.5f, 0);
+        tableViewport.getCamera().update();
     }
 
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
 
-        tableViewport.setScreenPosition(round(getX()), round(getY()));
-        tableViewport.setScreenSize(round(getWidth()), round(getHeight()));
+        tableViewport.update(round(getWidth()), round(getHeight()));
+        tableViewport.setScreenPosition(
+            round(getX()) + tableViewport.getLeftGutterWidth(),
+            round(getY()) + tableViewport.getBottomGutterHeight()
+        );
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();

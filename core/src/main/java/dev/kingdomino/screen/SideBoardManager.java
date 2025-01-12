@@ -23,8 +23,9 @@ public class SideBoardManager {
         kingCount -= 1;
 
         sideBoardActors = new SideBoardActor[kingCount];
-        tableViewport = new FitViewport(10, 10);
-        tableViewport.getCamera().position.set(4, 4, 0);
+        tableViewport = new FitViewport(9, 9);
+        tableViewport.getCamera().position.set(4.5f, 4.5f, 0);
+        tableViewport.getCamera().update();
 
         for (int i = 0; i < kingCount; i++) {
             sideBoardActors[i] = new SideBoardActor(crownOverlay, screenViewport, tableViewport);

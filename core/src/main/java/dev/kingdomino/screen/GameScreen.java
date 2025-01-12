@@ -5,10 +5,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -53,14 +56,17 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void initScreen() {
         rootTable = new Table();
-        rootTable.setFillParent(true);
-        // TODO remove this line once we are done with layout
-        rootTable.setDebug(true);
-        stage.addActor(rootTable);
-
         Table leftInfoLayout = new Table();
         Table rightInfoLayout = new Table();
         Table mainGameLayout = new Table();
+
+        rootTable.setFillParent(true);
+        // TODO remove this line once we are done with layout
+        rootTable.setDebug(true);
+        leftInfoLayout.setDebug(true);
+        rightInfoLayout.setDebug(true);
+        mainGameLayout.setDebug(true);
+        stage.addActor(rootTable);
 
         leftInfoLayout.add(new Label("Left Info", skin));
         leftInfoLayout.row();
@@ -71,17 +77,22 @@ public class GameScreen extends AbstractScreen {
 
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport);
         sideBoardManager = new SideBoardManager(gameManager, crownOverlay, screenViewport);
-
-        mainGameLayout.add(mainBoardActor).width(500).height(500).fill();
+        
+        // Better than implementing Layout interface... that is one massive interface.
+        Container<Actor> container = new Container<>(mainBoardActor);
+        container.fill();
+        mainGameLayout.add(container).expand().fill();
 
         for (SideBoardActor actor : sideBoardManager.getSideBoardActors()) {
-            rightInfoLayout.add(actor).width(300).height(300).fill();
+            container = new Container<>(actor);
+            container.fill();
+            rightInfoLayout.add(container).expand().fill();
             rightInfoLayout.row();
         }
 
-        rootTable.add(leftInfoLayout).width(150).expandY().fill();
+        rootTable.add(leftInfoLayout).width(Value.percentWidth(0.15f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
-        rootTable.add(rightInfoLayout).width(300).expandY().fill();
+        rootTable.add(rightInfoLayout).width(Value.percentWidth(0.21f, rootTable)).expandY().fill();
     }
 
     @Override
