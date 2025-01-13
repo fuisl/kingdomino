@@ -30,6 +30,7 @@ import dev.kingdomino.game.TerrainType;
 public class GameScreen extends AbstractScreen {
     private Stage stage;
     private GameManager gameManager;
+    private GameTimer gameTimer;
     private ScreenViewport screenViewport;
     private TextureRegion[] crownOverlay;
     private MainBoardActor mainBoardActor;
@@ -41,15 +42,19 @@ public class GameScreen extends AbstractScreen {
     // Shader stuff
     private Mesh screenQuad;
     private ShaderProgram backgroundShader;
+
+    // CRT shader: render everything to frame buffer then apply shader
     private ShaderProgram crtShader;
     private FrameBuffer crtFbo;
     private Mesh crtQuad;
+    private float crtValue = 30f; // control intensity of the CRT effect
 
     public GameScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
         super(spriteBatch, assetManager);
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
         gameManager = new GameManager();
+        gameTimer = GameTimer.getInstance();
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -70,9 +75,11 @@ public class GameScreen extends AbstractScreen {
         crownOverlay[3] = atlas.findRegion("threecrown");
 
         // shader stuff
+        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        // init the shaders
         initBackgroundShader();
         initCRTShader();
-        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -140,13 +147,21 @@ public class GameScreen extends AbstractScreen {
         // stage.act(delta);
         // stage.draw();
 
-        renderCRTShader(delta);
+        // wrap everything in a buffer
+        crtFbo.begin();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        renderBackground();
+        stage.act(delta);
+        stage.draw();
+        crtFbo.end();
+
+        // apply the CRT shader
+        renderCRTShader();
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-
 
         // resize the CRT shader
         if (crtFbo != null)
@@ -161,9 +176,6 @@ public class GameScreen extends AbstractScreen {
         };
         crtQuad.setVertices(newVertices);
 
-        cam.setToOrtho(false, width, height);
-        cam.update();
-
         // background shader
         float[] bgVertices = new float[] {
                 0, 0, 0, 0, 0,
@@ -172,6 +184,10 @@ public class GameScreen extends AbstractScreen {
                 0, height, 0, 0, 1
         };
         screenQuad.setVertices(bgVertices);
+
+        // update camera
+        cam.setToOrtho(false, width, height);
+        cam.update();
     }
 
     @Override
@@ -190,11 +206,11 @@ public class GameScreen extends AbstractScreen {
         backgroundShader.bind();
         // define the uniform
         backgroundShader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        backgroundShader.setUniformf("u_time", GameTimer.getInstance().totalTime); // control color bleeding.
-        backgroundShader.setUniformf("u_spinTime", GameTimer.getInstance().totalTime * 0.0f); // control spining. set to
-                                                                                              // 0f to stop spining. set
-                                                                                              // negative to spin in
-                                                                                              // opposite direction
+        backgroundShader.setUniformf("u_time", gameTimer.totalTime); // control color bleeding.
+        backgroundShader.setUniformf("u_spinTime", gameTimer.totalTime * 0.0f); // control spining. set to
+                                                                                // 0f to stop spining. set
+                                                                                // negative to spin in
+                                                                                // opposite direction
         backgroundShader.setUniformf("u_contrast", 1.5f);
         backgroundShader.setUniformf("u_spinAmount", 0.2f); // control the shape of the spin
         backgroundShader.setUniformf("u_colour1", Color.valueOf("02394A"));
@@ -206,8 +222,7 @@ public class GameScreen extends AbstractScreen {
         cam.position.set(w / 2f, h / 2f, 0);
         cam.update();
 
-        // this is where bug begin, maybe another matrix would do the work but for now,
-        // it's good enough.
+        // 2 triangles to form a quad
         float[] vertices = new float[] {
                 0, 0, 0, 0, 0,
                 w, 0, 0, 1, 0,
@@ -225,8 +240,8 @@ public class GameScreen extends AbstractScreen {
     }
 
     public void initBackgroundShader() {
-        String vertexShader = Gdx.files.internal("assets/shaders/vortex.vert.glsl").readString();
-        String fragmentShader = Gdx.files.internal("assets/shaders/background.frag.glsl").readString();
+        String vertexShader = Gdx.files.internal("assets/shaders/background.vert").readString();
+        String fragmentShader = Gdx.files.internal("assets/shaders/background.frag").readString();
 
         backgroundShader = new ShaderProgram(vertexShader, fragmentShader);
         this.screenQuad = new Mesh(true, 4, 6, new VertexAttribute(Usage.Position, 3, "a_position"),
@@ -263,40 +278,55 @@ public class GameScreen extends AbstractScreen {
         crtQuad.setIndices(new short[] { 0, 1, 2, 2, 3, 0 });
     }
 
-    public void renderCRTShader(float delta) {
-        crtFbo.begin();
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        renderBackground();
-        stage.act(delta);
-        stage.draw();
-
-        crtFbo.end();
+    public void renderCRTShader() {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         crtShader.bind();
-        crtShader.setUniformf("time", GameTimer.getInstance().totalTime);
-        crtShader.setUniformf("distortion_fac", 1.07f, 1.10f);
-        crtShader.setUniformf("scale_fac", 0.992f, 0.992f);
+        crtShader.setUniformf("time", gameTimer.totalTime);
+
+        // distortion
+        float distX = 1.0f + 0.07f * (crtValue / 100.0f);
+        float distY = 1.0f + 0.10f * (crtValue / 100.0f);
+        crtShader.setUniformf("distortion_fac", distX, distY);
+
+        // scale
+        float scaleX = 1.0f - 0.008f * (crtValue / 100.0f);
+        float scaleY = 1.0f - 0.008f * (crtValue / 100.0f);
+        crtShader.setUniformf("scale_fac", scaleX, scaleY);
+
+        // feather
         crtShader.setUniformf("feather_fac", 0.01f);
-        crtShader.setUniformf("noise_fac", 0.001f);
-        crtShader.setUniformf("bloom_fac", 1.0f); // tweak as needed
-        crtShader.setUniformf("crt_intensity", 0.16f);
-        crtShader.setUniformf("glitch_intensity", 0.0f); // or a higher value
+
+        // noise
+        float noiseFactor = 0.001f * (crtValue / 100.0f);
+        crtShader.setUniformf("noise_fac", noiseFactor);
+
+        crtShader.setUniformf("bloom_fac", 1.0f);
+
+        // intensity
+        float intensity = 0.16f * (crtValue / 100.0f);
+        crtShader.setUniformf("crt_intensity", intensity);
+
+        // glitch
+        crtShader.setUniformf("glitch_intensity", 0.2f); // or a higher value
+
+        // scanlines
         crtShader.setUniformf("scanlines", Gdx.graphics.getHeight() * 0.75f);
 
+        // resolution
         crtShader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         float mx = Gdx.input.getX();
         float my = Gdx.graphics.getHeight() - Gdx.input.getY(); // invert Y if needed
-        crtShader.setUniformf("hovering", 0.0f); // or 0.0f to disable
+        crtShader.setUniformf("hovering", 1.0f); // or 0.0f to disable
         crtShader.setUniformf("screen_scale", 100f);
         crtShader.setUniformf("mouse_screen_pos", mx, my);
 
         crtQuad.bind(crtShader);
         crtShader.setUniformMatrix("u_projTrans", cam.combined);
 
+        // bind the frame buffer
         crtFbo.getColorBufferTexture().bind();
 
         crtQuad.render(crtShader, GL20.GL_TRIANGLES);
