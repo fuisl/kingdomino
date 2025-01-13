@@ -153,8 +153,7 @@ public class GameScreen extends AbstractScreen {
         backgroundShader.setUniformf("u_time", GameTimer.getInstance().totalTime); // control color bleeding.
         backgroundShader.setUniformf("u_spinTime", GameTimer.getInstance().totalTime * 0.0f);  // control spining. set to 0f to stop spining. set negative to spin in opposite direction
         backgroundShader.setUniformf("u_contrast", 1.5f);
-        backgroundShader.setUniformf("u_spinAmount", 0.2f);  // control the shape of the spin
-        backgroundShader.setUniformf("u_vortexAmt",3f); // control the strength of vortex. even though I don't see much different
+        backgroundShader.setUniformf("u_spinAmount", 0.2f); // control the shape of the spin
         backgroundShader.setUniformf("u_colour1", Color.valueOf("02394A"));
         backgroundShader.setUniformf("u_colour2", Color.valueOf("043565"));
         backgroundShader.setUniformf("u_colour3", Color.valueOf("5158BB"));
