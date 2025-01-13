@@ -12,7 +12,7 @@ uniform float u_contrast;
 uniform float u_spinAmount;
 uniform vec2  u_resolution; // (width, height)
 
-// Varying from the vertex shader (if needed for texturing)
+// (optional for texturing)
 varying vec2 v_texCoord;
 
 void main() {
@@ -22,13 +22,13 @@ void main() {
     // Pixelation factor based on screen diagonal / 700
     float pixel_size = length(u_resolution) / 700.0;
 
-    // 1) Floor the screenCoords for a blocky effect
-    // 2) Shift by -0.5 * u_resolution so the center is at (0,0)
-    // 3) Normalize by length(u_resolution)
+    // 1) floor the screenCoords for a blocky effect
+    // 2) shift by -0.5 * u_resolution so the center is at (0,0)
+    // 3) normalize by length(u_resolution)
     vec2 uv = floor(screenCoords / pixel_size) * pixel_size;
          uv = (uv - 0.5 * u_resolution) / length(u_resolution);
-    // Slight offset in x-direction
-    uv -= vec2(0.12, 0.0);
+    // offset (optional)
+    // uv -= vec2(0.12, 0.0);
 
     float uv_len = length(uv);
 
@@ -59,7 +59,7 @@ void main() {
         uv  -= cos(uv.x + uv.y) - sin(uv.x * 0.711 - uv.y);
     }
 
-    // Combine with contrast/spin to get paint amount
+    // combine with contrast/spin to get paint amount
     float contrast_mod = 0.25 * u_contrast + 0.5 * u_spinAmount + 1.2;
     float paint_res    = min(2.0, max(0.0, length(uv) * 0.035 * contrast_mod));
     float c1p = max(0.0, 1.0 - contrast_mod * abs(1.0 - paint_res));
