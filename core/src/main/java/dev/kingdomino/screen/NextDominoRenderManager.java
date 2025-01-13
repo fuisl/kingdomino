@@ -1,0 +1,55 @@
+package dev.kingdomino.screen;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
+import dev.kingdomino.game.Domino;
+import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.King;
+import dev.kingdomino.game.Turn;
+
+public class NextDominoRenderManager extends AbstractPlayerIconRenderManager {
+    private DominoActor[] dominoActors;
+
+    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
+        super(gameManager, kingAvatar, skin);
+
+        dominoActors = new DominoActor[kingCount];
+
+        for (int i = 0; i < kingCount; i++) {
+            dominoActors[i] = new DominoActor();
+        }
+    }
+
+    @Override
+    public void setLayout(Table layout) {
+        for (int i = 0; i < kingCount; i++) {
+            layout.add(generateContainer(dominoActors[i])).expandY().fill();
+            layout.add(generateContainer(playerIconActors[i])).fill();
+            layout.row();
+        }
+    }
+
+    @Override
+    public void informActors() {
+        Turn nextTurn = gameManager.getNextTurn();
+
+        if (nextTurn == null) {
+            // TODO implement end of turn view
+            // right now it break at this point
+            return;
+        }
+
+        Domino[] nextTurnDomino = nextTurn.getDraft();
+        King[] nextTurnPick = nextTurn.getKings();
+
+        for (int i = 0; i < kingCount; i++) {
+            dominoActors[i].setDomino(nextTurnDomino[i]);
+
+            if (nextTurnPick[i] == null) continue;
+
+            playerIconActors[i].setKingID(nextTurnPick[i].getId());
+        }
+    }
+}

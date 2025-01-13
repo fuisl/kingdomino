@@ -490,6 +490,14 @@ public class GameManager {
         return this.kingCount;
     }
 
+    public Turn getCurrentTurn() {
+        return this.currentTurn;
+    }
+
+    public Turn getNextTurn() {
+        return this.nextTurn;
+    }
+
     public GameState getCurrentState() {
         return currentState;
     }
