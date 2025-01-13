@@ -18,8 +18,8 @@ public class TurnOrderRenderManager extends AbstractPlayerIconRenderManager {
         String[] label = {"1st", "2nd", "3rd", "4th"};
 
         for (int i = 0; i < kingCount; i++) {
-            turnOrderLayout.add(new Label(label[i], skin));
-            turnOrderLayout.add(generateContainer(playerIconActors[i])).expandY().fillY();
+            turnOrderLayout.add(new Label(label[i], skin)).expand().fill();
+            turnOrderLayout.add(generateContainer(playerIconActors[i])).expand().fill();
             turnOrderLayout.row();
         }
     }

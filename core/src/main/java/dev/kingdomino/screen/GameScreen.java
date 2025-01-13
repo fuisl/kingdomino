@@ -64,7 +64,7 @@ public class GameScreen extends AbstractScreen {
 
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
-        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin);
+        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay);
         sideBoardManager = new SideBoardManager(gameManager, crownOverlay, screenViewport);
     }
 
@@ -79,11 +79,6 @@ public class GameScreen extends AbstractScreen {
         Table nextDominoLayout = new Table();
 
         rootTable.setFillParent(true);
-        // TODO remove this line once we are done with layout
-        rootTable.setDebug(true);
-        leftInfoLayout.setDebug(true);
-        rightInfoLayout.setDebug(true);
-        mainGameLayout.setDebug(true);
         stage.addActor(rootTable);
 
         leftInfoLayout.add(new Label("Turn Order", skin));
@@ -125,6 +120,9 @@ public class GameScreen extends AbstractScreen {
         rootTable.add(leftInfoLayout).width(Value.percentWidth(0.15f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
         rootTable.add(rightInfoLayout).width(Value.percentWidth(0.21f, rootTable)).expandY().fill();
+
+        // TODO remove this line once we are done with layout
+        stage.setDebugAll(true);
     }
 
     @Override

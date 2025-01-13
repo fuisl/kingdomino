@@ -12,21 +12,21 @@ import dev.kingdomino.game.Turn;
 public class NextDominoRenderManager extends AbstractPlayerIconRenderManager {
     private DominoActor[] dominoActors;
 
-    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
+    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin, TextureRegion[] crownOverlay) {
         super(gameManager, kingAvatar, skin);
 
         dominoActors = new DominoActor[kingCount];
 
         for (int i = 0; i < kingCount; i++) {
-            dominoActors[i] = new DominoActor();
+            dominoActors[i] = new DominoActor(TextureRegion[] crownOverlay);
         }
     }
 
     @Override
     public void setLayout(Table layout) {
         for (int i = 0; i < kingCount; i++) {
-            layout.add(generateContainer(dominoActors[i])).expandY().fill();
-            layout.add(generateContainer(playerIconActors[i])).fill();
+            layout.add(generateContainer(dominoActors[i])).expand().fill();
+            layout.add(generateContainer(playerIconActors[i])).expand().fill();
             layout.row();
         }
     }
@@ -47,7 +47,10 @@ public class NextDominoRenderManager extends AbstractPlayerIconRenderManager {
         for (int i = 0; i < kingCount; i++) {
             dominoActors[i].setDomino(nextTurnDomino[i]);
 
-            if (nextTurnPick[i] == null) continue;
+            if (nextTurnPick[i] == null) {
+                playerIconActors[i].setKingID(-1);
+                continue;
+            }
 
             playerIconActors[i].setKingID(nextTurnPick[i].getId());
         }

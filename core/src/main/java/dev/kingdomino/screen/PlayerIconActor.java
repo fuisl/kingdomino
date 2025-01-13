@@ -13,6 +13,7 @@ public class PlayerIconActor extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
+        if (kingID == -1) return;
         batch.draw(kingAvatar[kingID], getX(), getY());
     }
 
