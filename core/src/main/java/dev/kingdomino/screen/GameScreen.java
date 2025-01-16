@@ -104,12 +104,9 @@ public class GameScreen extends AbstractScreen {
         container.fill();
         mainGameLayout.add(container).expand().fill();
         mainGameLayout.row();
-        mainGameLayout.add(new Label("Control Hints", skin));
+        // TODO make a controller for this control hint
+        mainGameLayout.add(new Label("Control Hint", skin));
 
-        // TODO replace with other player renders
-        rightInfoLayout.add(new Label("Right Info", skin));
-        rightInfoLayout.row();
-        
         for (SideBoardActor actor : sideBoardManager.getSideBoardActors()) {
             container = new Container<>(actor);
             container.fill();
@@ -144,7 +141,7 @@ public class GameScreen extends AbstractScreen {
         turnOrderRenderManager.informActors();
         leaderboardRenderManager.informActors();
         nextDominoRenderManager.informActors();
-
+        
         ScreenUtils.clear(Color.DARK_GRAY);
         stage.act(delta);
         stage.draw();

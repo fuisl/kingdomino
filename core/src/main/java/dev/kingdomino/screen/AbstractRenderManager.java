@@ -1,6 +1,8 @@
 package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -21,6 +23,12 @@ public abstract class AbstractRenderManager {
         for (int i = 0; i < kingCount; i++) {
             playerIconActors[i] = new PlayerIconActor(kingAvatar);
         }
+    }
+
+    protected Container<Actor> generateContainer(Actor actor) {
+        Container<Actor> containerizedActor = new Container<>(actor);
+        containerizedActor.fill();
+        return containerizedActor;
     }
 
     public abstract void setLayout(Table layout);

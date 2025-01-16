@@ -9,7 +9,7 @@ import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 import dev.kingdomino.game.Turn;
 
-public class NextDominoRenderManager extends AbstractPlayerIconRenderManager {
+public class NextDominoRenderManager extends AbstractRenderManager {
     private DominoActor[] dominoActors;
 
     public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin, TextureRegion[] crownOverlay) {
@@ -18,7 +18,7 @@ public class NextDominoRenderManager extends AbstractPlayerIconRenderManager {
         dominoActors = new DominoActor[kingCount];
 
         for (int i = 0; i < kingCount; i++) {
-            dominoActors[i] = new DominoActor(TextureRegion[] crownOverlay);
+            dominoActors[i] = new DominoActor(crownOverlay);
         }
     }
 

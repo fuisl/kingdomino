@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
-public class TurnOrderRenderManager extends AbstractPlayerIconRenderManager {
+public class TurnOrderRenderManager extends AbstractRenderManager {
     public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
         super(gameManager, kingAvatar, skin);
     }

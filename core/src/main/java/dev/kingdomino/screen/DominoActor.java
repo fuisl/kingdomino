@@ -1,5 +1,7 @@
 package dev.kingdomino.screen;
 
+import static java.lang.Math.min;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,10 +17,13 @@ public class DominoActor extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(domino.getTileA().getTerrain().getTexture(), getX(), getY(), getWidth()/2, getHeight());
-        batch.draw(crownOverlay[domino.getTileA().getCrown()], getX(), getY(), getWidth()/2, getHeight());
-        batch.draw(domino.getTileB().getTerrain().getTexture(), getX() + getWidth()/2, getY(), getWidth()/2, getHeight());
-        batch.draw(crownOverlay[domino.getTileB().getCrown()], getX() + getWidth()/2, getY(), getWidth()/2, getHeight());
+        float textureSize = min(getWidth()/2, getHeight());
+        float padding = (getWidth() - textureSize*2)/2;
+
+        batch.draw(domino.getTileA().getTerrain().getTexture(), padding + getX(), getY(), textureSize, textureSize);
+        batch.draw(crownOverlay[domino.getTileA().getCrown()], padding + getX(), getY(), textureSize, textureSize);
+        batch.draw(domino.getTileB().getTerrain().getTexture(), padding + getX() + textureSize, getY(), textureSize, textureSize);
+        batch.draw(crownOverlay[domino.getTileB().getCrown()], padding + getX() + textureSize, getY(), textureSize, textureSize);
     }
 
     public void setDomino(Domino domino) {
