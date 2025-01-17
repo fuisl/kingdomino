@@ -55,7 +55,15 @@ public class MainBoardActor extends Actor {
         Position tileAPosition = currentDomino.getPosTileA();
         Position tileBPosition = currentDomino.getPosTileB();
 
-        if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID) return;
+        if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID)  {
+            batch.end();
+
+            gameViewport.apply();
+            batch.setProjectionMatrix(gameViewport.getCamera().combined);
+
+            batch.begin();
+            return;
+        }
 
         batch.setColor(1f, 1f, 1f, 0.5f);
 
