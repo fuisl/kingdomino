@@ -1,19 +1,22 @@
 package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
-public class SideBoardManager {
+public class SidePanelManager {
     private SideBoardActor[] sideBoardActors;
     private FitViewport tableViewport;
     private GameManager gameManager;
     private int kingCount;
 
-    public SideBoardManager(GameManager gameManager, TextureRegion[] crownOverlay, ScreenViewport screenViewport) {
+    public SidePanelManager(GameManager gameManager, TextureRegion[] crownOverlay, ScreenViewport screenViewport, TextureRegion[] kingAvatar) {
         this.gameManager = gameManager;
         kingCount = gameManager.getKingCount();
         
@@ -28,31 +31,31 @@ public class SideBoardManager {
         tableViewport.getCamera().update();
 
         for (int i = 0; i < kingCount; i++) {
-            sideBoardActors[i] = new SideBoardActor(crownOverlay, screenViewport, tableViewport);
-        }
-
-        if (kingCount == 2) {
-            sideBoardActors[0].setPosition(1600, 450);
-            sideBoardActors[1].setPosition(1600, 0);
-        }
-        else {
-            sideBoardActors[0].setPosition(1600, 600);
-            sideBoardActors[1].setPosition(1600, 300);
-            sideBoardActors[2].setPosition(1600, 0);
+            sideBoardActors[i] = new SideBoardActor(crownOverlay, screenViewport, tableViewport, kingAvatar);
         }
     }
 
-    public void updateSideBoard() {
+    public void informActors() {
         int index = 0;
 
         for (King king : gameManager.getAllKing()) {
             if (king == gameManager.getCurrentKing()) continue;
             sideBoardActors[index].setBoard(king.getBoard().getLand());
+            sideBoardActors[index].setKingID(king.getId());
             index++;
         }
     }
 
-    public SideBoardActor[] getSideBoardActors() {
-        return sideBoardActors;
+    public void setLayout(Table layout) {
+        for (int i = 0; i < kingCount; i++) {
+            layout.add(generateContainer(sideBoardActors[i])).expand().fill();
+            layout.row();
+        }
+    }
+
+    private Container<Actor> generateContainer(Actor actor) {
+        Container<Actor> containerizedActor = new Container<>(actor);
+        containerizedActor.fill();
+        return containerizedActor;
     }
 }

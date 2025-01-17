@@ -56,12 +56,7 @@ public class MainBoardActor extends Actor {
         Position tileBPosition = currentDomino.getPosTileB();
 
         if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID)  {
-            batch.end();
-
-            gameViewport.apply();
-            batch.setProjectionMatrix(gameViewport.getCamera().combined);
-
-            batch.begin();
+            endCustomRender(batch);
             return;
         }
 
@@ -73,6 +68,10 @@ public class MainBoardActor extends Actor {
         batch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
 
         batch.setColor(1f, 1f, 1f, 1f);
+        endCustomRender(batch);
+    }
+
+    private void endCustomRender(Batch batch) {
         batch.end();
 
         gameViewport.apply();

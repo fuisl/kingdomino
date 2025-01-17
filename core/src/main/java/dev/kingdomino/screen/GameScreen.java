@@ -25,7 +25,7 @@ public class GameScreen extends AbstractScreen {
     private TextureRegion[] crownOverlay;
     private TextureRegion[] kingAvatar;
     private MainBoardActor mainBoardActor;
-    private SideBoardManager sideBoardManager;
+    private SidePanelManager sidePanelManager;
     private TurnOrderRenderManager turnOrderRenderManager;
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
@@ -67,7 +67,7 @@ public class GameScreen extends AbstractScreen {
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay);
-        sideBoardManager = new SideBoardManager(gameManager, crownOverlay, screenViewport);
+        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
         controlHintManager = new ControlHintManager(gameManager, skin);
     }
@@ -111,12 +111,7 @@ public class GameScreen extends AbstractScreen {
         mainGameLayout.row();
         controlHintManager.setLayout(mainGameLayout);
 
-        for (SideBoardActor actor : sideBoardManager.getSideBoardActors()) {
-            container = new Container<>(actor);
-            container.fill();
-            rightInfoLayout.add(container).expand().fill();
-            rightInfoLayout.row();
-        }
+        sidePanelManager.setLayout(rightInfoLayout);
 
         rootTable.add(leftInfoLayout).width(Value.percentWidth(0.15f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
@@ -139,9 +134,10 @@ public class GameScreen extends AbstractScreen {
         // in theory we can supplement a default board to deal with
         if (gameManager.getCurrentKing() == null) return;
 
-        sideBoardManager.updateSideBoard();
         mainBoardActor.setBoard(gameManager.getBoard().getLand());
         mainBoardActor.setCurrentDomino(gameManager.getCurrentDomino());
+        // TODO rework this mess to use stage.act()?
+        sidePanelManager.informActors();
         turnOrderRenderManager.informActors();
         leaderboardRenderManager.informActors();
         nextDominoRenderManager.informActors();

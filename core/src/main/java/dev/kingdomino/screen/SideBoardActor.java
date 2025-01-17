@@ -13,16 +13,21 @@ import dev.kingdomino.game.Tile;
 public class SideBoardActor extends Actor {
     private Tile[][] boardTiles;
     private TextureRegion[] crownOverlay;
+    private TextureRegion[] kingAvatar;
     private FitViewport tableViewport;
     private ScreenViewport gameViewport;
+    private int kingID;
     
-    public SideBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, FitViewport tableViewport) {
+    public SideBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, FitViewport tableViewport, TextureRegion[] kingAvatar) {
         this.crownOverlay = crownOverlay;
         this.gameViewport = screenViewport;
         this.tableViewport = tableViewport;
+        this.kingAvatar = kingAvatar;
     }
 
     public void draw(Batch batch, float parentAlpha) {
+        batch.draw(kingAvatar[kingID], getX(), getY() + getHeight() - 64, 64, 64);
+
         batch.end();
 
         tableViewport.update(round(getWidth()), round(getHeight()), true);
@@ -53,5 +58,9 @@ public class SideBoardActor extends Actor {
 
     public void setBoard(Tile[][] boardTiles) {
         this.boardTiles = boardTiles;
+    }
+
+    public void setKingID(int kingID) {
+        this.kingID = kingID;
     }
 }

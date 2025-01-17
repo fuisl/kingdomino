@@ -34,7 +34,7 @@ public class MainBoardHUDManager {
         layout.add(playerScore).expand().fill().align(Align.right);
     }
 
-    protected Container<Actor> generateContainer(Actor actor) {
+    private Container<Actor> generateContainer(Actor actor) {
         Container<Actor> containerizedActor = new Container<>(actor);
         containerizedActor.fill();
         return containerizedActor;
