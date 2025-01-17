@@ -29,6 +29,8 @@ public class GameScreen extends AbstractScreen {
     private TurnOrderRenderManager turnOrderRenderManager;
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
+    private MainBoardHUDManager mainBoardHUDManager;
+    private ControlHintManager controlHintManager;
     private Table rootTable;
     private Skin skin;
 
@@ -66,6 +68,8 @@ public class GameScreen extends AbstractScreen {
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay);
         sideBoardManager = new SideBoardManager(gameManager, crownOverlay, screenViewport);
+        mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
+        controlHintManager = new ControlHintManager(gameManager, skin);
     }
 
     @Override
@@ -77,6 +81,7 @@ public class GameScreen extends AbstractScreen {
         Table turnOrderLayout = new Table();
         Table leaderboardLayout = new Table();
         Table nextDominoLayout = new Table();
+        Table mainBoardHUDLayout = new Table();
 
         rootTable.setFillParent(true);
         stage.addActor(rootTable);
@@ -96,16 +101,15 @@ public class GameScreen extends AbstractScreen {
         nextDominoRenderManager.setLayout(nextDominoLayout);
         leftInfoLayout.add(nextDominoLayout).expand().fill();
 
-        // TODO replace with actual player render
-        mainGameLayout.add(new Label("Main Game Area", skin));
+        mainBoardHUDManager.setLayout(mainBoardHUDLayout);
+        mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.1f, mainGameLayout)).expandX().fill();
         mainGameLayout.row();
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport);
         Container<Actor> container = new Container<>(mainBoardActor);
         container.fill();
         mainGameLayout.add(container).expand().fill();
         mainGameLayout.row();
-        // TODO make a controller for this control hint
-        mainGameLayout.add(new Label("Control Hint", skin));
+        controlHintManager.setLayout(mainGameLayout);
 
         for (SideBoardActor actor : sideBoardManager.getSideBoardActors()) {
             container = new Container<>(actor);
@@ -141,6 +145,8 @@ public class GameScreen extends AbstractScreen {
         turnOrderRenderManager.informActors();
         leaderboardRenderManager.informActors();
         nextDominoRenderManager.informActors();
+        mainBoardHUDManager.informActors();
+        controlHintManager.informActors();
         
         ScreenUtils.clear(Color.DARK_GRAY);
         stage.act(delta);
