@@ -92,23 +92,40 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(mainBoardHUDManager);
         stage.addActor(controlHintManager);
 
-        leftInfoLayout.add(new Label("Turn Order", skin));
-        leftInfoLayout.row();
+        turnOrderLayout.add(new Label("Turn Order", skin)).colspan(2);
+        turnOrderLayout.row();
         turnOrderRenderManager.setLayout(turnOrderLayout);
-        leftInfoLayout.add(turnOrderLayout).expand().fill();
+
+        leftInfoLayout.add(turnOrderLayout)
+            .height(Value.percentHeight(0.25f, leftInfoLayout))
+            .expandX()
+            .fill()
+            .pad(30);
+
         leftInfoLayout.row();
-        leftInfoLayout.add(new Label("Leaderboard", skin));
-        leftInfoLayout.row();
+        leaderboardLayout.add(new Label("Leaderboard", skin)).colspan(3);
+        leaderboardLayout.row();
         leaderboardRenderManager.setLayout(leaderboardLayout);
-        leftInfoLayout.add(leaderboardLayout).expand().fill();
+
+        leftInfoLayout.add(leaderboardLayout)
+            .height(Value.percentHeight(0.25f, leftInfoLayout))
+            .expandX()
+            .fill()
+            .pad(30);
+    
         leftInfoLayout.row();
-        leftInfoLayout.add(new Label("Next Dominoes", skin));
-        leftInfoLayout.row();
+        nextDominoLayout.add(new Label("Next Dominoes", skin)).colspan(2);
+        nextDominoLayout.row();
         nextDominoRenderManager.setLayout(nextDominoLayout);
-        leftInfoLayout.add(nextDominoLayout).expand().fill();
+
+        leftInfoLayout.add(nextDominoLayout)
+            .height(Value.percentHeight(0.25f, leftInfoLayout))
+            .expandX()
+            .fill()
+            .pad(30);
 
         mainBoardHUDManager.setLayout(mainBoardHUDLayout);
-        mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.1f, mainGameLayout)).expandX().fill();
+        mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.08f, mainGameLayout)).expandX().fill();
         mainGameLayout.row();
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport);
         Container<Actor> container = new Container<>(mainBoardActor);
@@ -122,9 +139,6 @@ public class GameScreen extends AbstractScreen {
         rootTable.add(leftInfoLayout).width(Value.percentWidth(0.15f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
         rootTable.add(rightInfoLayout).width(Value.percentWidth(0.21f, rootTable)).expandY().fill();
-
-        // TODO remove this line once we are done with layout
-        stage.setDebugAll(true);
     }
 
     @Override

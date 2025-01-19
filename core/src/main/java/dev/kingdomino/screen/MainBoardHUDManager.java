@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.utils.Align;
 
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
@@ -29,9 +28,17 @@ public class MainBoardHUDManager extends Actor {
     }
 
     public void setLayout(Table layout) {
-        layout.add(generateContainer(playerIconActor)).width(Value.percentHeight(1f, layout)).expandY().fill();
+        layout.add(generateContainer(playerIconActor))
+            .width(Value.percentHeight(1f, layout))
+            .expandY()
+            .fill()
+            .padLeft(15);
+        // are we adding player name..?
         //layout.add(generateContainer(playerName)).expand().fill();
-        layout.add(playerScore).expand().fill().align(Align.right);
+        layout.add(playerScore)
+            .right()
+            .expand()
+            .pad(15);
     }
 
     private Container<Actor> generateContainer(Actor actor) {
