@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import dev.kingdomino.game.GameManager;
 
-public abstract class AbstractRenderManager {
+public abstract class AbstractRenderManager extends Actor {
     protected GameManager gameManager;
     protected PlayerIconActor[] playerIconActors;
     protected int kingCount;
@@ -32,6 +32,4 @@ public abstract class AbstractRenderManager {
     }
 
     public abstract void setLayout(Table layout);
-
-    public abstract void informActors();
 }

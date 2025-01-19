@@ -33,7 +33,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
     }
 
     @Override
-    public void informActors() {
+    public void act(float delta) {
         // TODO nab a sorted version of this.
         King[] kings = gameManager.getAllKing();
 

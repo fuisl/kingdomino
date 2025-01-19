@@ -32,7 +32,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     }
 
     @Override
-    public void informActors() {
+    public void act(float delta) {
         Turn nextTurn = gameManager.getNextTurn();
 
         if (nextTurn == null) {

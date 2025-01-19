@@ -25,7 +25,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
     }
 
     @Override
-    public void informActors() {
+    public void act(float delta) {
         King[] turnOrder = gameManager.getCurrentTurn().getKings();
         int position = 0;
 

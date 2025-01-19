@@ -85,6 +85,12 @@ public class GameScreen extends AbstractScreen {
 
         rootTable.setFillParent(true);
         stage.addActor(rootTable);
+        stage.addActor(turnOrderRenderManager);
+        stage.addActor(leaderboardRenderManager);
+        stage.addActor(nextDominoRenderManager);
+        stage.addActor(sidePanelManager);
+        stage.addActor(mainBoardHUDManager);
+        stage.addActor(controlHintManager);
 
         leftInfoLayout.add(new Label("Turn Order", skin));
         leftInfoLayout.row();
@@ -136,13 +142,6 @@ public class GameScreen extends AbstractScreen {
 
         mainBoardActor.setBoard(gameManager.getBoard().getLand());
         mainBoardActor.setCurrentDomino(gameManager.getCurrentDomino());
-        // TODO rework this mess to use stage.act()?
-        sidePanelManager.informActors();
-        turnOrderRenderManager.informActors();
-        leaderboardRenderManager.informActors();
-        nextDominoRenderManager.informActors();
-        mainBoardHUDManager.informActors();
-        controlHintManager.informActors();
         
         ScreenUtils.clear(Color.DARK_GRAY);
         stage.act(delta);

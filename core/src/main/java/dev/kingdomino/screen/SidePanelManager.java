@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
-public class SidePanelManager {
+public class SidePanelManager extends Actor {
     private SideBoardActor[] sideBoardActors;
     private FitViewport tableViewport;
     private GameManager gameManager;
@@ -35,7 +35,8 @@ public class SidePanelManager {
         }
     }
 
-    public void informActors() {
+    @Override
+    public void act(float delta) {
         int index = 0;
 
         for (King king : gameManager.getAllKing()) {

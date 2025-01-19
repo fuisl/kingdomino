@@ -1,5 +1,6 @@
 package dev.kingdomino.screen;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -7,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 import dev.kingdomino.game.GameManager;
 
-public class ControlHintManager {
+public class ControlHintManager extends Actor{
     // not extending AbstractRenderManager here as we do not need to render all 4 player at once.
 
     private GameManager gameManager;
@@ -22,7 +23,8 @@ public class ControlHintManager {
         layout.add(controlHint).height(Value.percentHeight(0.05f, layout));
     }
 
-    public void informActors() {
+    @Override
+    public void act(float delta) {
         switch (gameManager.getCurrentState()) {
             case RESULTS:
                 break;

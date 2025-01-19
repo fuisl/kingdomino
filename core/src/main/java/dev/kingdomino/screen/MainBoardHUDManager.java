@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
-public class MainBoardHUDManager {
+public class MainBoardHUDManager extends Actor {
     // not extending AbstractRenderManager here as we do not need to render all 4 player at once.
 
     private GameManager gameManager;
@@ -40,7 +40,8 @@ public class MainBoardHUDManager {
         return containerizedActor;
     }
 
-    public void informActors() {
+    @Override
+    public void act(float delta) {
         King currentKing = gameManager.getCurrentKing();
 
         playerIconActor.setKingID(currentKing.getId());
