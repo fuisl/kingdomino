@@ -22,21 +22,24 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
     }
 
     @Override
-    public void setLayout(Table turnOrderLayout) {
+    public void setLayout(Table layout) {
         String[] label = {"1st", "2nd", "3rd", "4th"};
 
+        layout.add(new Label("Leaderboard", skin)).colspan(3);
+        layout.row();
+
         for (int i = 0; i < kingCount; i++) {
-            turnOrderLayout.add(new Label(label[i], skin))
+            layout.add(new Label(label[i], skin))
                 .expand()
                 .center();
-            turnOrderLayout.add(generateContainer(playerIconActors[i]))
-                .width(Value.percentWidth(1f/3, turnOrderLayout))
+            layout.add(generateContainer(playerIconActors[i]))
+                .width(Value.percentWidth(1f/3, layout))
                 .expandY()
                 .fill();
-            turnOrderLayout.add(pointLabels[i])
+            layout.add(pointLabels[i])
                 .expand()
                 .center();
-            turnOrderLayout.row();
+            layout.row();
         }
     }
 

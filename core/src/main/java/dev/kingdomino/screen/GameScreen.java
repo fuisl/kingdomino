@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
@@ -92,37 +91,33 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(mainBoardHUDManager);
         stage.addActor(controlHintManager);
 
-        turnOrderLayout.add(new Label("Turn Order", skin)).colspan(2);
-        turnOrderLayout.row();
         turnOrderRenderManager.setLayout(turnOrderLayout);
 
         leftInfoLayout.add(turnOrderLayout)
             .height(Value.percentHeight(0.25f, leftInfoLayout))
             .expandX()
             .fill()
-            .pad(30);
+            .pad(15);
 
         leftInfoLayout.row();
-        leaderboardLayout.add(new Label("Leaderboard", skin)).colspan(3);
-        leaderboardLayout.row();
+
         leaderboardRenderManager.setLayout(leaderboardLayout);
 
         leftInfoLayout.add(leaderboardLayout)
             .height(Value.percentHeight(0.25f, leftInfoLayout))
             .expandX()
             .fill()
-            .pad(30);
+            .pad(15);
     
         leftInfoLayout.row();
-        nextDominoLayout.add(new Label("Next Dominoes", skin)).colspan(2);
-        nextDominoLayout.row();
+
         nextDominoRenderManager.setLayout(nextDominoLayout);
 
         leftInfoLayout.add(nextDominoLayout)
             .height(Value.percentHeight(0.25f, leftInfoLayout))
             .expandX()
             .fill()
-            .pad(30);
+            .pad(15);
 
         mainBoardHUDManager.setLayout(mainBoardHUDLayout);
         mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.08f, mainGameLayout)).expandX().fill();
@@ -136,9 +131,9 @@ public class GameScreen extends AbstractScreen {
 
         sidePanelManager.setLayout(rightInfoLayout);
 
-        rootTable.add(leftInfoLayout).width(Value.percentWidth(0.15f, rootTable)).expandY().fill();
+        rootTable.add(leftInfoLayout).width(Value.percentWidth(0.18f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
-        rootTable.add(rightInfoLayout).width(Value.percentWidth(0.21f, rootTable)).expandY().fill();
+        rootTable.add(rightInfoLayout).width(Value.percentWidth(0.19f, rootTable)).expandY().fill();
 
         // TODO remove this line once we are done with layout
         stage.setDebugAll(true);
