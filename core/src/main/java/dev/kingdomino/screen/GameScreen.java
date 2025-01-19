@@ -94,31 +94,31 @@ public class GameScreen extends AbstractScreen {
         turnOrderRenderManager.setLayout(turnOrderLayout);
 
         leftInfoLayout.add(turnOrderLayout)
-            .height(Value.percentHeight(0.25f, leftInfoLayout))
+            .height(Value.percentHeight(0.37f, leftInfoLayout))
             .expandX()
             .fill()
             .pad(15);
 
-        leftInfoLayout.row();
-
-        leaderboardRenderManager.setLayout(leaderboardLayout);
-
-        leftInfoLayout.add(leaderboardLayout)
-            .height(Value.percentHeight(0.25f, leftInfoLayout))
-            .expandX()
-            .fill()
-            .pad(15);
-    
         leftInfoLayout.row();
 
         nextDominoRenderManager.setLayout(nextDominoLayout);
 
         leftInfoLayout.add(nextDominoLayout)
-            .height(Value.percentHeight(0.25f, leftInfoLayout))
+            .height(Value.percentHeight(0.27f, leftInfoLayout))
             .expandX()
             .fill()
             .pad(15);
 
+        leaderboardRenderManager.setLayout(leaderboardLayout);
+
+        leftInfoLayout.row();
+
+        leftInfoLayout.add(leaderboardLayout)
+            .height(Value.percentHeight(0.27f, leftInfoLayout))
+            .expandX()
+            .fill()
+            .pad(15);
+    
         mainBoardHUDManager.setLayout(mainBoardHUDLayout);
         mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.08f, mainGameLayout)).expandX().fill();
         mainGameLayout.row();
@@ -131,9 +131,9 @@ public class GameScreen extends AbstractScreen {
 
         sidePanelManager.setLayout(rightInfoLayout);
 
-        rootTable.add(leftInfoLayout).width(Value.percentWidth(0.18f, rootTable)).expandY().fill();
+        rootTable.add(leftInfoLayout).width(Value.percentWidth(0.14f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
-        rootTable.add(rightInfoLayout).width(Value.percentWidth(0.19f, rootTable)).expandY().fill();
+        rootTable.add(rightInfoLayout).width(Value.percentWidth(0.2f, rootTable)).expandY().fill();
 
         // TODO remove this line once we are done with layout
         stage.setDebugAll(true);
