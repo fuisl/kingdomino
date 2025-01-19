@@ -43,8 +43,8 @@ void main()
     // 2) Smoothly transition edges to black
     //-------------------------------------------------------------
     float mask =
-          (1.0 - smoothstep(1.0 - feather_fac, 1.0, abs(tc.x) - BUFF))
-        * (1.0 - smoothstep(1.0 - feather_fac, 1.0, abs(tc.y) - BUFF));
+          (1.0 - smoothstep(1.0 - feather_fac, 1.0, abs(float(tc.x)) - BUFF))
+        * (1.0 - smoothstep(1.0 - feather_fac, 1.0, abs(float(tc.y)) - BUFF));
 
     //-------------------------------------------------------------
     // 3) Undo the recenter back to [0,1]
@@ -207,7 +207,7 @@ void main()
                 samp.g = max((1.0 / (1.0 - cutoff)) * samp.g - (1.0 / (1.0 - cutoff)) + 1.0, 0.0);
                 samp.b = max((1.0 / (1.0 - cutoff)) * samp.b - (1.0 / (1.0 - cutoff)) + 1.0, 0.0);
 
-                float mixFactor = (2.0 - float(abs(i + j)) / float(BLOOM_AMT + BLOOM_AMT));
+                float mixFactor = (2.0 - float(abs(float(i + j))) / float(BLOOM_AMT + BLOOM_AMT));
                 col += min(min(samp.r, samp.g), samp.b) * mixFactor;
             }
         }

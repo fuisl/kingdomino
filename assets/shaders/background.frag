@@ -48,7 +48,7 @@ void main() {
     // The paint effect
     uv *= 30.0;
     speed   = u_time * 2.0;
-    vec2 uv2 = uv.x + uv.y; // a combined offset
+    vec2 uv2 = vec2(uv.x + uv.y); // a combined offset
 
     for(int i = 0; i < 5; i++) {
         uv2 += sin(max(uv.x, uv.y)) + uv;
@@ -61,9 +61,9 @@ void main() {
 
     // combine with contrast/spin to get paint amount
     float contrast_mod = 0.25 * u_contrast + 0.5 * u_spinAmount + 1.2;
-    float paint_res    = min(2.0, max(0.0, length(uv) * 0.035 * contrast_mod));
-    float c1p = max(0.0, 1.0 - contrast_mod * abs(1.0 - paint_res));
-    float c2p = max(0.0, 1.0 - contrast_mod * abs(paint_res));
+    float paint_res = min(2.0, max(0.0, length(vec2(uv)) * 0.035 * contrast_mod));
+    float c1p = max(0.0, 1.0 - contrast_mod * abs(1.0 - float(paint_res)));
+    float c2p = max(0.0, 1.0 - contrast_mod * abs(float(paint_res)));
     float c3p = 1.0 - min(1.0, c1p + c2p);
 
     // Final color blend
