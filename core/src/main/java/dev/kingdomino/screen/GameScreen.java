@@ -139,6 +139,9 @@ public class GameScreen extends AbstractScreen {
         rootTable.add(leftInfoLayout).width(Value.percentWidth(0.15f, rootTable)).expandY().fill();
         rootTable.add(mainGameLayout).expand().fill();
         rootTable.add(rightInfoLayout).width(Value.percentWidth(0.21f, rootTable)).expandY().fill();
+
+        // TODO remove this line once we are done with layout
+        stage.setDebugAll(true);
     }
 
     @Override

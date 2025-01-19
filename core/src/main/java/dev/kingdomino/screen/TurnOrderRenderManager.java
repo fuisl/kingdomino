@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
@@ -18,8 +19,13 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
         String[] label = {"1st", "2nd", "3rd", "4th"};
 
         for (int i = 0; i < kingCount; i++) {
-            turnOrderLayout.add(new Label(label[i], skin)).expand().fill();
-            turnOrderLayout.add(generateContainer(playerIconActors[i])).expand().fill();
+            turnOrderLayout.add(new Label(label[i], skin))
+                .center()
+                .expand();
+            turnOrderLayout.add(generateContainer(playerIconActors[i]))
+                .width(Value.percentWidth(0.5f, turnOrderLayout))
+                .expandY()
+                .fill();
             turnOrderLayout.row();
         }
     }

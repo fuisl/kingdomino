@@ -17,7 +17,9 @@ public class PlayerIconActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         if (kingID == -1) return;
         float textureSize = min(getWidth(), getHeight());
-        batch.draw(kingAvatar[kingID], getX(), getY(), textureSize, textureSize);
+        float offsetX = getWidth()/2 - textureSize/2;
+
+        batch.draw(kingAvatar[kingID], getX() + offsetX, getY(), textureSize, textureSize);
     }
 
     public void setKingID(int kingID) {
