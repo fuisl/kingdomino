@@ -8,6 +8,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import dev.kingdomino.screen.BoardInputProcessor;
+
 // import dev.kingdomino.game.Event.TriggerType;
 
 public class GameManager {
@@ -478,6 +480,22 @@ public class GameManager {
         if (currentState == GameState.TURN_CHOOSING) {
             nextTurn.selectDomino(currentKing, index);
         }
+    }
+
+    public King[] getAllKing() {
+        return this.kings;
+    }
+
+    public int getKingCount() {
+        return this.kingCount;
+    }
+
+    public Turn getCurrentTurn() {
+        return this.currentTurn;
+    }
+
+    public Turn getNextTurn() {
+        return this.nextTurn;
     }
 
     public GameState getCurrentState() {

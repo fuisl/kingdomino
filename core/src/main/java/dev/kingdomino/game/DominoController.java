@@ -159,6 +159,10 @@ public class DominoController {
         moveDomino(lastDirection, true);
     }
 
+    public int getRotationIndex() {
+        return this.rotationIndex;
+    }
+
     public void undo() {
         if (lastAction == 0) {
             undoMoveDomino();
