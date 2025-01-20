@@ -53,6 +53,8 @@ public class TurnOrderRenderManager extends Actor {
 
     @Override
     public void act(float delta) {
+        if (gameManager.getNextTurn() == null) return;
+
         King[] currentTurnOrder = gameManager.getCurrentTurn().getKings();
         int currentTurnIndex = gameManager.getCurrentTurn().getCurrentIndex();
         King[] nextTurnOrder = gameManager.getNextTurn().getKings();
