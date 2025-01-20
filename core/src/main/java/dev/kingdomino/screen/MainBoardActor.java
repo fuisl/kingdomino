@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import dev.kingdomino.game.Domino;
+import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.Position;
 import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
@@ -28,8 +29,10 @@ public class MainBoardActor extends Actor {
     private FitViewport tableViewport;
     private ScreenViewport gameViewport;
     private Domino currentDomino;
+    private GameManager gameManager;
     
-    public MainBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport) {
+    public MainBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, GameManager gameManager) {
+        this.gameManager = gameManager;
         this.crownOverlay = crownOverlay;
         this.gameViewport = screenViewport;
         tableViewport = new FitViewport(9, 9);
@@ -37,18 +40,15 @@ public class MainBoardActor extends Actor {
         tableViewport.getCamera().update();
     }
 
+    @Override
+    public void act(float delta) {
+        this.boardTiles = gameManager.getBoard().getLand();
+        this.currentDomino = gameManager.getCurrentDomino();
+    }
+
+    @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.end();
-        
-        // update the viewport positions in case if the screen size has changed
-        tableViewport.update(round(getWidth()), round(getHeight()));
-        tableViewport.setScreenPosition(
-            round(getX()) + tableViewport.getLeftGutterWidth(),
-            round(getY()) + tableViewport.getBottomGutterHeight()
-        );
-        tableViewport.apply();
-        batch.setProjectionMatrix(tableViewport.getCamera().combined);
-        batch.begin();
+        startCustomRender(batch);
 
         for (int i = 0; i < 9; i++) {
             for (int j = boardTiles[0].length - 1; j >= 0; j--) {
@@ -89,6 +89,20 @@ public class MainBoardActor extends Actor {
         gameViewport.apply();
         batch.setProjectionMatrix(gameViewport.getCamera().combined);
 
+        batch.begin();
+    }
+
+    private void startCustomRender(Batch batch) {
+        batch.end();
+        
+        // update the viewport positions in case if the screen size has changed
+        tableViewport.update(round(getWidth()), round(getHeight()));
+        tableViewport.setScreenPosition(
+            round(getX()) + tableViewport.getLeftGutterWidth(),
+            round(getY()) + tableViewport.getBottomGutterHeight()
+        );
+        tableViewport.apply();
+        batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();
     }
 

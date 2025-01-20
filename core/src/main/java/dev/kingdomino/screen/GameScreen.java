@@ -79,6 +79,7 @@ public class GameScreen extends AbstractScreen {
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
         controlHintManager = new ControlHintManager(gameManager, skin);
+        mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
     }
     
     @Override
@@ -135,11 +136,12 @@ public class GameScreen extends AbstractScreen {
         mainBoardHUDManager.setLayout(mainBoardHUDLayout);
         mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.08f, mainGameLayout)).expandX().fill();
         mainGameLayout.row();
-        mainBoardActor = new MainBoardActor(crownOverlay, screenViewport);
+
         Container<Actor> container = new Container<>(mainBoardActor);
         container.fill();
         mainGameLayout.add(container).expand().fill();
         mainGameLayout.row();
+        
         controlHintManager.setLayout(mainGameLayout);
 
         sidePanelManager.setLayout(rightInfoLayout);
@@ -165,10 +167,6 @@ public class GameScreen extends AbstractScreen {
         // in theory we can supplement a default board to deal with
         if (gameManager.getCurrentKing() == null)
             return;
-
-        // TODO move to mainBoardActor.act()
-        mainBoardActor.setBoard(gameManager.getBoard().getLand());
-        mainBoardActor.setCurrentDomino(gameManager.getCurrentDomino());
 
         ScreenUtils.clear(Color.DARK_GRAY);
         stage.act(delta);
