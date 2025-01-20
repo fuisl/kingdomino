@@ -10,6 +10,26 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{url}
+\usepackage{listings}
+\usepackage{algorithm2e}
+
+% Configure the listings package
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    captionpos=b
+}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -95,6 +115,11 @@ gains while strategically positioning themselves for future moves. The game
 concludes when each player has filled their grid or can no longer place tiles,
 with scoring determining the winner based on terrain connectivity and crown
 placements.
+
+\begin{figure*}[htbp]
+    \centerline{\includegraphics[width=\textwidth]{assets/kingdomino.jpg}}
+    \caption{Kingdomino Board Game.}\label{fig:kingdomino}
+\end{figure*}
 
 \subsection{Formal Description}
 
@@ -215,12 +240,17 @@ faithful and enjoyable digital representation of the original board game.
 % -- Who did what, how the tasks were divided, how you communicated and tracked progress, 
 %    brainstorming sessions, etc.
 
+\begin{figure*}[htbp]
+    \centerline{\includegraphics[width=0.8\textwidth]{assets/github-project.png}}
+    \caption{Kanban Board implements SCRUM planning technique.}\label{fig:kanban}
+\end{figure*}
+
 In general, the project was divided into two main parts: the game logic and the
 graphical user interface (GUI). We used GitHub Project to track and communicate
 with each other.
 
-We ultilize SCRUM methodology to manage our project. For more details, see the
-GitHub Project board.
+We ultilize SCRUM (Fig~\ref{fig:kanban}) methodology to manage our project. For
+more details, see the GitHub Project board.
 
 \subsection{Roles and Responsibilities}
 % -- Person A, Person B
@@ -247,17 +277,30 @@ understanding of the project as a whole.
 \subsection{Collaboration Tools and Workflow}
 % -- Bug tracking, repository management, code reviews, etc.
 
-GitHub Issues and Pull Requests to track bugs and feature requests. Each team
-member created branches for their respective tasks, ensuring that the main
-branch remained stable. Code reviews were conducted via Pull Requests, where we
-provided feedback and suggestions for improvements. We also used GitHub Actions
-for continuous integration, running automated tests to catch issues early.
+We mainly use GitHub Issues and Pull Requests to track bugs and feature
+requests. Each team member created branches for their respective tasks,
+ensuring that the main branch remained stable.
+
+Moreover, we practice code review through GitHub Pull
+Requests\ref{fig:github-pr}. This ensures that all code changes are reviewed by
+other team member before being merged into the main branch. This process helps
+to maintain code quality, catch potential bugs early, and facilitate knowledge
+sharing among team members. Each pull request includes a description of the
+changes, and reviewers provide feedback, request modifications, or approve the
+changes. This collaborative approach to code review has been instrumental in
+maintaining a high standard of code throughout the project.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/github-pr.png}}
+    \caption{A conversation in one Pull Request.}\label{fig:github-pr}
+\end{figure}
 
 For communication, we relied on Messenger for real-time discussions and meet
 each other at school or guest house for meetings. We documented our progress
-and decisions in a shared Google Drive, which included meeting notes, design
-documents, and brainstorming sessions. This collaborative approach ensured
-transparency and kept everyone aligned with the project's goals.
+and decisions via commit messages. Other document which included meeting notes,
+design documents, and brainstorming sessions are stored in the form of digital
+draft. This collaborative approach ensured transparency and kept everyone
+aligned with the project's goals.
 
 %======================================================
 \section{Proposed Approaches}
@@ -265,28 +308,168 @@ transparency and kept everyone aligned with the project's goals.
 % -- Input/Output technique.
 % -- Algorithm/Pseudocode.
 % -- Process flow diagram (if necessary).
+% summary of the section
 
 \subsection{Input/Output Technique}
 % -- Explanation of data formats, how the program interacts with users.
 
-\subsection{Algorithm and Pseudocode}
+The program accepts input from users through a graphical user interface (GUI).
+Users interact with the program by using keyboard button. The input data is
+then handled within the Screen and then processed by the InputProcessor
+provided by LibGDX Framework to interact with system and update the game state.
 
-
-% -- Outline the key algorithm(s) or approach used for the game logic or AI.
+\subsubsection{Data Formats}
+Data is encapsulate in each classes and Objects being govern by a single
+GameManager and EventManager.
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/github-project.png}}
-    \caption{Optional Process Flow Diagram (replace with your own).}\label{fig:flow_diagram}
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/GameManager.png}}
+    \caption{Data Encapsulation.}\label{fig:gamemanager}
 \end{figure}
+
+\subsubsection{User Interaction}
+The user interface consists of several screens, including the main menu, game
+screen, and settings. Each screen is designed to be intuitive and
+user-friendly. For example, the main menu provides options to start a new game,
+load a saved game, and access settings. During gameplay, users can interact
+with the game through keyboard and consolve inputs.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/interaction.png}}
+    \caption{Interfaces from User to Game Logic.}\label{fig:interaction}
+\end{figure}
+
+\subsection{Algorithm and Pseudocode}
+
+The flood-fill algorithm is a computer graphics algorithm used to determine the
+area connected to a given node in a multi-dimensional array. It is commonly
+used in tools like paint bucket in graphics editors to fill bounded areas with
+color.
+
+In the context of Kingdomino, the flood-fill algorithm is utilized to calculate
+the score by identifying and evaluating connected groups of the same terrain
+type. The algorithm traverses the game board, starting from a given tile, and
+recursively explores all adjacent tiles of the same terrain type. This allows
+the game to efficiently compute the size of each connected terrain group and
+apply the scoring rules based on the number of crowns within these groups.
+
+Below is a pseudocode representation of the recursive 4-way flood-fill
+algorithm:
+
+\begin{algorithm}[htbp]
+    \caption{Flood-fill Algorithm}
+    \KwIn{Tile}
+    \KwOut{Flood-filled region}
+    \If{Tile is not inside Region}{
+        \Return\;
+    }
+    Set the node\;
+    Perform Flood-fill one step to the south of Tile\;
+    Perform Flood-fill one step to the north of Tile\;
+    Perform Flood-fill one step to the west of Tile\;
+    Perform Flood-fill one step to the east of Tile\;
+    \Return\;
+\end{algorithm}
+
+This algorithm is in its original form. For Kingdomino with multiplicative
+scoring system, we need to modify the algorithm to calculate both the spanned
+region (area) and also count the number of crowns within the connected group.
+See Listing~\ref{lst:floodfill} for the implementation details.
+
+To better illustrate the concept of flood-fill, consider the following example
+with a 9$\times$9 grid:
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-start.png}}
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-detected.png}}
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-continue.png}}
+    % \caption{}\label{fig:floodfill-start}
+\end{figure}
+
+In this example, the algorithm starts at the selected tile (highlighted in
+red). It then recursively explores all adjacent tiles of the same terrain type,
+marking them as visited and counting the number of crowns within the connected
+group. The process continues until all connected tiles of the same terrain type
+have been evaluated, resulting in the final score for that terrain group.
 
 %======================================================
 \section{Implementation Details}
 % 6. IMPLEMENTATION DETAILS
 % -- Application structure, GUI details, UML/Class Diagram, used libraries, important code snippets.
 
+\subsection{Game States}
+
+In the implementation of Kingdomino, the game progresses through a series of well-defined states. Each state represents a distinct phase of the game, ensuring a structured flow from the beginning to the end. The primary game states include:
+
+\begin{itemize}
+    \item \textbf{Init}: The initial state where the game components are set up and initialized.
+    \item \textbf{Setup}: This state involves preparing the game board, shuffling tiles, and setting up players for the game.
+    \item \textbf{Turn Start}: Marks the beginning of a player's turn, where the current player and available tiles are determined.
+    \item \textbf{Turn Placing}: The state where the player places their selected tile on the board according to the game rules.
+    \item \textbf{Turn Choosing}: The state where the player selects a tile for the next round.
+    \item \textbf{Turn End}: Concludes the current player's turn and transitions to the next player.
+    \item \textbf{Game Over}: The final state when the game ends, and no more moves can be made.
+    \item \textbf{Results}: Displays the final scores and determines the winner based on the game rules.
+\end{itemize}
+
+Each state transitions to the next based on player actions and game logic. The
+following diagram illustrates the state transitions:
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.55\textwidth]{assets/states.png}}
+    \caption{Game State Transitions.}\label{fig:game_states}
+\end{figure}
+
 \subsection{Application Structure}
 % -- High-level architecture. Possibly a diagram.
 
+\subsubsection{Units of Tile}
+
+Tile is the essential, smallest accessible unit for this game. Tile holds 2
+most important attributes: TerrainType and Number of Crowns.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/unit.png}}
+    \caption{Units of Tile.}\label{fig:unit}
+\end{figure}
+
+Board is 2-dimensional array of type Tile. Though Board has more attributes and
+methods which supports interactions between GameManager and Board, Tile[][] is
+where Tiles being store and perform logic on.
+
+On the other hand, Domino is an interface between human player and Board. It
+holds informations about location, validator, etc., which related to action
+that can be performed on Board (like moving, rotating or placing Domino). The
+actual Domino will not be placed in Board, only the two Tiles that composes
+Domino would be added. Domino will then be discarded.
+
+\subsubsection{Placing Domino}
+
+Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-1.png}}
+    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-2.png}}
+    \caption{Placing Domino.}\label{fig:placing}
+\end{figure}
+
+\subsubsection{Rotating Domino}
+
+Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.55\textwidth]{assets/rotate.png}}
+    \caption{Rotate Domino by moving TileB relative to TileA.}\label{fig:rotate}
+\end{figure}
+
+The rotation logic for the domino can be described as follows:
+
+\[
+    \text{If rotating clockwise:} \quad\boxed{\text{index} = (\text{index} + 1) \mod 4}
+\]
+\[
+    \text{If rotating counter-clockwise:} \quad\boxed{\text{index} = (\text{index} + 3) \mod 4}
+\]
 \subsection{Graphical User Interface (GUI)}
 % -- Describe the interface design, layout, main widgets.
 
@@ -300,21 +483,27 @@ transparency and kept everyone aligned with the project's goals.
 \subsection{Important Code Snippets}
 % -- Show the relevant or tricky parts of your code with explanations.
 
-\begin{figure}[htbp]
-    % \centerline{\includegraphics[width=0.48\textwidth]{placeholder_class_diagram.png}}
-    \caption{UML/Class Diagram (replace with your UML figure).}\label{fig:uml}
-\end{figure}
+\begin{lstlisting}[language=Java, caption={Flood-Fill Algorithm}, label={lst:floodfill}]
+private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
+    if (x < 0 || x >= land.length || y < 0 || y >= land.length) {
+        return 0;
+    }
 
-% Example of a short code snippet:
-\begin{verbatim}
-// Pseudocode or short snippet
-function calculateScore(board):
-    score = 0
-    for each territory in board:
-        if territory is contiguous:
-            score += territory.size * territory.crowns
-    return score
-\end{verbatim}
+    if (land[y][x] == null || visited[y][x] || land[y][x].getTerrain() != terrain) {
+        return 0;
+    }
+    
+
+    totalCrown += land[y][x].getCrown();
+    visited[y][x] = true;
+
+    return 1 +
+            floodFill(x + 1, y, terrain, visited) +
+            floodFill(x - 1, y, terrain, visited) +
+            floodFill(x, y + 1, terrain, visited) +
+            floodFill(x, y - 1, terrain, visited);
+    }
+\end{lstlisting}
 
 %======================================================
 \section{Experimental Results, Statistical Tests, Running Scenarios}
