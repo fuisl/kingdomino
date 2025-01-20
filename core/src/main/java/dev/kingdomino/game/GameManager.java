@@ -501,4 +501,8 @@ public class GameManager {
     public GameState getCurrentState() {
         return currentState;
     }
+
+    public DraftInputProcessor getDraftInputProcessor() {
+        return this.draftInputProcessor;
+    }
 }

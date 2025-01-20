@@ -9,23 +9,7 @@ public class ScreenManager {
     // Handles the switching and construction of screens.
     private Game game;
 
-    // Only a single ScreenManager may exists.
-    private static ScreenManager instance;
-
-    private ScreenManager() {
-        return;
-    }
-
-    public static ScreenManager getInstance() {
-        if (instance == null) {
-            instance = new ScreenManager();
-        }
-
-        return instance;
-    }
-
-    // Initialize with instance of Game
-    public void initialize(Game game) {
+    public ScreenManager(Game game) {
         this.game = game;
     }
 

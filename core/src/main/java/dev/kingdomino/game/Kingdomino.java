@@ -13,11 +13,13 @@ import dev.kingdomino.screen.ScreenManager;
 public class Kingdomino extends Game {
     private SpriteBatch spriteBatch;
     private AssetManager assetManager;
+    private ScreenManager screenManager;
 
     @Override
     public void create() {
         assetManager = new AssetManager();
         spriteBatch = new SpriteBatch();
+        screenManager = new ScreenManager(this);
 
         queueAssets(assetManager);
 
@@ -25,8 +27,7 @@ public class Kingdomino extends Game {
         // Right now this will BLOCK execution until all asset are loaded.
         assetManager.finishLoading();
 
-        ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().showScreen(ScreenEnum.GAMESCREEN, spriteBatch, assetManager);
+        screenManager.showScreen(ScreenEnum.GAMESCREEN, spriteBatch, assetManager);
     }
 
     private void queueAssets(AssetManager assetManager) {
@@ -36,7 +37,7 @@ public class Kingdomino extends Game {
          * the game is not big enough to warrant partial loading.
          * At least, hopefully, I dont want to deal with that mess
          */
-        assetManager.load("tileTextures.atlas", TextureAtlas.class);
+        assetManager.load("gameTextures.atlas", TextureAtlas.class);
         assetManager.load("skin/uiskin.json", Skin.class);
     }
 

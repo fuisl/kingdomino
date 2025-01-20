@@ -29,6 +29,10 @@ public class DraftInputProcessor implements InputProcessor {
         this.selectionIndex = 0;
     }
 
+    public int getSelectionIndex() {
+        return this.selectionIndex;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         if (gameManager.getCurrentState() == GameManager.GameState.TURN_START) {

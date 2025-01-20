@@ -2,7 +2,7 @@
 .devcontainer/
 .github/
 .vscode
-*.tpproj
+/rawAssets
 
 ## Gradle:
 .gradle/

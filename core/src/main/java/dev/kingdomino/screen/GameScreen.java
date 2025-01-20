@@ -44,7 +44,7 @@ public class GameScreen extends AbstractScreen {
         gameManager.update(0f);
         gameManager.update(0f);
         
-        TextureAtlas atlas = assetManager.get("tileTextures.atlas");
+        TextureAtlas atlas = assetManager.get("gameTextures.atlas");
         skin = assetManager.get("skin/uiskin.json");
 
         for (TerrainType name : TerrainType.values()) {
@@ -65,7 +65,7 @@ public class GameScreen extends AbstractScreen {
 
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
-        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay);
+        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay, atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
         controlHintManager = new ControlHintManager(gameManager, skin);
@@ -74,6 +74,8 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void initScreen() {
         rootTable = new Table();
+        
+        // TODO convert to getLayout instead of the current setLayout.
         Table leftInfoLayout = new Table();
         Table rightInfoLayout = new Table();
         Table mainGameLayout = new Table();
