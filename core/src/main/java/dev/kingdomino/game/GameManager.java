@@ -295,7 +295,7 @@ public class GameManager {
                     clearScreen();
 
                     System.out.printf("CHOOSE NEXT DOMINO\n\n");
-                    Domino[] nextRemainingDraft = nextTurn.getRemainingDraft();
+                    Domino[] nextRemainingDraft = nextTurn.getDraft();
                     draftInputProcessor.remainingDrafts = nextRemainingDraft.length;
                     renderQueueWithSelection(nextRemainingDraft, draftInputProcessor.selectionIndex); // TODO: optimize
                     renderStatusChoosing(currentTurn);
