@@ -8,6 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import dev.kingdomino.game.GameManager;
 
+/**
+ * Defines shared implementation detail for RenderManager classes.
+ * 
+ * @author LunaciaDev
+ */
 public abstract class AbstractRenderManager extends Actor {
     protected GameManager gameManager;
     protected PlayerIconActor[] playerIconActors;
@@ -25,11 +30,20 @@ public abstract class AbstractRenderManager extends Actor {
         }
     }
 
+    /**
+     * Generate a {@link Container} wrapping the given {@link Actor}.
+     * 
+     * @param actor The Actor that will be wrapped
+     * @return A {@link Container} containing the given {@link Actor}
+     */
     protected Container<Actor> generateContainer(Actor actor) {
         Container<Actor> containerizedActor = new Container<>(actor);
         containerizedActor.fill();
         return containerizedActor;
     }
 
+    /**
+     * Abstract method to enforce all RenderManagers to have a setLayout method.
+     */
     public abstract void setLayout(Table layout);
 }

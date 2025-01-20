@@ -11,6 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
+/**
+ * A RenderManager specialize in handling the player information at the top of Game Screen,
+ * automatically updating that based on the current {@link GameState}.
+ * 
+ * @author LunaciaDev
+ */
 public class MainBoardHUDManager extends Actor {
     // not extending AbstractRenderManager here as we do not need to render all 4 player at once.
 
@@ -41,6 +47,12 @@ public class MainBoardHUDManager extends Actor {
             .pad(15);
     }
 
+    /**
+     * Generate a {@link Container} wrapping the given {@link Actor}.
+     * 
+     * @param actor The Actor that will be wrapped
+     * @return A {@link Container} containing the given {@link Actor}
+     */
     private Container<Actor> generateContainer(Actor actor) {
         Container<Actor> containerizedActor = new Container<>(actor);
         containerizedActor.fill();

@@ -10,6 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
+/**
+ * A RenderManager specialize in showing the turn order on the left side,
+ * automatically updating that based on the current {@link GameState}.
+ * 
+ * @author LunaciaDev
+ */
 public class TurnOrderRenderManager extends Actor {
     protected GameManager gameManager;
     protected PlayerIconActor[] playerIconActors;

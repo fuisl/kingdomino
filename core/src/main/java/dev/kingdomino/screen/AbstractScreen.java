@@ -4,11 +4,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * Defines shared implementation detail for Screens. Extends this class instead of directly implementing
+ * {@link Screen}.
+ * 
+ * @author LunaciaDev
+ */
 public abstract class AbstractScreen implements Screen {
     protected SpriteBatch spriteBatch;
     protected AssetManager assetManager;
-
-    // TODO: populate with basic works shared by all screen
 
     // TODO: convert this into variable Object parameter as it is only getting worse hardcoding EVERYTHING
     // I have to update like 3 different file to pass the assetManager in...

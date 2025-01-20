@@ -9,6 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
+/**
+ * A RenderManager specialize in handling the Leaderboard to the left of the Game Screen,
+ * automatically updating that based on the current {@link GameState}.
+ * 
+ * @author LunaciaDev
+ */
 public class LeaderboardRenderManager extends AbstractRenderManager {
     private Label[] pointLabels;
 

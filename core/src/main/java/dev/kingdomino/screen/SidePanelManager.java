@@ -10,6 +10,11 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
+/**
+ * Manage the Actors of the right-side panel of the screen.
+ * 
+ * @author LunaciaDev
+ */
 public class SidePanelManager extends Actor {
     private SideBoardActor[] sideBoardActors;
     private FitViewport tableViewport;
@@ -53,7 +58,13 @@ public class SidePanelManager extends Actor {
             layout.row();
         }
     }
-
+    
+    /**
+     * Generate a {@link Container} wrapping the given {@link Actor}.
+     * 
+     * @param actor The Actor that will be wrapped
+     * @return A {@link Container} containing the given {@link Actor}
+     */
     private Container<Actor> generateContainer(Actor actor) {
         Container<Actor> containerizedActor = new Container<>(actor);
         containerizedActor.fill();

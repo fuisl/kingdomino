@@ -5,6 +5,7 @@ import static java.lang.Math.round;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -13,6 +14,14 @@ import dev.kingdomino.game.Position;
 import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
 
+/**
+ * An {@link Actor} specialize in drawing the Game Board. Unlike other Actors, this has its own {@link FitViewport}
+ * to draw with and thus having finer control on the drawing process. This actor does not implement sizing preferences,
+ * and thus must be wrapped in a {@link Container} to be used. Failure to do so will cause its height/width to be 0,
+ * making it not drawing anything.
+ * 
+ * @author LunaciaDev
+ */
 public class MainBoardActor extends Actor {
     private Tile[][] boardTiles;
     private TextureRegion[] crownOverlay;
@@ -30,7 +39,8 @@ public class MainBoardActor extends Actor {
 
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
-
+        
+        // update the viewport positions in case if the screen size has changed
         tableViewport.update(round(getWidth()), round(getHeight()));
         tableViewport.setScreenPosition(
             round(getX()) + tableViewport.getLeftGutterWidth(),
@@ -55,6 +65,7 @@ public class MainBoardActor extends Actor {
         Position tileAPosition = currentDomino.getPosTileA();
         Position tileBPosition = currentDomino.getPosTileB();
 
+        // Blink the hovering domino if the placement is invalid
         if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID)  {
             endCustomRender(batch);
             return;
@@ -74,16 +85,27 @@ public class MainBoardActor extends Actor {
     private void endCustomRender(Batch batch) {
         batch.end();
 
+        // return the batch state to its original state.
         gameViewport.apply();
         batch.setProjectionMatrix(gameViewport.getCamera().combined);
 
         batch.begin();
     }
 
+    /**
+     * Set the Game Board to be drawn. Must be called before drawing.
+     * 
+     * @param boardTiles The Game Board to be drawn
+     */
     public void setBoard(Tile[][] boardTiles) {
         this.boardTiles = boardTiles;
     }
 
+    /**
+     * Set the {@link Domino} that is being placed. Must be called before drawing.
+     * 
+     * @param currentDomino The Domino that is currently being placed
+     */
     public void setCurrentDomino(Domino currentDomino) {
         this.currentDomino = currentDomino;
     }

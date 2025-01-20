@@ -8,6 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import dev.kingdomino.game.Domino;
 
+/**
+ * An {@link Actor} specialize in drawing {@link Domino}. This actor does not implement sizing preferences, and thus
+ * must be wrapped in a {@link Container} to be used. Failure to do so will cause its height/width to be 0, making it
+ * not drawing anything.
+ * 
+ * @see com.badlogic.gdx.scenes.scene2d.ui.Container
+ * 
+ * @author LunaciaDev
+ */
 public class DominoActor extends Actor {
     private Domino domino;
     private TextureRegion[] crownOverlay;
@@ -17,6 +26,9 @@ public class DominoActor extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
+        /**
+         * Since the domino is drawn cell-by-cell, we need to figure out the position of each cell on screen.
+         */
         float textureSize = min(getWidth()/2, getHeight());
         float padding = (getWidth() - textureSize*2)/2;
 

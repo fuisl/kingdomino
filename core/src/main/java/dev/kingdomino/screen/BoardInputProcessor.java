@@ -14,6 +14,13 @@ import dev.kingdomino.game.Position;
 import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
 
+/**
+ * Handles input during the placement phase of the game. Only one should exist at any given time,
+ * however Singleton Pattern is actively discouraged due to unexpected behavior in mobile platform,
+ * thus make sure that there is no instance of this before generating a new one.
+ * 
+ * @author fuisl
+ */
 public class BoardInputProcessor extends AbstractInputProcessor {
     private EventManager eventManager = EventManager.getInstance();
     private GameManager gameManager;
@@ -31,9 +38,9 @@ public class BoardInputProcessor extends AbstractInputProcessor {
     public boolean valid;
     public boolean keylocked = false;
 
-    public BoardInputProcessor(GameManager gm) {
-        this.gameManager = gm;
-        this.currentDomino = gm.getCurrentDomino();
+    public BoardInputProcessor(GameManager gameManager) {
+        this.gameManager = gameManager;
+        this.currentDomino = gameManager.getCurrentDomino();
         this.updated = true;
         this.valid = false;
         this.exit = false;

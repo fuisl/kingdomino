@@ -13,6 +13,12 @@ import dev.kingdomino.game.King;
 import dev.kingdomino.game.Turn;
 import dev.kingdomino.game.GameManager.GameState;
 
+/**
+ * A RenderManager specialize in showing next round's {@link Domino} on the left side,
+ * automatically updating that based on the current {@link GameState}.
+ * 
+ * @author LunaciaDev
+ */
 public class NextDominoRenderManager extends AbstractRenderManager {
     private DominoActor[] dominoActors;
     private HighlightActor[] highlightActors;
@@ -89,6 +95,9 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         highlightActors[currentSelection].setVisible(true);
     }
 
+    /**
+     * Hide all highlight actors.
+     */
     private void hideAllHighlighter() {
         for (int i = 0; i < kingCount; i++) {
             highlightActors[i].setVisible(false);

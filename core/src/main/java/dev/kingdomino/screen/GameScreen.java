@@ -17,6 +17,11 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.TerrainType;
 
+/**
+ * The main game screen of Kingdomino.
+ * 
+ * @author LunaciaDev
+ */
 public class GameScreen extends AbstractScreen {
     private Stage stage;
     private GameManager gameManager;
@@ -33,6 +38,10 @@ public class GameScreen extends AbstractScreen {
     private Table rootTable;
     private Skin skin;
 
+    /**
+     * Create an instance of GameScreen with an instance of {@link SpriteBatch} and {@link AssetManager}.
+     * The class does not generate nor manage the instances of those.
+     */
     public GameScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
         super(spriteBatch, assetManager);
         screenViewport = new ScreenViewport();
@@ -43,7 +52,7 @@ public class GameScreen extends AbstractScreen {
         // why do you need to be pinged twice...?
         gameManager.update(0f);
         gameManager.update(0f);
-        
+
         TextureAtlas atlas = assetManager.get("gameTextures.atlas");
         skin = assetManager.get("skin/uiskin.json");
 
@@ -65,16 +74,18 @@ public class GameScreen extends AbstractScreen {
 
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
-        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay, atlas.findRegion("highlight"));
+        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay,
+                atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
         controlHintManager = new ControlHintManager(gameManager, skin);
     }
-
+    
     @Override
     public void initScreen() {
+        // welcome to the world of Layout-by-Code. Please make yourself at home.
         rootTable = new Table();
-        
+
         // TODO convert to getLayout instead of the current setLayout.
         Table leftInfoLayout = new Table();
         Table rightInfoLayout = new Table();
@@ -96,31 +107,31 @@ public class GameScreen extends AbstractScreen {
         turnOrderRenderManager.setLayout(turnOrderLayout);
 
         leftInfoLayout.add(turnOrderLayout)
-            .height(Value.percentHeight(0.37f, leftInfoLayout))
-            .expandX()
-            .fill()
-            .pad(15);
+                .height(Value.percentHeight(0.37f, leftInfoLayout))
+                .expandX()
+                .fill()
+                .pad(15);
 
         leftInfoLayout.row();
 
         nextDominoRenderManager.setLayout(nextDominoLayout);
 
         leftInfoLayout.add(nextDominoLayout)
-            .height(Value.percentHeight(0.27f, leftInfoLayout))
-            .expandX()
-            .fill()
-            .pad(15);
+                .height(Value.percentHeight(0.27f, leftInfoLayout))
+                .expandX()
+                .fill()
+                .pad(15);
 
         leaderboardRenderManager.setLayout(leaderboardLayout);
 
         leftInfoLayout.row();
 
         leftInfoLayout.add(leaderboardLayout)
-            .height(Value.percentHeight(0.27f, leftInfoLayout))
-            .expandX()
-            .fill()
-            .pad(15);
-    
+                .height(Value.percentHeight(0.27f, leftInfoLayout))
+                .expandX()
+                .fill()
+                .pad(15);
+
         mainBoardHUDManager.setLayout(mainBoardHUDLayout);
         mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.08f, mainGameLayout)).expandX().fill();
         mainGameLayout.row();
@@ -152,11 +163,13 @@ public class GameScreen extends AbstractScreen {
         // update the actors with new informations
         // TODO remove this once we have a proper screen covering this part
         // in theory we can supplement a default board to deal with
-        if (gameManager.getCurrentKing() == null) return;
+        if (gameManager.getCurrentKing() == null)
+            return;
 
+        // TODO move to mainBoardActor.act()
         mainBoardActor.setBoard(gameManager.getBoard().getLand());
         mainBoardActor.setCurrentDomino(gameManager.getCurrentDomino());
-        
+
         ScreenUtils.clear(Color.DARK_GRAY);
         stage.act(delta);
         stage.draw();

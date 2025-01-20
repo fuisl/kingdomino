@@ -5,11 +5,20 @@ import static java.lang.Math.round;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import dev.kingdomino.game.Tile;
 
+/**
+ * An {@link Actor} specialize in drawing inactive Game Boards. Unlike other Actors, these share their own {@link FitViewport}
+ * to draw with and thus having finer control on the drawing process. This actor does not implement sizing preferences,
+ * and thus must be wrapped in a {@link Container} to be used. Failure to do so will cause its height/width to be 0,
+ * making it not drawing anything.
+ * 
+ * @author LunaciaDev
+ */
 public class SideBoardActor extends Actor {
     private Tile[][] boardTiles;
     private TextureRegion[] crownOverlay;
@@ -18,10 +27,13 @@ public class SideBoardActor extends Actor {
     private ScreenViewport gameViewport;
     private int kingID;
     
-    public SideBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, FitViewport tableViewport, TextureRegion[] kingAvatar) {
+    /**
+     * Initialize the Actor. The same tableView should be supplied for all instances of this.
+     */
+    public SideBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, FitViewport tableView, TextureRegion[] kingAvatar) {
         this.crownOverlay = crownOverlay;
         this.gameViewport = screenViewport;
-        this.tableViewport = tableViewport;
+        this.tableViewport = tableView;
         this.kingAvatar = kingAvatar;
     }
 
@@ -56,10 +68,20 @@ public class SideBoardActor extends Actor {
         batch.begin();
     }
 
+    /**
+     * Set the Game Board to be drawn. Must be called before drawing.
+     * 
+     * @param boardTiles The Game Board to be drawn
+     */
     public void setBoard(Tile[][] boardTiles) {
         this.boardTiles = boardTiles;
     }
 
+    /**
+     * Set which King this board belong to. Must be called before drawing.
+     * 
+     * @param kingID Internal ID of the King the board belong to.
+     */
     public void setKingID(int kingID) {
         this.kingID = kingID;
     }

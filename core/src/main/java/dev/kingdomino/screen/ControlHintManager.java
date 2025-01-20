@@ -8,7 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 import dev.kingdomino.game.GameManager;
 
-public class ControlHintManager extends Actor{
+/**
+ * A RenderManager specialize in handling the Control Hint at the bottom of {@link GameScreen},
+ * automatically updating that based on the current {@link GameState}.
+ * 
+ * @author LunaciaDev
+ */
+public class ControlHintManager extends Actor {
     // not extending AbstractRenderManager here as we do not need to render all 4 player at once.
 
     private GameManager gameManager;
