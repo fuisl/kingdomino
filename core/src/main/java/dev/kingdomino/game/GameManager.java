@@ -181,6 +181,8 @@ public class GameManager {
         placingDomino = true;
         if (boardInputProcessor.exit && boardInputProcessor.valid) {
             currentBoard.getScoringSystem().calculateLandScore();
+            // update score var after placing domino
+            results();
             if (finalTurn) {
                 currentState = GameState.TURN_END;
             } else {
@@ -510,5 +512,9 @@ public class GameManager {
 
     public DraftInputProcessor getDraftInputProcessor() {
         return this.draftInputProcessor;
+    }
+
+    public Map<King, int[]> getScores() {
+        return scores;
     }
 }

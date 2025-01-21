@@ -1,5 +1,7 @@
 package dev.kingdomino.screen;
 
+import java.util.Map;
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -56,13 +58,14 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
 
     @Override
     public void act(float delta) {
-        // TODO nab a sorted version of this.
-        King[] kings = gameManager.getAllKing();
+        Map<King, int[]> scores = gameManager.getScores();
+
+        if (scores == null) return;
 
         int position = 0;
-        for (King king : kings) {
-            playerIconActors[position].setKingID(king.getId());
-            pointLabels[position].setText(king.getBoard().getScoringSystem().getBoardTotal() + "pt");
+        for (Map.Entry<King, int[]> entry : scores.entrySet()) {
+            playerIconActors[position].setKingID(entry.getKey().getId());
+            pointLabels[position].setText(entry.getValue()[2] + "pt");
             position++;
         }
     }
