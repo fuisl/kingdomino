@@ -16,10 +16,12 @@ import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
 
 /**
- * An {@link Actor} specialize in drawing the Game Board. Unlike other Actors, this has its own {@link FitViewport}
- * to draw with and thus having finer control on the drawing process. This actor does not implement sizing preferences,
- * and thus must be wrapped in a {@link Container} to be used. Failure to do so will cause its height/width to be 0,
- * making it not drawing anything.
+ * An {@link Actor} specialize in drawing the Game Board. Unlike other Actors,
+ * this has its own {@link FitViewport} to draw with and thus having finer
+ * control on the drawing process. This actor does not implement sizing
+ * preferences, and thus must be wrapped in a {@link Container} to be used.
+ * Failure to do so will cause its height/width to be 0, making it not drawing
+ * anything.
  * 
  * @author LunaciaDev
  */
@@ -30,7 +32,7 @@ public class MainBoardActor extends Actor {
     private ScreenViewport gameViewport;
     private Domino currentDomino;
     private GameManager gameManager;
-    
+
     public MainBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, GameManager gameManager) {
         this.gameManager = gameManager;
         this.crownOverlay = crownOverlay;
@@ -53,9 +55,10 @@ public class MainBoardActor extends Actor {
         for (int i = 0; i < 9; i++) {
             for (int j = boardTiles[0].length - 1; j >= 0; j--) {
                 if (boardTiles[i][j] != null) {
-                    // the coordinate system of the screen has origin at bottom left instead of top left
-                    batch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length-i-1, 1, 1);
-                    batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length-i-1, 1, 1);
+                    // the coordinate system of the screen has origin at bottom left instead of top
+                    // left
+                    batch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length - i - 1, 1, 1);
+                    batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length - i - 1, 1, 1);
                 }
             }
         }
@@ -66,17 +69,17 @@ public class MainBoardActor extends Actor {
         Position tileBPosition = currentDomino.getPosTileB();
 
         // Blink the hovering domino if the placement is invalid
-        if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID)  {
+        if (tileA.getTerrain() == TerrainType.INVALID || tileB.getTerrain() == TerrainType.INVALID) {
             endCustomRender(batch);
             return;
         }
 
         batch.setColor(1f, 1f, 1f, 0.5f);
 
-        batch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-        batch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8-tileAPosition.y(), 1, 1);
-        batch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
-        batch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8-tileBPosition.y(), 1, 1);
+        batch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8 - tileAPosition.y(), 1, 1);
+        batch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8 - tileAPosition.y(), 1, 1);
+        batch.draw(tileB.getTerrain().getTexture(), tileBPosition.x(), 8 - tileBPosition.y(), 1, 1);
+        batch.draw(crownOverlay[tileB.getCrown()], tileBPosition.x(), 8 - tileBPosition.y(), 1, 1);
 
         batch.setColor(1f, 1f, 1f, 1f);
         endCustomRender(batch);
@@ -94,13 +97,12 @@ public class MainBoardActor extends Actor {
 
     private void startCustomRender(Batch batch) {
         batch.end();
-        
+
         // update the viewport positions in case if the screen size has changed
         tableViewport.update(round(getWidth()), round(getHeight()));
         tableViewport.setScreenPosition(
-            round(getX()) + tableViewport.getLeftGutterWidth(),
-            round(getY()) + tableViewport.getBottomGutterHeight()
-        );
+                round(getX()) + tableViewport.getLeftGutterWidth(),
+                round(getY()) + tableViewport.getBottomGutterHeight());
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();

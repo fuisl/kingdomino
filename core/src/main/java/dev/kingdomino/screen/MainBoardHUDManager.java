@@ -12,39 +12,45 @@ import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
 /**
- * A RenderManager specialize in handling the player information at the top of Game Screen,
- * automatically updating that based on the current {@link GameState}.
+ * A RenderManager specialize in handling the player information at the top of
+ * Game Screen, automatically updating that based on the current
+ * {@link GameState}.
  * 
  * @author LunaciaDev
  */
 public class MainBoardHUDManager extends Actor {
-    // not extending AbstractRenderManager here as we do not need to render all 4 player at once.
+    // not extending AbstractRenderManager here as we do not need to render all 4
+    // player at once.
 
     private GameManager gameManager;
     private PlayerIconActor playerIconActor;
-    //private Label playerName;
+    // private Label playerName;
     private Label playerScore;
 
     public MainBoardHUDManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
         this.gameManager = gameManager;
 
         this.playerIconActor = new PlayerIconActor(kingAvatar);
-        //this.playerName = new Label("Placeholder", skin);
+        // this.playerName = new Label("Placeholder", skin);
         this.playerScore = new Label("Placeholder", skin);
     }
 
-    public void setLayout(Table layout) {
+    public Table getLayout() {
+        Table layout = new Table();
+
         layout.add(generateContainer(playerIconActor))
-            .width(Value.percentHeight(1f, layout))
-            .expandY()
-            .fill()
-            .padLeft(15);
+                .width(Value.percentHeight(1f, layout))
+                .expandY()
+                .fill()
+                .padLeft(15);
         // are we adding player name..?
-        //layout.add(generateContainer(playerName)).expand().fill();
+        // layout.add(generateContainer(playerName)).expand().fill();
         layout.add(playerScore)
-            .right()
-            .expand()
-            .pad(15);
+                .right()
+                .expand()
+                .pad(15);
+
+        return layout;
     }
 
     /**

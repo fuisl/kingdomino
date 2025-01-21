@@ -12,10 +12,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import dev.kingdomino.game.Tile;
 
 /**
- * An {@link Actor} specialize in drawing inactive Game Boards. Unlike other Actors, these share their own {@link FitViewport}
- * to draw with and thus having finer control on the drawing process. This actor does not implement sizing preferences,
- * and thus must be wrapped in a {@link Container} to be used. Failure to do so will cause its height/width to be 0,
- * making it not drawing anything.
+ * An {@link Actor} specialize in drawing inactive Game Boards. Unlike other
+ * Actors, these share their own {@link FitViewport} to draw with and thus
+ * having finer control on the drawing process. This actor does not implement
+ * sizing preferences, and thus must be wrapped in a {@link Container} to be
+ * used. Failure to do so will cause its height/width to be 0, making it not
+ * drawing anything.
  * 
  * @author LunaciaDev
  */
@@ -26,11 +28,13 @@ public class SideBoardActor extends Actor {
     private FitViewport tableViewport;
     private ScreenViewport gameViewport;
     private int kingID;
-    
+
     /**
-     * Initialize the Actor. The same tableView should be supplied for all instances of this.
+     * Initialize the Actor. The same tableView should be supplied for all instances
+     * of this.
      */
-    public SideBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, FitViewport tableView, TextureRegion[] kingAvatar) {
+    public SideBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, FitViewport tableView,
+            TextureRegion[] kingAvatar) {
         this.crownOverlay = crownOverlay;
         this.gameViewport = screenViewport;
         this.tableViewport = tableView;
@@ -44,9 +48,8 @@ public class SideBoardActor extends Actor {
 
         tableViewport.update(round(getWidth()), round(getHeight()), true);
         tableViewport.setScreenPosition(
-            round(getX()) + tableViewport.getLeftGutterWidth(),
-            round(getY()) + tableViewport.getBottomGutterHeight()
-        );
+                round(getX()) + tableViewport.getLeftGutterWidth(),
+                round(getY()) + tableViewport.getBottomGutterHeight());
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();
@@ -54,9 +57,10 @@ public class SideBoardActor extends Actor {
         for (int i = 0; i < 9; i++) {
             for (int j = boardTiles[0].length - 1; j >= 0; j--) {
                 if (boardTiles[i][j] != null) {
-                    // the coordinate system of the screen has origin at bottom left instead of top left
-                    batch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length-i-1, 1, 1);
-                    batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length-i-1, 1, 1);
+                    // the coordinate system of the screen has origin at bottom left instead of top
+                    // left
+                    batch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length - i - 1, 1, 1);
+                    batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length - i - 1, 1, 1);
                 }
             }
         }

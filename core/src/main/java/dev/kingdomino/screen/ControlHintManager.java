@@ -9,13 +9,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import dev.kingdomino.game.GameManager;
 
 /**
- * A RenderManager specialize in handling the Control Hint at the bottom of {@link GameScreen},
+ * A RenderManager specialize in handling the Control Hint at the bottom of
+ * {@link GameScreen},
  * automatically updating that based on the current {@link GameState}.
  * 
  * @author LunaciaDev
  */
 public class ControlHintManager extends Actor {
-    // not extending AbstractRenderManager here as we do not need to render all 4 player at once.
+    // not extending AbstractRenderManager here as we do not need to render all 4
+    // player at once.
 
     private GameManager gameManager;
     private Label controlHint;
@@ -35,7 +37,8 @@ public class ControlHintManager extends Actor {
             case RESULTS:
                 break;
             case TURN_CHOOSING:
-                controlHint.setText("Use W, S to choose the domino to play on next round, X to confirm. The position determine the play order next round.");
+                controlHint.setText(
+                        "Use W, S to choose the domino to play on next round, X to confirm. The position determine the play order next round.");
                 break;
             case TURN_PLACING:
                 controlHint.setText("Use W, A, S, D to move the domino; Q, E to rotate; X to place; C to discard.");

@@ -14,8 +14,8 @@ import dev.kingdomino.game.Turn;
 import dev.kingdomino.game.GameManager.GameState;
 
 /**
- * A RenderManager specialize in showing next round's {@link Domino} on the left side,
- * automatically updating that based on the current {@link GameState}.
+ * A RenderManager specialize in showing next round's {@link Domino} on the left
+ * side, automatically updating that based on the current {@link GameState}.
  * 
  * @author LunaciaDev
  */
@@ -25,7 +25,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     private DraftInputProcessor draftInputProcessor;
 
     public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin,
-                                   TextureRegion[] crownOverlay, TextureRegion selectionOverlay) {
+            TextureRegion[] crownOverlay, TextureRegion selectionOverlay) {
 
         super(gameManager, kingAvatar, skin);
 
@@ -40,15 +40,17 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         draftInputProcessor = gameManager.getDraftInputProcessor();
     }
 
-    @Override 
-    public void setLayout(Table layout) {
+    @Override
+    public Table getLayout() {
+        Table layout = new Table();
+
         layout.add(new Label("Next Dominoes", skin));
         layout.row();
 
         for (int i = 0; i < kingCount; i++) {
             Stack stack = new Stack();
             stack.add(generateContainer(highlightActors[i]));
-            
+
             Table row = new Table();
             row.pad(5);
             row.add(generateContainer(dominoActors[i])).expand().fill();
@@ -59,6 +61,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             layout.add(stack).expand().fill();
             layout.row();
         }
+
+        return layout;
     }
 
     @Override
@@ -87,7 +91,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
         hideAllHighlighter();
 
-        if (gameManager.getCurrentState() != GameState.TURN_CHOOSING) return;
+        if (gameManager.getCurrentState() != GameState.TURN_CHOOSING)
+            return;
 
         int currentSelection = draftInputProcessor.getSelectionIndex();
 

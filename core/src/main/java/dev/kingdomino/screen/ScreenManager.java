@@ -6,8 +6,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
- * Manage GameScreens. All Screen switching should be done via an instance of this class, as
- * it will ensure all required preparation is done.
+ * Manage GameScreens. All Screen switching should be done via an instance of
+ * this class, as it will ensure all required preparation is done.
  * 
  * @author LunaciaDev
  */
@@ -28,6 +28,7 @@ public class ScreenManager {
         newScreen.initScreen();
         game.setScreen(newScreen);
 
-        if (currentScreen != null) currentScreen.dispose();
+        if (currentScreen != null)
+            currentScreen.dispose();
     }
 }

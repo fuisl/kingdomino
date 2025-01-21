@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 /**
- * An {@link Actor} specialize in drawing Player Icons. This actor does not implement sizing preferences, and thus
- * must be wrapped in a {@link Container} to be used. Failure to do so will cause its height/width to be 0, making it
+ * An {@link Actor} specialize in drawing Player Icons. This actor does not
+ * implement sizing preferences, and thus must be wrapped in a {@link Container}
+ * to be used. Failure to do so will cause its height/width to be 0, making it
  * not drawing anything.
  * 
  * @see com.badlogic.gdx.scenes.scene2d.ui.Container
@@ -24,15 +25,17 @@ public class PlayerIconActor extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        if (kingID == -1) return;
+        if (kingID == -1)
+            return;
         float textureSize = min(getWidth(), getHeight());
-        float offsetX = getWidth()/2 - textureSize/2;
+        float offsetX = getWidth() / 2 - textureSize / 2;
 
         batch.draw(kingAvatar[kingID], getX() + offsetX, getY(), textureSize, textureSize);
     }
 
     /**
-     * Set which King icon will be drawn based on the King's internal ID. Must be called before drawing.
+     * Set which King icon will be drawn based on the King's internal ID. Must be
+     * called before drawing.
      * 
      * @param kingID Internal ID of the King that will be drawn
      */

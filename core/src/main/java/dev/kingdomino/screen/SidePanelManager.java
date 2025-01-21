@@ -21,13 +21,15 @@ public class SidePanelManager extends Actor {
     private GameManager gameManager;
     private int kingCount;
 
-    public SidePanelManager(GameManager gameManager, TextureRegion[] crownOverlay, ScreenViewport screenViewport, TextureRegion[] kingAvatar) {
+    public SidePanelManager(GameManager gameManager, TextureRegion[] crownOverlay, ScreenViewport screenViewport,
+            TextureRegion[] kingAvatar) {
         this.gameManager = gameManager;
         kingCount = gameManager.getKingCount();
-        
+
         // clamping as 2 king game has 4 boards
         // 4 king game has 4 board, 3 king game has 3 board.
-        if (kingCount == 2) kingCount = 4;
+        if (kingCount == 2)
+            kingCount = 4;
         kingCount -= 1;
 
         sideBoardActors = new SideBoardActor[kingCount];
@@ -45,20 +47,25 @@ public class SidePanelManager extends Actor {
         int index = 0;
 
         for (King king : gameManager.getAllKing()) {
-            if (king == gameManager.getCurrentKing()) continue;
+            if (king == gameManager.getCurrentKing())
+                continue;
             sideBoardActors[index].setBoard(king.getBoard().getLand());
             sideBoardActors[index].setKingID(king.getId());
             index++;
         }
     }
 
-    public void setLayout(Table layout) {
+    public Table getLayout() {
+        Table layout = new Table();
+
         for (int i = 0; i < kingCount; i++) {
             layout.add(generateContainer(sideBoardActors[i])).expand().fill();
             layout.row();
         }
+
+        return layout;
     }
-    
+
     /**
      * Generate a {@link Container} wrapping the given {@link Actor}.
      * 

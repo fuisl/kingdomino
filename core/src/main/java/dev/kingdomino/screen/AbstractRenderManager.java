@@ -24,7 +24,7 @@ public abstract class AbstractRenderManager extends Actor {
         this.kingCount = gameManager.getKingCount();
         this.playerIconActors = new PlayerIconActor[kingCount];
         this.skin = skin;
-        
+
         for (int i = 0; i < kingCount; i++) {
             playerIconActors[i] = new PlayerIconActor(kingAvatar);
         }
@@ -45,5 +45,5 @@ public abstract class AbstractRenderManager extends Actor {
     /**
      * Abstract method to enforce all RenderManagers to have a setLayout method.
      */
-    public abstract void setLayout(Table layout);
+    public abstract Table getLayout();
 }

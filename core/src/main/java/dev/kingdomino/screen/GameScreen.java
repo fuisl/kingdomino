@@ -39,8 +39,9 @@ public class GameScreen extends AbstractScreen {
     private Skin skin;
 
     /**
-     * Create an instance of GameScreen with an instance of {@link SpriteBatch} and {@link AssetManager}.
-     * The class does not generate nor manage the instances of those.
+     * Create an instance of GameScreen with an instance of {@link SpriteBatch} and
+     * {@link AssetManager}. The class does not generate nor manage the instances of
+     * those.
      */
     public GameScreen(SpriteBatch spriteBatch, AssetManager assetManager) {
         super(spriteBatch, assetManager);
@@ -81,20 +82,14 @@ public class GameScreen extends AbstractScreen {
         controlHintManager = new ControlHintManager(gameManager, skin);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
     }
-    
+
     @Override
     public void initScreen() {
         // welcome to the world of Layout-by-Code. Please make yourself at home.
         rootTable = new Table();
 
-        // TODO convert to getLayout instead of the current setLayout.
         Table leftInfoLayout = new Table();
-        Table rightInfoLayout = new Table();
         Table mainGameLayout = new Table();
-        Table turnOrderLayout = new Table();
-        Table leaderboardLayout = new Table();
-        Table nextDominoLayout = new Table();
-        Table mainBoardHUDLayout = new Table();
 
         rootTable.setFillParent(true);
         stage.addActor(rootTable);
@@ -105,9 +100,7 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(mainBoardHUDManager);
         stage.addActor(controlHintManager);
 
-        turnOrderRenderManager.setLayout(turnOrderLayout);
-
-        leftInfoLayout.add(turnOrderLayout)
+        leftInfoLayout.add(turnOrderRenderManager.getLayout())
                 .height(Value.percentHeight(0.37f, leftInfoLayout))
                 .expandX()
                 .fill()
@@ -115,40 +108,47 @@ public class GameScreen extends AbstractScreen {
 
         leftInfoLayout.row();
 
-        nextDominoRenderManager.setLayout(nextDominoLayout);
-
-        leftInfoLayout.add(nextDominoLayout)
+        leftInfoLayout.add(nextDominoRenderManager.getLayout())
                 .height(Value.percentHeight(0.27f, leftInfoLayout))
                 .expandX()
                 .fill()
                 .pad(15);
-
-        leaderboardRenderManager.setLayout(leaderboardLayout);
 
         leftInfoLayout.row();
 
-        leftInfoLayout.add(leaderboardLayout)
+        leftInfoLayout.add(leaderboardRenderManager.getLayout())
                 .height(Value.percentHeight(0.27f, leftInfoLayout))
                 .expandX()
                 .fill()
                 .pad(15);
 
-        mainBoardHUDManager.setLayout(mainBoardHUDLayout);
-        mainGameLayout.add(mainBoardHUDLayout).height(Value.percentHeight(0.08f, mainGameLayout)).expandX().fill();
+        mainGameLayout.add(mainBoardHUDManager.getLayout())
+                .height(Value.percentHeight(0.08f, mainGameLayout))
+                .expandX()
+                .fill();
+
         mainGameLayout.row();
 
         Container<Actor> container = new Container<>(mainBoardActor);
         container.fill();
         mainGameLayout.add(container).expand().fill();
         mainGameLayout.row();
-        
+
         controlHintManager.setLayout(mainGameLayout);
 
-        sidePanelManager.setLayout(rightInfoLayout);
+        rootTable.add(leftInfoLayout)
+                .width(Value.percentWidth(0.14f, rootTable))
+                .expandY()
+                .fill();
 
-        rootTable.add(leftInfoLayout).width(Value.percentWidth(0.14f, rootTable)).expandY().fill();
-        rootTable.add(mainGameLayout).expand().fill();
-        rootTable.add(rightInfoLayout).width(Value.percentWidth(0.2f, rootTable)).expandY().fill();
+        rootTable.add(mainGameLayout)
+                .expand()
+                .fill();
+
+        rootTable.add(sidePanelManager.getLayout())
+                .width(Value.percentWidth(0.2f, rootTable))
+                .expandY()
+                .fill();
 
         // TODO remove this line once we are done with layout
         stage.setDebugAll(true);

@@ -27,22 +27,26 @@ public class TurnOrderRenderManager extends Actor {
         this.kingCount = gameManager.getKingCount();
         this.playerIconActors = new PlayerIconActor[5];
         this.skin = skin;
-        
+
         for (int i = 0; i < 5; i++) {
             playerIconActors[i] = new PlayerIconActor(kingAvatar);
         }
     }
 
-    public void setLayout(Table layout) {
+    public Table getLayout() {
+        Table layout = new Table();
+
         layout.add(new Label("Turn Order", skin)).colspan(kingCount);
         layout.row();
         for (int i = 0; i < 5; i++) {
             layout.add(generateContainer(playerIconActors[i]))
-                .expand()
-                .fill();
+                    .expand()
+                    .fill();
 
             layout.row();
         }
+
+        return layout;
     }
 
     protected Container<Actor> generateContainer(Actor actor) {
@@ -53,7 +57,8 @@ public class TurnOrderRenderManager extends Actor {
 
     @Override
     public void act(float delta) {
-        if (gameManager.getNextTurn() == null) return;
+        if (gameManager.getNextTurn() == null)
+            return;
 
         King[] currentTurnOrder = gameManager.getCurrentTurn().getKings();
         int currentTurnIndex = gameManager.getCurrentTurn().getCurrentIndex();
@@ -75,7 +80,7 @@ public class TurnOrderRenderManager extends Actor {
                     for (; i < 5; i++) {
                         playerIconActors[i].setKingID(-1);
                     }
-                    
+
                     return;
                 }
             }
