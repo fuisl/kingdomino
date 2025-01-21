@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.GameManager.GameState;
 import dev.kingdomino.game.King;
 
 /**
@@ -16,21 +17,9 @@ import dev.kingdomino.game.King;
  * 
  * @author LunaciaDev
  */
-public class TurnOrderRenderManager extends Actor {
-    protected GameManager gameManager;
-    protected PlayerIconActor[] playerIconActors;
-    protected int kingCount;
-    protected Skin skin;
-
+public class TurnOrderRenderManager extends AbstractRenderManager {
     public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
-        this.gameManager = gameManager;
-        this.kingCount = gameManager.getKingCount();
-        this.playerIconActors = new PlayerIconActor[5];
-        this.skin = skin;
-
-        for (int i = 0; i < 5; i++) {
-            playerIconActors[i] = new PlayerIconActor(kingAvatar);
-        }
+        super(gameManager, kingAvatar, skin);
     }
 
     public Table getLayout() {
@@ -38,7 +27,8 @@ public class TurnOrderRenderManager extends Actor {
 
         layout.add(new Label("Turn Order", skin)).colspan(kingCount);
         layout.row();
-        for (int i = 0; i < 5; i++) {
+
+        for (int i = 0; i < kingCount; i++) {
             layout.add(generateContainer(playerIconActors[i]))
                     .expand()
                     .fill();
@@ -66,7 +56,7 @@ public class TurnOrderRenderManager extends Actor {
         int nextTurnIndex = 0;
 
         // TODO figure out how to animate this mess
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < kingCount; i++) {
             if (currentTurnIndex < kingCount) {
                 playerIconActors[i].setKingID(currentTurnOrder[currentTurnIndex].getId());
                 currentTurnIndex++;
@@ -77,7 +67,7 @@ public class TurnOrderRenderManager extends Actor {
                 nextTurnIndex++;
 
                 if (nextTurnIndex == kingCount) {
-                    for (; i < 5; i++) {
+                    for (; i < kingCount; i++) {
                         playerIconActors[i].setKingID(-1);
                     }
 
