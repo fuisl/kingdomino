@@ -8,8 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import dev.kingdomino.screen.BoardInputProcessor;
-
 // import dev.kingdomino.game.Event.TriggerType;
 
 public class GameManager {

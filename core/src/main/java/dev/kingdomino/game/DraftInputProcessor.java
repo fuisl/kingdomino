@@ -8,6 +8,7 @@ import dev.kingdomino.game.Event.TriggerType;
 public class DraftInputProcessor implements InputProcessor {
     private EventManager eventManager = EventManager.getInstance();
     private GameManager gameManager;
+    private Turn nextTurn;
     public int selectionIndex;
     public int remainingDrafts;
 
@@ -23,10 +24,15 @@ public class DraftInputProcessor implements InputProcessor {
     }
 
     public void reset() {
-        this.updated = true;
-        this.exit = false;
-        this.show = true;
-        this.selectionIndex = 0;
+        nextTurn = gameManager.getNextTurn();
+        updated = true;
+        exit = false;
+        show = true;
+        
+        selectionIndex = 0;
+        while (nextTurn.isSelected(selectionIndex)) {
+            selectionIndex = (selectionIndex + 1) % remainingDrafts;
+        }
     }
 
     public int getSelectionIndex() {
@@ -49,29 +55,24 @@ public class DraftInputProcessor implements InputProcessor {
             case Keys.LEFT:
             case Keys.UP:
             case Keys.W:
-                // ;
-                e = new Event(
-                        TriggerType.IMMEDIATE,
-                        false,
-                        true,
-                        null,
-                        () -> selectionIndex = (selectionIndex += remainingDrafts - 1) % remainingDrafts,
-                        null,
-                        null,
-                        null);
+                while (true) {
+                    selectionIndex = (selectionIndex + remainingDrafts - 1) % remainingDrafts;
+
+                    if (!nextTurn.isSelected(selectionIndex)) break;
+                }
+                
+                updated = true;
                 break;
             case Keys.RIGHT:
             case Keys.DOWN:
             case Keys.S:
-                e = new Event(
-                        TriggerType.IMMEDIATE,
-                        false,
-                        true,
-                        null,
-                        () -> selectionIndex = (selectionIndex += 1) % remainingDrafts,
-                        null,
-                        null,
-                        null);
+                while (true) {
+                    selectionIndex = (selectionIndex + 1) % remainingDrafts;
+
+                    if (!nextTurn.isSelected(selectionIndex)) break;
+                }
+
+                updated = true;
                 break;
             case Keys.ENTER:
             case Keys.X:

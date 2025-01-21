@@ -90,7 +90,6 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         if (gameManager.getCurrentState() != GameState.TURN_CHOOSING) return;
 
         int currentSelection = draftInputProcessor.getSelectionIndex();
-        while (nextTurn.isSelected(currentSelection)) currentSelection++;
 
         highlightActors[currentSelection].setVisible(true);
     }

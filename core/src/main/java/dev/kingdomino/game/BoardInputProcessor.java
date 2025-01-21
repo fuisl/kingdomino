@@ -1,18 +1,8 @@
-package dev.kingdomino.screen;
+package dev.kingdomino.game;
 
 import com.badlogic.gdx.Input.Keys;
 
-import dev.kingdomino.game.Board;
-import dev.kingdomino.game.Direction;
-import dev.kingdomino.game.Domino;
-import dev.kingdomino.game.DominoController;
-import dev.kingdomino.game.Event;
 import dev.kingdomino.game.Event.TriggerType;
-import dev.kingdomino.game.EventManager;
-import dev.kingdomino.game.GameManager;
-import dev.kingdomino.game.Position;
-import dev.kingdomino.game.TerrainType;
-import dev.kingdomino.game.Tile;
 
 /**
  * Handles input during the placement phase of the game. Only one should exist at any given time,

@@ -1,4 +1,4 @@
-package dev.kingdomino.screen;
+package dev.kingdomino.game;
 
 import com.badlogic.gdx.InputProcessor;
 
