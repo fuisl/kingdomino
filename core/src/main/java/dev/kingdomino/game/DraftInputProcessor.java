@@ -25,6 +25,7 @@ public class DraftInputProcessor implements InputProcessor {
 
     public void reset() {
         nextTurn = gameManager.getNextTurn();
+        remainingDrafts = nextTurn.getDraft().length;
         updated = true;
         exit = false;
         show = true;

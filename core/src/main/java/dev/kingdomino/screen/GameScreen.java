@@ -158,10 +158,6 @@ public class GameScreen extends AbstractScreen {
     public void render(float delta) {
         gameManager.update(delta);
 
-        // TODO remove this as we are now rendering from the UI
-        // keep for debugging purpose only.
-        gameManager.render(spriteBatch);
-
         // update the actors with new informations
         // TODO remove this once we have a proper screen covering this part
         // in theory we can supplement a default board to deal with
