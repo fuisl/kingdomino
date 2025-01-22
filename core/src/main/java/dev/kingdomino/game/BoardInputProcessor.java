@@ -1,24 +1,36 @@
 package dev.kingdomino.game;
 
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 
 import dev.kingdomino.game.Event.TriggerType;
 
-public class BoardInputProcessor implements InputProcessor {
+/**
+ * Handles input during the placement phase of the game. Only one should exist at any given time,
+ * however Singleton Pattern is actively discouraged due to unexpected behavior in mobile platform,
+ * thus make sure that there is no instance of this before generating a new one.
+ * 
+ * @author fuisl
+ */
+public class BoardInputProcessor extends AbstractInputProcessor {
     private EventManager eventManager = EventManager.getInstance();
     private GameManager gameManager;
     private Board board;
     private Domino currentDomino;
+    private Position[] tileBOffsets = {
+        Direction.RIGHT.get(),
+        Direction.DOWN.get(),
+        Direction.LEFT.get(),
+        Direction.UP.get()
+    };
 
     public boolean updated;
     public boolean exit;
     public boolean valid;
     public boolean keylocked = false;
 
-    public BoardInputProcessor(GameManager gm) {
-        this.gameManager = gm;
-        this.currentDomino = gm.getCurrentDomino();
+    public BoardInputProcessor(GameManager gameManager) {
+        this.gameManager = gameManager;
+        this.currentDomino = gameManager.getCurrentDomino();
         this.updated = true;
         this.valid = false;
         this.exit = false;
@@ -44,7 +56,9 @@ public class BoardInputProcessor implements InputProcessor {
 
         Event e = null;
         switch (keycode) {
-            case Keys.W: // 'w'
+            case Keys.W: {
+                if (currentDomino.getPosTileA().y() == 0 || currentDomino.getPosTileB().y() == 0) return true;
+
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -55,7 +69,10 @@ public class BoardInputProcessor implements InputProcessor {
                         null,
                         null);
                 break;
-            case Keys.S: // 's'
+            }
+            case Keys.S: {
+                if (currentDomino.getPosTileA().y() == 8 || currentDomino.getPosTileB().y() == 8) return true;
+
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -66,7 +83,10 @@ public class BoardInputProcessor implements InputProcessor {
                         null,
                         null);
                 break;
-            case Keys.A: // 'a'
+            }
+            case Keys.A: {
+                if (currentDomino.getPosTileA().x() == 0 || currentDomino.getPosTileB().x() == 0) return true;
+
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -77,7 +97,10 @@ public class BoardInputProcessor implements InputProcessor {
                         null,
                         null);
                 break;
-            case Keys.D: // 'd'
+            }
+            case Keys.D: {
+                if (currentDomino.getPosTileA().x() == 8 || currentDomino.getPosTileB().x() == 8) return true;
+
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -88,7 +111,16 @@ public class BoardInputProcessor implements InputProcessor {
                         null,
                         null);
                 break;
-            case Keys.E: // 'e'
+            }
+            case Keys.E: {
+                int rotationIndex = currentDomino.getDominoController().getRotationIndex();
+                int newIndex = (rotationIndex + 1) % 4;
+                int tileAx = currentDomino.getPosTileA().x();
+                int tileAy = currentDomino.getPosTileA().y();
+                
+                if (tileAx + tileBOffsets[newIndex].x() > 8 || tileAx + tileBOffsets[newIndex].x() < 0) return true;
+                if (tileAy + tileBOffsets[newIndex].y() > 8 || tileAy + tileBOffsets[newIndex].y() < 0) return true;
+
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -99,7 +131,17 @@ public class BoardInputProcessor implements InputProcessor {
                         null,
                         null);
                 break;
-            case Keys.Q: // 'q'
+            }
+
+            case Keys.Q: {
+                int rotationIndex = currentDomino.getDominoController().getRotationIndex();
+                int newIndex = (rotationIndex + 3) % 4;
+                int tileAx = currentDomino.getPosTileA().x();
+                int tileAy = currentDomino.getPosTileA().y();
+                
+                if (tileAx + tileBOffsets[newIndex].x() > 8 || tileAx + tileBOffsets[newIndex].x() < 0) return true;
+                if (tileAy + tileBOffsets[newIndex].y() > 8 || tileAy + tileBOffsets[newIndex].y() < 0) return true;
+
                 e = new Event(
                         TriggerType.IMMEDIATE,
                         false,
@@ -110,7 +152,9 @@ public class BoardInputProcessor implements InputProcessor {
                         null,
                         null);
                 break;
-            case Keys.X: // 'x'
+            }
+
+        case Keys.X: // 'x'
                 if (keylocked) {
                     break;
                 }
@@ -181,45 +225,4 @@ public class BoardInputProcessor implements InputProcessor {
         eventManager.addEvent(blink_x, "other", false);
         eventManager.addEvent(blink_back, "other", false);
     }, null, null, null);
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
-    }
-
 }

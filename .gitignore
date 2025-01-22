@@ -1,3 +1,9 @@
+## Codespace Personal Files:
+.devcontainer/
+.github/
+.vscode
+/rawAssets
+
 ## Gradle:
 .gradle/
 gradle-app.setting

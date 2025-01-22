@@ -181,6 +181,8 @@ public class GameManager {
         placingDomino = true;
         if (boardInputProcessor.exit && boardInputProcessor.valid) {
             currentBoard.getScoringSystem().calculateLandScore();
+            // update score var after placing domino
+            results();
             if (finalTurn) {
                 currentState = GameState.TURN_END;
             } else {
@@ -252,7 +254,7 @@ public class GameManager {
     }
 
     // ---------------------RENDER---------------------
-
+    @Deprecated
     public void render(SpriteBatch batch) {
         // render game components
 
@@ -293,7 +295,7 @@ public class GameManager {
                     clearScreen();
 
                     System.out.printf("CHOOSE NEXT DOMINO\n\n");
-                    Domino[] nextRemainingDraft = nextTurn.getRemainingDraft();
+                    Domino[] nextRemainingDraft = nextTurn.getDraft();
                     draftInputProcessor.remainingDrafts = nextRemainingDraft.length;
                     renderQueueWithSelection(nextRemainingDraft, draftInputProcessor.selectionIndex); // TODO: optimize
                     renderStatusChoosing(currentTurn);
@@ -323,11 +325,13 @@ public class GameManager {
         // }
     }
 
+    @Deprecated
     private static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    @Deprecated
     private static void renderStatusChoosing(Turn currentTurn) {
         System.out.println();
         System.out.println("KING " + currentTurn.getCurrentKing().getId() + " PREVIOUS DOMINO: "
@@ -337,6 +341,7 @@ public class GameManager {
                         currentTurn.getCurrentDomino().getTileB().getTerrain()));
     }
 
+    @Deprecated
     private static void renderStatusPlacing(Turn currentTurn) {
         System.out.println();
         System.out.printf("KING %d's LAND | CURRENT DOMINO [%c%d|%c%d] | CURRENT SCORE: %d\n",
@@ -348,6 +353,7 @@ public class GameManager {
                 currentTurn.getCurrentKing().getBoard().getScoringSystem().getLandTotal());
     }
 
+    @Deprecated
     private static void renderQueueWithSelection(Domino[] draft, int index) {
         for (int i = 0; i < draft.length; i++) {
             int crownA = draft[i].getTileA().getCrown();
@@ -363,6 +369,7 @@ public class GameManager {
         }
     }
 
+    @Deprecated
     private static void renderKingQueueWithSelection(King[] kings, King currentKing) {
         for (int i = 0; i < kings.length; i++) {
             if (kings[i] == currentKing) {
@@ -373,6 +380,7 @@ public class GameManager {
         }
     }
 
+    @Deprecated
     private static void renderBoard(Board board, Domino domino) {
         Tile[][] land = board.getLand(); // getLand() returns a clone of the land
 
@@ -411,6 +419,7 @@ public class GameManager {
         // land[pos2.y()][pos2.x()] = null;
     }
 
+    @Deprecated
     private static char getCharType(TerrainType type) {
         switch (type) {
             case WHEATFIELD:
@@ -438,6 +447,7 @@ public class GameManager {
         }
     }
 
+    @Deprecated
     private static void renderResults(Map<King, int[]> scores) {
         System.out.printf("RESULTS \n(TOTAL | LAND | BONUS)\n\n");
         int rank = 1;
@@ -480,7 +490,31 @@ public class GameManager {
         }
     }
 
+    public King[] getAllKing() {
+        return this.kings;
+    }
+
+    public int getKingCount() {
+        return this.kingCount;
+    }
+
+    public Turn getCurrentTurn() {
+        return this.currentTurn;
+    }
+
+    public Turn getNextTurn() {
+        return this.nextTurn;
+    }
+
     public GameState getCurrentState() {
         return currentState;
+    }
+
+    public DraftInputProcessor getDraftInputProcessor() {
+        return this.draftInputProcessor;
+    }
+
+    public Map<King, int[]> getScores() {
+        return scores;
     }
 }

@@ -27,14 +27,8 @@ public class Turn {
     }
 
     public void selectDomino(King king, int index) {
-        while (selected[index]) {
-            index++;
-        }
-
         selected[index] = true;
         kings[index] = king;
-
-        countRemaining--;
     }
 
     public void next() {
@@ -70,6 +64,7 @@ public class Turn {
         return draft;
     }
 
+    @Deprecated
     public Domino[] getRemainingDraft() {
         Domino[] remainingDraft = new Domino[countRemaining];
         for (int i = 0, j = 0; i < draft.length; i++) {

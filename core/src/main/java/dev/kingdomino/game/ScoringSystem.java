@@ -39,9 +39,9 @@ public class ScoringSystem {
 
         for (int i = 0; i < land.length; i++) {
             for (int j = 0; j < land.length; j++) {
-                if (land[i][j] != null && !visited[i][j]) {
+                if (land[j][i] != null && !visited[j][i]) {
                     totalCrown = 0;
-                    int score = floodFill(i, j, land[i][j].getTerrain(), visited);
+                    int score = floodFill(i, j, land[j][i].getTerrain(), visited);
                     landTotalTemp += score * totalCrown;
                 }
             }
@@ -56,12 +56,12 @@ public class ScoringSystem {
             return 0;
         }
 
-        if (land[y][x] == null || visited[x][y] || land[y][x].getTerrain() != terrain) {
+        if (land[y][x] == null || visited[y][x] || land[y][x].getTerrain() != terrain) {
             return 0;
         }
 
         totalCrown += land[y][x].getCrown();
-        visited[x][y] = true;
+        visited[y][x] = true;
 
         return 1 +
                 floodFill(x + 1, y, terrain, visited) +
@@ -76,7 +76,7 @@ public class ScoringSystem {
         int countNotNull = 0;
         for (int i = 0; i < land.length; i++) {
             for (int j = 0; j < land.length; j++) {
-                if (land[i][j] != null) {
+                if (land[j][i] != null) {
                     countNotNull++;
                     minX = Math.min(minX, i);
                     minY = Math.min(minY, j);
