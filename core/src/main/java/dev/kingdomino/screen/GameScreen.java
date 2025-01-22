@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import dev.kingdomino.game.GameManager;
@@ -38,6 +39,8 @@ public class GameScreen extends AbstractScreen {
     private Table rootTable;
     private Skin skin;
     private OrthographicCamera cam;
+
+    private final boolean SHADER_TOGGLE = false;
 
     // Shader stuff
     private Mesh screenQuad;
@@ -149,20 +152,22 @@ public class GameScreen extends AbstractScreen {
         mainBoardActor.setCurrentDomino(gameManager.getCurrentDomino());
 
         // renderBackground();
-        // // ScreenUtils.clear(Color.DARK_GRAY);
-        // stage.act(delta);
-        // stage.draw();
-
-        // wrap everything in a buffer
-        crtFbo.begin();
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderBackground();
-        stage.act(delta);
-        stage.draw();
-        crtFbo.end();
-
-        // apply the CRT shader
-        renderCRTShader();
+        if (SHADER_TOGGLE) {
+            // wrap everything in a buffer
+            crtFbo.begin();
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            renderBackground();
+            stage.act(delta);
+            stage.draw();
+            crtFbo.end();
+            
+            // apply the CRT shader
+            renderCRTShader();
+        } else {
+            ScreenUtils.clear(Color.DARK_GRAY);
+            stage.act(delta);
+            stage.draw();
+        }
     }
 
     @Override
