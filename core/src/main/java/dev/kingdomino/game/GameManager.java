@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // import dev.kingdomino.game.Event.TriggerType;
@@ -27,16 +28,18 @@ public class GameManager {
     private boolean resultsRendered = false;
 
     private final GameTimer gameTimer = GameTimer.getInstance();
-    private GameState currentState = GameState.SETUP;
+    public static GameState currentState = GameState.SETUP;
 
     private final EventManager eventManager;
     private final BoardInputHandler boardInputHandler;
     private final BoardInputProcessor boardInputProcessor;
+    private final BoardInputController boardInputController;
 
     private final DraftInputHandler draftInputHandler;
     private final DraftInputProcessor draftInputProcessor;
+    private final DraftInputController draftInputController;
 
-    public InputDevice currentInputDevice; // use for displaying accordingly
+    public static InputDevice currentInputDevice; // use for displaying accordingly
 
     public enum GameState {
         INIT,
@@ -54,7 +57,7 @@ public class GameManager {
         CONTROLLER
     }
 
-    public void setInputProcessor(InputDevice device) {
+    public static void setInputDevice(InputDevice device) {
         switch (device) {
             case KEYBOARD:
                 currentInputDevice = InputDevice.KEYBOARD;
@@ -72,10 +75,14 @@ public class GameManager {
         eventManager = EventManager.getInstance();
         boardInputHandler = new BoardInputHandler(this);
         boardInputProcessor = new BoardInputProcessor(boardInputHandler);
+        boardInputController = new BoardInputController(boardInputHandler);
 
         draftInputHandler = new DraftInputHandler(this);
         draftInputProcessor = new DraftInputProcessor(draftInputHandler);
+        draftInputController = new DraftInputController(draftInputHandler);
 
+        Controllers.addListener(boardInputController);
+        Controllers.addListener(draftInputController);
         Gdx.input.setInputProcessor(new InputMultiplexer(boardInputProcessor, draftInputProcessor));
 
         // initialize game components
