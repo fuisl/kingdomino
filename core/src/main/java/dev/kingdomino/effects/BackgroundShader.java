@@ -80,12 +80,19 @@ public class BackgroundShader {
         screenQuad.render(backgroundShader, GL20.GL_TRIANGLES);
     }
 
-    public Mesh getScreenQuad() {
-        return screenQuad;
-    }
-
     public void dispose() {
         screenQuad.dispose();
         backgroundShader.dispose();
+    }
+
+    public void changeVertices(int width, int height) {
+        // background shader
+        float[] bgVertices = new float[] {
+            0, 0, 0, 0, 0,
+            width, 0, 0, 1, 0,
+            width, height, 0, 1, 1,
+            0, height, 0, 0, 1
+        };
+        screenQuad.setVertices(bgVertices);
     }
 }

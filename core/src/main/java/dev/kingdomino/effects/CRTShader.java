@@ -125,7 +125,7 @@ public class CRTShader {
         crtQuad.render(crtShader, GL20.GL_TRIANGLES);
     }
 
-    public void replaceBuffer(int width, int height, Mesh screenQuad) {
+    public void replaceBuffer(int width, int height) {
         if (crtFbo != null) {
             crtFbo.dispose();
         }
@@ -139,15 +139,6 @@ public class CRTShader {
                 0, height, 0, 0, 1
         };
         crtQuad.setVertices(newVertices);
-
-        // background shader
-        float[] bgVertices = new float[] {
-                0, 0, 0, 0, 0,
-                width, 0, 0, 1, 0,
-                width, height, 0, 1, 1,
-                0, height, 0, 0, 1
-        };
-        screenQuad.setVertices(bgVertices);
 
         // update camera
         camera.setToOrtho(false, width, height);

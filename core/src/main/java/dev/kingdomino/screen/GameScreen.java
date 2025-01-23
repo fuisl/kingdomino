@@ -209,7 +209,8 @@ public class GameScreen extends AbstractScreen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
 
-        crtShader.replaceBuffer(width, height, backgroundShader.getScreenQuad());
+        crtShader.replaceBuffer(width, height);
+        backgroundShader.changeVertices(width, height);
     }
 
     @Override
