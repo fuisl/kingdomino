@@ -3,6 +3,7 @@ package dev.kingdomino.game;
 import com.badlogic.gdx.Input.Keys;
 
 import dev.kingdomino.game.BoardInputHandler.Action;
+import dev.kingdomino.game.GameManager.InputDevice;
 
 /**
  * Handles input during the placement phase of the game. Only one should exist
@@ -27,6 +28,7 @@ public class BoardInputProcessor extends AbstractInputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        GameManager.setInputDevice(InputDevice.KEYBOARD);
         return boardInputHandler.keyDown(translateKeycodeToAction(keycode));
     }
 
@@ -49,7 +51,7 @@ public class BoardInputProcessor extends AbstractInputProcessor {
             case Keys.Q:
                 return Action.ROTATE_COUNTERCLOCKWISE;
             default:
-                return Action.NONE;  // cannot be null
+                return Action.NONE; // cannot be null
         }
     }
 }

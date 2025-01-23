@@ -1,6 +1,7 @@
 package dev.kingdomino.game;
 
 import dev.kingdomino.game.Event.TriggerType;
+import dev.kingdomino.game.GameManager.InputDevice;
 
 public class DraftInputHandler extends AbstractInputProcessor {
     private final EventManager eventManager = EventManager.getInstance();
@@ -45,6 +46,11 @@ public class DraftInputHandler extends AbstractInputProcessor {
         return this.selectionIndex;
     }
 
+    public boolean keyUp(Action action) {
+        eventManager.clearQueue("input", false);
+        return true;
+    }
+
     public boolean keyDown(Action action) {
         if (gameManager.getCurrentState() == GameManager.GameState.TURN_START) {
             show = false;
@@ -58,24 +64,10 @@ public class DraftInputHandler extends AbstractInputProcessor {
 
         switch (action) {
             case MOVE_UP:
-                while (true) {
-                    selectionIndex = (selectionIndex + remainingDrafts - 1) % remainingDrafts;
-
-                    if (!nextTurn.isSelected(selectionIndex))
-                        break;
-                }
-
-                updated = true;
+                e = createMoveUpEvent();
                 break;
             case MOVE_DOWN:
-                while (true) {
-                    selectionIndex = (selectionIndex + 1) % remainingDrafts;
-
-                    if (!nextTurn.isSelected(selectionIndex))
-                        break;
-                }
-
-                updated = true;
+                e = createMoveDownEvent();
                 break;
             case SELECT_DOMINO:
                 e = createSelectDominoEvent();
@@ -102,6 +94,54 @@ public class DraftInputHandler extends AbstractInputProcessor {
                 () -> {
                     gameManager.selectDomino(selectionIndex);
                     exit = true;
+                },
+                null,
+                null,
+                null);
+    }
+
+    private Event createMoveUpEvent() {
+        float delay = 0.0f;
+        if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {
+            delay = 0.1f;
+        }
+        return new Event(
+                TriggerType.BEFORE,
+                true,
+                true,
+                delay,
+                () -> {
+                    while (true) {
+                        selectionIndex = (selectionIndex + remainingDrafts - 1) % remainingDrafts;
+
+                        if (!nextTurn.isSelected(selectionIndex))
+                            break;
+                    }
+                    updated = true;
+                },
+                null,
+                null,
+                null);
+    }
+
+    private Event createMoveDownEvent() {
+        float delay = 0.0f;
+        if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {
+            delay = 0.1f;
+        }
+        return new Event(
+                TriggerType.BEFORE,
+                true,
+                true,
+                delay,
+                () -> {
+                    while (true) {
+                        selectionIndex = (selectionIndex + 1) % remainingDrafts;
+
+                        if (!nextTurn.isSelected(selectionIndex))
+                            break;
+                    }
+                    updated = true;
                 },
                 null,
                 null,

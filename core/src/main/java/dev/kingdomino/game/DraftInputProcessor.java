@@ -3,6 +3,7 @@ package dev.kingdomino.game;
 import com.badlogic.gdx.Input.Keys;
 
 import dev.kingdomino.game.DraftInputHandler.Action;
+import dev.kingdomino.game.GameManager.InputDevice;
 
 public class DraftInputProcessor extends AbstractInputProcessor {
     private final DraftInputHandler draftInputHandler;
@@ -13,6 +14,7 @@ public class DraftInputProcessor extends AbstractInputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        GameManager.setInputDevice(InputDevice.KEYBOARD);
         return draftInputHandler.keyDown(translateKeycodeToAction(keycode));
     }
 

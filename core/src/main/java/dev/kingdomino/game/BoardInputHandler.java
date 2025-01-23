@@ -1,6 +1,7 @@
 package dev.kingdomino.game;
 
 import dev.kingdomino.game.Event.TriggerType;
+import dev.kingdomino.game.GameManager.InputDevice;
 
 /**
  * Handles input during the placement phase of the game. Only one should exist
@@ -28,8 +29,6 @@ public class BoardInputHandler {
     public boolean valid;
     public boolean keylocked = false;
 
-    private final float moveCooldown = 0.1f; // how many seconds between moves
-
     public enum Action {
         MOVE_UP,
         MOVE_DOWN,
@@ -53,7 +52,6 @@ public class BoardInputHandler {
     public void update() {
         currentDomino = gameManager.getCurrentDomino();
         board = gameManager.getBoard();
-        gameManager.setInputProcessor(GameManager.InputDevice.KEYBOARD);
     }
 
     public void reset() {
@@ -165,6 +163,10 @@ public class BoardInputHandler {
     }
 
     private Event createMoveEvent(Direction direction) {
+        float moveCooldown = 0.0f;
+        if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {
+            moveCooldown = 0.15f;
+        }
         return new Event(
                 TriggerType.BEFORE,
                 true,
@@ -185,7 +187,7 @@ public class BoardInputHandler {
         return new Event(
                 TriggerType.IMMEDIATE,
                 false,
-                true,
+                false,
                 null,
                 () -> currentDomino.rotateDomino(clockwise),
                 null,
@@ -204,7 +206,7 @@ public class BoardInputHandler {
                         valid = true;
                         exit = true;
                     } else {
-                        eventManager.addEvent(invalidEffect.copy(), "base", false);
+                        eventManager.addEvent(invalidEffect.copy(), "input", false);
                         valid = false;
                         keylocked = true;
                     }
