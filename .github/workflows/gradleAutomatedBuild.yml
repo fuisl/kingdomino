@@ -5,15 +5,15 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Build Executable Application
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build-windows:
+    name: Build Windows Application
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,22 +37,19 @@ jobs:
     - name: Package Windows Executable
       run: ./gradlew run lwjgl3:packageWinX64
 
-    - name: Package Linux Executable
-      run: ./gradlew run lwjgl3:packageLinuxX64
-
     # Maybe add Mac build later?
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Distributable Packages
+        name: Windows (x64) Executable
         path: lwjgl3/build/construo/dist
 
-  dependency-submission:
-
+  build-linux:
+    name: Build Linux Application
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
     - uses: actions/checkout@v4
@@ -60,9 +57,23 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
+        # using Microsoft built OpenJDK
         distribution: 'microsoft'
 
-    # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-    # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    # Construo can build cross-platform perfectly fine.
+    
+    - name: Package Windows Executable
+      run: ./gradlew run lwjgl3:packageLinuxX64
+
+    # Maybe add Mac build later?
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Linux (x64) Executable
+        path: lwjgl3/build/construo/dist
