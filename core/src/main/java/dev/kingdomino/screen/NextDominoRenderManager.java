@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import dev.kingdomino.game.Domino;
-import dev.kingdomino.game.DraftInputProcessor;
+import dev.kingdomino.game.DraftInputHandler;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 import dev.kingdomino.game.Turn;
@@ -22,7 +22,7 @@ import dev.kingdomino.game.GameManager.GameState;
 public class NextDominoRenderManager extends AbstractRenderManager {
     private DominoActor[] dominoActors;
     private HighlightActor[] highlightActors;
-    private DraftInputProcessor draftInputProcessor;
+    private DraftInputHandler draftInputHandler;
 
     public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin,
             TextureRegion[] crownOverlay, TextureRegion selectionOverlay) {
@@ -37,7 +37,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             highlightActors[i] = new HighlightActor(selectionOverlay);
         }
 
-        draftInputProcessor = gameManager.getDraftInputProcessor();
+        draftInputHandler = gameManager.getDraftInputHandler();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         if (gameManager.getCurrentState() != GameState.TURN_CHOOSING)
             return;
 
-        int currentSelection = draftInputProcessor.getSelectionIndex();
+        int currentSelection = draftInputHandler.getSelectionIndex();
 
         highlightActors[currentSelection].setVisible(true);
     }

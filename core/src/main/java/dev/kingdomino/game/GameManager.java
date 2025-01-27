@@ -6,17 +6,18 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.controllers.Controllers;
 
 // import dev.kingdomino.game.Event.TriggerType;
 
 public class GameManager {
     private int kingCount = 4;
-    private Deck deck;
-    private Board[] boards;
+    private final Deck deck;
+    private final Board[] boards;
     private Board currentBoard;
     private Domino currentDomino;
     private Turn currentTurn;
-    private King[] kings;
+    private final King[] kings;
     private King currentKing;
     private Turn nextTurn;
     private boolean placingDomino = false;
@@ -24,12 +25,19 @@ public class GameManager {
     private Map<King, int[]> scores;
     private boolean finalTurn = false; // set true for debugging
 
-    private GameTimer gameTimer = GameTimer.getInstance();
-    private GameState currentState = GameState.SETUP;
+    private final GameTimer gameTimer = GameTimer.getInstance();
+    public static GameState currentState = GameState.SETUP;
 
-    private EventManager eventManager;
-    private BoardInputProcessor boardInputProcessor;
-    private DraftInputProcessor draftInputProcessor;
+    private final EventManager eventManager;
+    private final BoardInputHandler boardInputHandler;
+    private final BoardInputProcessor boardInputProcessor;
+    private final BoardInputController boardInputController;
+
+    private final DraftInputHandler draftInputHandler;
+    private final DraftInputProcessor draftInputProcessor;
+    private final DraftInputController draftInputController;
+
+    public static InputDevice currentInputDevice; // use for displaying accordingly
 
     public enum GameState {
         INIT,
@@ -42,11 +50,37 @@ public class GameManager {
         RESULTS
     }
 
+    public enum InputDevice {
+        KEYBOARD,
+        CONTROLLER
+    }
+
+    public static void setInputDevice(InputDevice device) {
+        switch (device) {
+            case KEYBOARD:
+                currentInputDevice = InputDevice.KEYBOARD;
+                break;
+            case CONTROLLER:
+                currentInputDevice = InputDevice.CONTROLLER;
+                break;
+            default:
+                break;
+        }
+    }
+
     public GameManager() {
         // initialize game manager
         eventManager = EventManager.getInstance();
-        boardInputProcessor = new BoardInputProcessor(this);
-        draftInputProcessor = new DraftInputProcessor(this);
+        boardInputHandler = new BoardInputHandler(this);
+        boardInputProcessor = new BoardInputProcessor(boardInputHandler);
+        boardInputController = new BoardInputController(boardInputHandler);
+
+        draftInputHandler = new DraftInputHandler(this);
+        draftInputProcessor = new DraftInputProcessor(draftInputHandler);
+        draftInputController = new DraftInputController(draftInputHandler);
+
+        Controllers.addListener(boardInputController);
+        Controllers.addListener(draftInputController);
         Gdx.input.setInputProcessor(new InputMultiplexer(boardInputProcessor, draftInputProcessor));
 
         // initialize game components
@@ -90,8 +124,8 @@ public class GameManager {
 
                 // eventManager.addEvent(autoContinue.copy(), "base", false);
 
-                if (draftInputProcessor.show == false) {
-                    draftInputProcessor.show = true;
+                if (draftInputHandler.show == false) {
+                    draftInputHandler.show = true;
                     updateTurn();
                 }
                 break;
@@ -121,7 +155,7 @@ public class GameManager {
 
         // // test end game
         // for (int i = 0; i < 44; i++) {
-        //     deck.drawCard();
+        // deck.drawCard();
         // }
 
         // game init for 3 kings (removing 12 dominos)
@@ -170,14 +204,14 @@ public class GameManager {
             currentBoard = currentKing.getBoard();
             currentState = GameState.TURN_PLACING;
 
-            draftInputProcessor.reset();
-            boardInputProcessor.reset();
+            draftInputHandler.reset();
+            boardInputHandler.reset();
         }
     }
 
     private void placeDomino() {
         placingDomino = true;
-        if (boardInputProcessor.exit && boardInputProcessor.valid) {
+        if (boardInputHandler.exit && boardInputHandler.valid) {
             currentBoard.getScoringSystem().calculateLandScore();
             // update score var after placing domino
             results();
@@ -196,7 +230,7 @@ public class GameManager {
         // }
 
         choosingDomino = true;
-        if (draftInputProcessor.exit) {
+        if (draftInputHandler.exit) {
             currentState = GameState.TURN_END;
             choosingDomino = false;
         }
@@ -213,7 +247,6 @@ public class GameManager {
                 currentTurn = nextTurn.copy(); // weird
                 nextTurn = null;
                 currentState = GameState.SETUP;
-                return;
             }
         }
 
@@ -302,11 +335,15 @@ public class GameManager {
         return currentState;
     }
 
-    public DraftInputProcessor getDraftInputProcessor() {
-        return this.draftInputProcessor;
+    public DraftInputHandler getDraftInputHandler() {
+        return this.draftInputHandler;
     }
 
     public Map<King, int[]> getScores() {
         return scores;
+    }
+
+    public BoardInputHandler getBoardInputHandler() {
+        return this.boardInputHandler;
     }
 }
