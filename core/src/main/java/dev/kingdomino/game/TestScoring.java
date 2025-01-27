@@ -12,17 +12,14 @@ public class TestScoring {
         // tile with the castle (this represented the demo in rule book)
         land[CENTER][CENTER] = new Tile(TerrainType.CASTLE, 0);
 
-        land[CENTER][CENTER + 1] = new Tile(TerrainType.WHEATFIELD, 1);
-        land[CENTER + 1][CENTER] = new Tile(TerrainType.WHEATFIELD, 0);
-        land[CENTER + 1][CENTER + 1] = new Tile(TerrainType.WHEATFIELD, 0);
+        land[CENTER][CENTER + 1] = new Tile(TerrainType.FIELD, 1);
+        land[CENTER + 1][CENTER] = new Tile(TerrainType.FIELD, 0);
+        land[CENTER + 1][CENTER + 1] = new Tile(TerrainType.FIELD, 0);
 
-        land[CENTER][CENTER + 2] = new Tile(TerrainType.GRASSLAND, 0);
-        land[CENTER][CENTER + 3] = new Tile(TerrainType.GRASSLAND, 0);
-        land[CENTER][CENTER + 4] = new Tile(TerrainType.GRASSLAND, 0);
-        land[CENTER + 1][CENTER + 2] = new Tile(TerrainType.GRASSLAND, 2);
-
-        land[CENTER + 2][CENTER] = new Tile(TerrainType.MOUNTAIN, 0);
-        land[CENTER + 3][CENTER] = new Tile(TerrainType.MOUNTAIN, 0);
+        land[CENTER][CENTER + 2] = new Tile(TerrainType.PLAINS, 0);
+        land[CENTER][CENTER + 3] = new Tile(TerrainType.PLAINS, 0);
+        land[CENTER][CENTER + 4] = new Tile(TerrainType.PLAINS, 0);
+        land[CENTER + 1][CENTER + 2] = new Tile(TerrainType.PLAINS, 2);
 
         land[CENTER + 2][CENTER + 1] = new Tile(TerrainType.LAKE, 1);
         land[CENTER + 3][CENTER + 1] = new Tile(TerrainType.LAKE, 0);

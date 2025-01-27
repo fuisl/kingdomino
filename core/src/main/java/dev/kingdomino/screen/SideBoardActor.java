@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
 
 /**
@@ -59,6 +60,12 @@ public class SideBoardActor extends Actor {
                 if (boardTiles[i][j] != null) {
                     // the coordinate system of the screen has origin at bottom left instead of top
                     // left
+
+                    if (boardTiles[i][j].getTerrain() == TerrainType.CASTLE) {
+                        batch.draw(boardTiles[i][j].getTerrain().getCastleTexture(kingID), j, boardTiles[0].length - i - 1, 1, 1);
+                        continue;
+                    }
+
                     batch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length - i - 1, 1, 1);
                     batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length - i - 1, 1, 1);
                 }

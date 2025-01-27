@@ -6,22 +6,23 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * Enum representing the different terrain types in the game.
  */
 public enum TerrainType {
-    WHEATFIELD,
+    FIELD,
     FOREST,
     LAKE,
-    GRASSLAND,
-    SWAMP,
+    PLAINS,
+    SWAMPS,
     MINE,
-    MOUNTAIN,
-    DESERT,
     CASTLE,
     INVALID;
     //ERROR,
 
     // Extending the enum with its associated texture.
     private TextureRegion texture;
+    private TextureRegion[] castleTextures;
 
     public TextureRegion getTexture() {return this.texture;}
+    public TextureRegion getCastleTexture(int id) {return this.castleTextures[id];}
 
     public void setTexture(TextureRegion texture) {this.texture = texture;}
+    public void setCastleTexture(TextureRegion[] castleTextures) {this.castleTextures = castleTextures; }
 }

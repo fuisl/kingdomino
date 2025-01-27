@@ -31,8 +31,6 @@ public class GameScreen extends AbstractScreen {
     private Stage stage;
     private GameManager gameManager;
     private ScreenViewport screenViewport;
-    private TextureRegion[] crownOverlay;
-    private TextureRegion[] kingAvatar;
     private MainBoardActor mainBoardActor;
     private SidePanelManager sidePanelManager;
     private TurnOrderRenderManager turnOrderRenderManager;
@@ -59,6 +57,7 @@ public class GameScreen extends AbstractScreen {
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
         gameManager = new GameManager();
+        
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -69,20 +68,34 @@ public class GameScreen extends AbstractScreen {
         skin = assetManager.get("skin/uiskin.json");
 
         for (TerrainType name : TerrainType.values()) {
+            if (name == TerrainType.CASTLE) {
+                TextureRegion[] castleTextures = new TextureRegion[4];
+                castleTextures[0] = atlas.findRegion("blueCastle");
+                castleTextures[1] = atlas.findRegion("greenCastle");
+                castleTextures[2] = atlas.findRegion("pinkCastle");
+                castleTextures[3] = atlas.findRegion("yellowCastle");
+
+                name.setCastleTexture(castleTextures);
+                continue;
+            }
+
             name.setTexture(atlas.findRegion(name.name().toLowerCase()));
         }
 
+        TextureRegion[] crownOverlay;
+        TextureRegion[] kingAvatar;
+
         crownOverlay = new TextureRegion[4];
-        crownOverlay[0] = atlas.findRegion("nocrown");
-        crownOverlay[1] = atlas.findRegion("onecrown");
-        crownOverlay[2] = atlas.findRegion("twocrown");
-        crownOverlay[3] = atlas.findRegion("threecrown");
+        crownOverlay[0] = atlas.findRegion("noCrown");
+        crownOverlay[1] = atlas.findRegion("oneCrown");
+        crownOverlay[2] = atlas.findRegion("twoCrown");
+        crownOverlay[3] = atlas.findRegion("threeCrown");
 
         kingAvatar = new TextureRegion[4];
-        kingAvatar[0] = atlas.findRegion("kingOne");
-        kingAvatar[1] = atlas.findRegion("kingTwo");
-        kingAvatar[2] = atlas.findRegion("kingThree");
-        kingAvatar[3] = atlas.findRegion("kingFour");
+        kingAvatar[0] = atlas.findRegion("blueKing");
+        kingAvatar[1] = atlas.findRegion("greenKing");
+        kingAvatar[2] = atlas.findRegion("pinkKing");
+        kingAvatar[3] = atlas.findRegion("yellowKing");
 
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);

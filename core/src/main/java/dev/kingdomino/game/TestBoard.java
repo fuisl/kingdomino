@@ -118,22 +118,18 @@ public class TestBoard {
 
     public static char getCharType(TerrainType type) {
         switch (type) {
-            case WHEATFIELD:
+            case FIELD:
                 return 'W';
             case FOREST:
                 return 'F';
             case LAKE:
                 return 'L';
-            case GRASSLAND:
+            case PLAINS:
                 return 'G';
-            case SWAMP:
+            case SWAMPS:
                 return 'S';
             case MINE:
                 return 'M';
-            case MOUNTAIN:
-                return 'T';
-            case DESERT:
-                return 'D';
             case CASTLE:
                 return 'C';
             default:
