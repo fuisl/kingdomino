@@ -10,6 +10,8 @@ name: Build Executable Application
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    types: [opened, reopened, synchronized]
 
 jobs:
   build-windows:
