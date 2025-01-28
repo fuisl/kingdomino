@@ -37,7 +37,6 @@ public class GameScreen extends AbstractScreen {
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
     private MainBoardHUDManager mainBoardHUDManager;
-    private ControlHintManager controlHintManager;
     private Table rootTable;
     private Skin skin;
 
@@ -103,7 +102,6 @@ public class GameScreen extends AbstractScreen {
                 atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
-        controlHintManager = new ControlHintManager(gameManager, skin);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
 
         // logging GPU info before shader init
@@ -134,7 +132,6 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(nextDominoRenderManager);
         stage.addActor(sidePanelManager);
         stage.addActor(mainBoardHUDManager);
-        stage.addActor(controlHintManager);
 
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
                 .height(Value.percentHeight(0.37f, leftInfoLayout))
@@ -169,8 +166,6 @@ public class GameScreen extends AbstractScreen {
         container.fill();
         mainGameLayout.add(container).expand().fill();
         mainGameLayout.row();
-
-        controlHintManager.setLayout(mainGameLayout);
 
         rootTable.add(leftInfoLayout)
                 .width(Value.percentWidth(0.14f, rootTable))

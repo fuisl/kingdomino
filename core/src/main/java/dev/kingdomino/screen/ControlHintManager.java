@@ -15,6 +15,7 @@ import dev.kingdomino.game.GameManager;
  * 
  * @author LunaciaDev
  */
+@Deprecated
 public class ControlHintManager extends Actor {
     // not extending AbstractRenderManager here as we do not need to render all 4
     // player at once.
