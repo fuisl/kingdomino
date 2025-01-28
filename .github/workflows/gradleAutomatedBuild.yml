@@ -37,7 +37,13 @@ jobs:
     - name: Package Windows Executable
       run: ./gradlew run lwjgl3:packageWinX64
 
-    # Maybe add Mac build later?
+    # Has to do this since construo always output a zip, and actions/upload-artifact always zip its input
+    
+    - name: Unzip Package
+      run: unzip ./lwjgl3/build/construo/dist/*.zip -d ./lwjgl3/build/construo/dist/
+
+    - name: Remove Zipped package
+      run: rm ./lwjgl3/build/construo/dist/*.zip
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
@@ -57,20 +63,19 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        # using Microsoft built OpenJDK
         distribution: 'microsoft'
-
-    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+  
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
-    # Construo can build cross-platform perfectly fine.
-    
-    - name: Package Windows Executable
+    - name: Package Linux Executable
       run: ./gradlew run lwjgl3:packageLinuxX64
 
-    # Maybe add Mac build later?
+    - name: Unzip Package
+      run: unzip ./lwjgl3/build/construo/dist/*.zip -d ./lwjgl3/build/construo/dist/
+
+    - name: Remove Zipped package
+      run: rm ./lwjgl3/build/construo/dist/*.zip
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
