@@ -66,6 +66,8 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
             while (nextTurnOrder[nextTurnIndex] == null) {
                 nextTurnIndex++;
 
+                // failsafe in case somehow there are less than kingCount in the order queue,
+                // which should be impossible.
                 if (nextTurnIndex == kingCount) {
                     for (; i < kingCount; i++) {
                         playerIconActors[i].setKingID(-1);
@@ -76,6 +78,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
             }
 
             playerIconActors[i].setKingID(nextTurnOrder[nextTurnIndex].getId());
+            nextTurnIndex++;
         }
     }
 }
