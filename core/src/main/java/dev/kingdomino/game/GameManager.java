@@ -57,10 +57,12 @@ public class GameManager {
         boards = new Board[kingCount];
         currentTurn = null;
         nextTurn = null;
+        scores = new LinkedHashMap<King, int[]>();
 
         for (int i = 0; i < kingCount; i++) {
             boards[i] = new Board();
             kings[i] = new King(i, boards[i]);
+            scores.put(kings[i], new int[]{0, 0, 0});
         }
 
         // initialize game state
@@ -138,6 +140,7 @@ public class GameManager {
         for (int i = 0; i < kingCount; i++) {
             draft_current[i] = deck.drawCard();
         }
+
         currentTurn = new Turn(draft_current);
 
         // setup the kings for first turn. TODO: add random later.
@@ -233,7 +236,7 @@ public class GameManager {
     }
 
     private void results() {
-        scores = new LinkedHashMap<King, int[]>();
+        scores.clear();
 
         // get scores for render
         for (King k : kings) {
