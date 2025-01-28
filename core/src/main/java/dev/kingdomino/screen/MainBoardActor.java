@@ -58,7 +58,8 @@ public class MainBoardActor extends Actor {
                     // the coordinate system of the screen has origin at bottom left instead of top
                     // left
                     if (boardTiles[i][j].getTerrain() == TerrainType.CASTLE) {
-                        batch.draw(boardTiles[i][j].getTerrain().getCastleTexture(gameManager.getCurrentKing().getId()), j, boardTiles[0].length - i - 1, 1, 1);
+                        batch.draw(boardTiles[i][j].getTerrain().getCastleTexture(gameManager.getCurrentKing().getId()),
+                                j, boardTiles[0].length - i - 1, 1, 1);
                         continue;
                     }
 
@@ -90,6 +91,33 @@ public class MainBoardActor extends Actor {
         endCustomRender(batch);
     }
 
+    @Override
+    public void setBounds(float x, float y, float width, float height) {
+        // catch setBounds from the parent to do resizing properly
+        // this Actor does not implement preferred size system and.. that break the
+        // entire layout system. Hooray! This workaround should be fine until it break hard
+        // enough that I have to implement Layout interface without any other choice.
+        super.setBounds(x, y, this.getParent().getWidth(), this.getParent().getHeight());
+    }
+
+    /**
+     * Set the Game Board to be drawn. Must be called before drawing.
+     * 
+     * @param boardTiles The Game Board to be drawn
+     */
+    public void setBoard(Tile[][] boardTiles) {
+        this.boardTiles = boardTiles;
+    }
+
+    /**
+     * Set the {@link Domino} that is being placed. Must be called before drawing.
+     * 
+     * @param currentDomino The Domino that is currently being placed
+     */
+    public void setCurrentDomino(Domino currentDomino) {
+        this.currentDomino = currentDomino;
+    }
+
     private void endCustomRender(Batch batch) {
         batch.end();
 
@@ -111,23 +139,5 @@ public class MainBoardActor extends Actor {
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();
-    }
-
-    /**
-     * Set the Game Board to be drawn. Must be called before drawing.
-     * 
-     * @param boardTiles The Game Board to be drawn
-     */
-    public void setBoard(Tile[][] boardTiles) {
-        this.boardTiles = boardTiles;
-    }
-
-    /**
-     * Set the {@link Domino} that is being placed. Must be called before drawing.
-     * 
-     * @param currentDomino The Domino that is currently being placed
-     */
-    public void setCurrentDomino(Domino currentDomino) {
-        this.currentDomino = currentDomino;
     }
 }

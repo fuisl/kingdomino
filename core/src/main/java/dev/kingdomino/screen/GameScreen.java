@@ -37,6 +37,7 @@ public class GameScreen extends AbstractScreen {
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
     private MainBoardHUDManager mainBoardHUDManager;
+    private ControlHintManager controlHintManager;
     private Table rootTable;
     private Skin skin;
 
@@ -102,6 +103,7 @@ public class GameScreen extends AbstractScreen {
                 atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
+        controlHintManager = new ControlHintManager(gameManager, skin);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
 
         // logging GPU info before shader init
@@ -132,6 +134,7 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(nextDominoRenderManager);
         stage.addActor(sidePanelManager);
         stage.addActor(mainBoardHUDManager);
+        stage.addActor(controlHintManager);
 
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
                 .height(Value.percentHeight(0.37f, leftInfoLayout))
@@ -164,8 +167,17 @@ public class GameScreen extends AbstractScreen {
 
         Container<Actor> container = new Container<>(mainBoardActor);
         container.fill();
-        mainGameLayout.add(container).expand().fill();
+
+        mainGameLayout.add(container)
+                .maxHeight(Value.percentHeight(0.92f, mainGameLayout))
+                .minHeight(Value.percentHeight(0.5f, mainGameLayout))
+                .prefHeight(Value.percentHeight(0.88f, mainGameLayout))
+                .expand()
+                .fill();
+
         mainGameLayout.row();
+
+        controlHintManager.setLayout(mainGameLayout);
 
         rootTable.add(leftInfoLayout)
                 .width(Value.percentWidth(0.14f, rootTable))
@@ -174,7 +186,9 @@ public class GameScreen extends AbstractScreen {
 
         rootTable.add(mainGameLayout)
                 .expand()
-                .fill();
+                .fill()
+                .minHeight(Value.percentHeight(1f, rootTable))
+                .maxHeight(Value.percentHeight(1f, rootTable));
 
         rootTable.add(sidePanelManager.getLayout())
                 .width(Value.percentWidth(0.2f, rootTable))
