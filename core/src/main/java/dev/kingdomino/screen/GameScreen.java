@@ -114,7 +114,7 @@ public class GameScreen extends AbstractScreen {
         OrthographicCamera shaderSharedCamera = new OrthographicCamera();
 
         this.backgroundShader = new BackgroundShader(shaderSharedCamera);
-        this.crtShader = new CRTShader(shaderSharedCamera);
+        this.crtShader = new CRTShader(shaderSharedCamera, 20f);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class CRTShader {
         this.crtValue = crtValue;
     }
 
-    public CRTShader(OrthographicCamera camera) {
+    public CRTShader(OrthographicCamera camera, float crtValue) {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
 
@@ -61,7 +61,7 @@ public class CRTShader {
 
         this.camera = camera;
         this.gameTimer = GameTimer.getInstance();
-        this.crtValue = 30f;
+        this.crtValue = crtValue;
     }
 
     public void startBufferCapture() {
