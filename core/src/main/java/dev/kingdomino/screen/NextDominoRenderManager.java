@@ -2,7 +2,6 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -23,11 +22,12 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     private DominoActor[] dominoActors;
     private HighlightActor[] highlightActors;
     private DraftInputProcessor draftInputProcessor;
+    private Label.LabelStyle headerStyle;
 
-    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin,
+    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
             TextureRegion[] crownOverlay, TextureRegion selectionOverlay) {
 
-        super(gameManager, kingAvatar, skin);
+        super(gameManager, kingAvatar);
 
         dominoActors = new DominoActor[kingCount];
         highlightActors = new HighlightActor[kingCount];
@@ -38,13 +38,15 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         }
 
         draftInputProcessor = gameManager.getDraftInputProcessor();
+
+        this.headerStyle = headerStyle;
     }
 
     @Override
     public Table getLayout() {
         Table layout = new Table();
 
-        layout.add(new Label("Next Dominoes", skin));
+        layout.add(new Label("Next Dominoes", headerStyle));
         layout.row();
 
         for (int i = 0; i < kingCount; i++) {

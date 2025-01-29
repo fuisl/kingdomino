@@ -2,9 +2,9 @@ package dev.kingdomino.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import dev.kingdomino.screen.ScreenEnum;
 import dev.kingdomino.screen.ScreenManager;
@@ -38,7 +38,8 @@ public class Kingdomino extends Game {
          * At least, hopefully, I dont want to deal with that mess
          */
         assetManager.load("gameTextures.atlas", TextureAtlas.class);
-        assetManager.load("skin/uiskin.json", Skin.class);
+        assetManager.load("PixelifySansHeader.fnt", BitmapFont.class);
+        assetManager.load("PixelifySansBody.fnt", BitmapFont.class);
     }
 
     @Override

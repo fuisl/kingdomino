@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -32,14 +32,14 @@ public class GameScreen extends AbstractScreen {
     private Stage stage;
     private GameManager gameManager;
     private ScreenViewport screenViewport;
+    private Table rootTable;
+
     private MainBoardActor mainBoardActor;
     private SidePanelManager sidePanelManager;
     private TurnOrderRenderManager turnOrderRenderManager;
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
     private ControlHintManager controlHintManager;
-    private Table rootTable;
-    private Skin skin;
 
     private CRTShader crtShader;
     private BackgroundShader backgroundShader;
@@ -59,8 +59,7 @@ public class GameScreen extends AbstractScreen {
         super(spriteBatch, assetManager);
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
-        gameManager = new GameManager();
-        
+        gameManager = new GameManager();        
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -68,7 +67,6 @@ public class GameScreen extends AbstractScreen {
         gameManager.update(0f);
 
         TextureAtlas atlas = assetManager.get("gameTextures.atlas");
-        skin = assetManager.get("skin/uiskin.json");
 
         for (TerrainType name : TerrainType.values()) {
             if (name == TerrainType.CASTLE) {
@@ -84,6 +82,14 @@ public class GameScreen extends AbstractScreen {
 
             name.setTexture(atlas.findRegion(name.name().toLowerCase()));
         }
+
+        Label.LabelStyle headerStyle = new Label.LabelStyle();
+        headerStyle.font = assetManager.get("PixelifySansHeader.fnt");
+        headerStyle.fontColor = Color.WHITE;
+
+        Label.LabelStyle bodyStyle = new Label.LabelStyle();
+        bodyStyle.font = assetManager.get("PixelifySansBody.fnt");
+        bodyStyle.fontColor = Color.WHITE;
 
         TextureRegion[] crownOverlay;
         TextureRegion[] kingAvatar;
@@ -103,12 +109,12 @@ public class GameScreen extends AbstractScreen {
         leftInfoBackground = new NinePatchDrawable(atlas.createPatch("leftTable"));
         rightInfoBackground = new NinePatchDrawable(atlas.createPatch("rightTable"));
 
-        turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
-        leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
-        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay,
+        turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle);
+        leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle);
+        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, headerStyle, crownOverlay,
                 atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
-        controlHintManager = new ControlHintManager(gameManager, skin);
+        controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
 
         // logging GPU info before shader init
@@ -154,7 +160,7 @@ public class GameScreen extends AbstractScreen {
                 .height(Value.percentHeight(0.25f, leftInfoLayout))
                 .expandX()
                 .fill()
-                .pad(15);
+                .pad(5);
 
         leftInfoLayout.row();
 
@@ -162,7 +168,7 @@ public class GameScreen extends AbstractScreen {
                 .height(Value.percentHeight(0.27f, leftInfoLayout))
                 .expandX()
                 .fill()
-                .pad(15);
+                .pad(5);
 
         leftInfoLayout.row();
 
@@ -170,7 +176,7 @@ public class GameScreen extends AbstractScreen {
                 .height(Value.percentHeight(0.27f, leftInfoLayout))
                 .expandX()
                 .fill()
-                .pad(15);
+                .pad(5);
 
         /**
          * Central Game Layout
@@ -216,8 +222,6 @@ public class GameScreen extends AbstractScreen {
                 .width(Value.percentWidth(0.16f, rootTable))
                 .expandY()
                 .fill();
-
-        stage.setDebugAll(true);
     }
 
     @Override

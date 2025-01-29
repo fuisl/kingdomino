@@ -2,7 +2,6 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.Align;
@@ -25,9 +24,9 @@ public class ControlHintManager extends Actor {
     private Label controlHint;
     private GameState lastGameState;
 
-    public ControlHintManager(GameManager gameManager, Skin skin) {
+    public ControlHintManager(GameManager gameManager, Label.LabelStyle bodyStyle) {
         this.gameManager = gameManager;
-        this.controlHint = new Label("placeholder", skin);
+        this.controlHint = new Label("placeholder", bodyStyle);
         this.lastGameState = GameState.INIT;
         controlHint.setWrap(true);
         controlHint.setAlignment(Align.center);

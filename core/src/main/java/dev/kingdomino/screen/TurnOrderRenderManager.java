@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.Align;
@@ -22,17 +21,26 @@ import dev.kingdomino.game.King;
  */
 public class TurnOrderRenderManager extends AbstractRenderManager {
     private Label score;
+    private Label.LabelStyle headerStyle;
+    private Label.LabelStyle bodyStyle;
 
-    public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
-        super(gameManager, kingAvatar, skin);
-        score = new Label("[PH]", skin);
+    public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle header, Label.LabelStyle body) {
+        super(gameManager, kingAvatar);
+
+        Label.LabelStyle redBody = new Label.LabelStyle(body);
+        redBody.fontColor = Color.RED;
+
+        score = new Label("[PH]", redBody);
         score.setColor(Color.RED);
+
+        this.headerStyle = header;
+        this.bodyStyle = body;
     }
 
     public Table getLayout() {
         Table layout = new Table();
 
-        Label header = new Label("Current Player", skin);
+        Label header = new Label("Current Player", headerStyle);
         header.setAlignment(Align.center);
 
         layout.add(header)
@@ -52,7 +60,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
 
         Table playerScore = new Table();
 
-        playerScore.add(new Label("Score", skin))
+        playerScore.add(new Label("Score", bodyStyle))
                 .pad(5);
 
         playerScore.row();
@@ -66,7 +74,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
 
         Table upcomingPlayers = new Table();
 
-        upcomingPlayers.add(new Label("Next:", skin))
+        upcomingPlayers.add(new Label("Next:", bodyStyle))
                 .pad(5);
 
         for (int i = 1; i < kingCount; i++) {
@@ -98,6 +106,8 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
         int currentTurnIndex = gameManager.getCurrentTurn().getCurrentIndex();
         King[] nextTurnOrder = gameManager.getNextTurn().getKings();
         int nextTurnIndex = 0;
+
+        score.setText(gameManager.getCurrentKing().getBoard().getScoringSystem().getBoardTotal());
 
         // TODO figure out how to animate this mess
         for (int i = 0; i < kingCount; i++) {
