@@ -37,7 +37,6 @@ public class GameScreen extends AbstractScreen {
     private TurnOrderRenderManager turnOrderRenderManager;
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
-    private MainBoardHUDManager mainBoardHUDManager;
     private ControlHintManager controlHintManager;
     private Table rootTable;
     private Skin skin;
@@ -109,7 +108,6 @@ public class GameScreen extends AbstractScreen {
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay,
                 atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
-        mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
         controlHintManager = new ControlHintManager(gameManager, skin);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
 
@@ -144,7 +142,6 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(leaderboardRenderManager);
         stage.addActor(nextDominoRenderManager);
         stage.addActor(sidePanelManager);
-        stage.addActor(mainBoardHUDManager);
         stage.addActor(controlHintManager);
 
         /**
@@ -154,7 +151,7 @@ public class GameScreen extends AbstractScreen {
         leftInfoLayout.setBackground(leftInfoBackground);
 
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
-                .height(Value.percentHeight(0.37f, leftInfoLayout))
+                .height(Value.percentHeight(0.25f, leftInfoLayout))
                 .expandX()
                 .fill()
                 .pad(15);
@@ -175,17 +172,9 @@ public class GameScreen extends AbstractScreen {
                 .fill()
                 .pad(15);
 
-
-        mainGameLayout.add(mainBoardHUDManager.getLayout())
-                .height(Value.percentHeight(0.08f, mainGameLayout))
-                .expandX()
-                .fill();
-
         /**
          * Central Game Layout
          */
-
-        mainGameLayout.row();
 
         Container<Actor> container = new Container<>(mainBoardActor);
         container.fill();
@@ -227,6 +216,8 @@ public class GameScreen extends AbstractScreen {
                 .width(Value.percentWidth(0.16f, rootTable))
                 .expandY()
                 .fill();
+
+        stage.setDebugAll(true);
     }
 
     @Override

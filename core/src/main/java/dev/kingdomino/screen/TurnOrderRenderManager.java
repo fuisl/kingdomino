@@ -1,11 +1,14 @@
 package dev.kingdomino.screen;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.utils.Align;
 
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.GameManager.GameState;
@@ -18,23 +21,64 @@ import dev.kingdomino.game.King;
  * @author LunaciaDev
  */
 public class TurnOrderRenderManager extends AbstractRenderManager {
+    private Label score;
+
     public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Skin skin) {
         super(gameManager, kingAvatar, skin);
+        score = new Label("[PH]", skin);
+        score.setColor(Color.RED);
     }
 
     public Table getLayout() {
         Table layout = new Table();
 
-        layout.add(new Label("Turn Order", skin)).colspan(kingCount);
+        Label header = new Label("Current Player", skin);
+        header.setAlignment(Align.center);
+
+        layout.add(header)
+                .width(Value.percentWidth(0.9f, layout))
+                .pad(5);
+
         layout.row();
 
-        for (int i = 0; i < kingCount; i++) {
-            layout.add(generateContainer(playerIconActors[i]))
-                    .expand()
-                    .fill();
+        Table currentPlayer = new Table();
 
-            layout.row();
+        currentPlayer.add(generateContainer(playerIconActors[0]))
+                .height(Value.percentHeight(0.3f, layout))
+                .width(Value.percentWidth(0.5f, currentPlayer))
+                .align(Align.center)
+                .fill()
+                .pad(5);
+
+        Table playerScore = new Table();
+
+        playerScore.add(new Label("Score", skin))
+                .pad(5);
+
+        playerScore.row();
+        playerScore.add(score)
+                .pad(5);
+
+        currentPlayer.add(playerScore);
+
+        layout.add(currentPlayer).fill();
+        layout.row();
+
+        Table upcomingPlayers = new Table();
+
+        upcomingPlayers.add(new Label("Next:", skin))
+                .pad(5);
+
+        for (int i = 1; i < kingCount; i++) {
+            upcomingPlayers.add(generateContainer(playerIconActors[i]))
+                    .height(Value.percentHeight(0.15f, layout))
+                    .align(Align.center)
+                    .expand()
+                    .fill()
+                    .pad(5);
         }
+
+        layout.add(upcomingPlayers).fill().pad(10, 0, 0, 0);
 
         return layout;
     }
