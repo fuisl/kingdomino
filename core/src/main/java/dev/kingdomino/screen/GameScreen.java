@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -43,6 +44,9 @@ public class GameScreen extends AbstractScreen {
 
     private CRTShader crtShader;
     private BackgroundShader backgroundShader;
+
+    private NinePatchDrawable leftInfoBackground;
+    private NinePatchDrawable rightInfoBackground;
 
     // TODO: Allow this value to be changed, if I can get there...
     private final boolean SHADER_TOGGLE = true;
@@ -97,6 +101,9 @@ public class GameScreen extends AbstractScreen {
         kingAvatar[2] = atlas.findRegion("pinkKing");
         kingAvatar[3] = atlas.findRegion("yellowKing");
 
+        leftInfoBackground = new NinePatchDrawable(atlas.createPatch("leftTable"));
+        rightInfoBackground = new NinePatchDrawable(atlas.createPatch("rightTable"));
+
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay,
@@ -121,13 +128,17 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void initScreen() {
-        // welcome to the world of Layout-by-Code. Please make yourself at home.
+        // welcome to the world of Layout-by-Code. Please make yourself feel at home.
         rootTable = new Table();
+        rootTable.setFillParent(true);
 
         Table leftInfoLayout = new Table();
         Table mainGameLayout = new Table();
 
-        rootTable.setFillParent(true);
+        /**
+         * Add non-drawing Actors to the system
+         */
+
         stage.addActor(rootTable);
         stage.addActor(turnOrderRenderManager);
         stage.addActor(leaderboardRenderManager);
@@ -135,6 +146,12 @@ public class GameScreen extends AbstractScreen {
         stage.addActor(sidePanelManager);
         stage.addActor(mainBoardHUDManager);
         stage.addActor(controlHintManager);
+
+        /**
+         * Left Information Layout
+         */
+
+        leftInfoLayout.setBackground(leftInfoBackground);
 
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
                 .height(Value.percentHeight(0.37f, leftInfoLayout))
@@ -158,10 +175,15 @@ public class GameScreen extends AbstractScreen {
                 .fill()
                 .pad(15);
 
+
         mainGameLayout.add(mainBoardHUDManager.getLayout())
                 .height(Value.percentHeight(0.08f, mainGameLayout))
                 .expandX()
                 .fill();
+
+        /**
+         * Central Game Layout
+         */
 
         mainGameLayout.row();
 
@@ -179,6 +201,17 @@ public class GameScreen extends AbstractScreen {
 
         controlHintManager.setLayout(mainGameLayout);
 
+        /**
+         * Right Information Layout
+         */
+        
+        Table rightInfoLayout = sidePanelManager.getLayout();
+        rightInfoLayout.setBackground(rightInfoBackground);
+
+        /**
+         * Packing Everything into rootTable
+         */
+
         rootTable.add(leftInfoLayout)
                 .width(Value.percentWidth(0.14f, rootTable))
                 .expandY()
@@ -190,13 +223,10 @@ public class GameScreen extends AbstractScreen {
                 .minHeight(Value.percentHeight(1f, rootTable))
                 .maxHeight(Value.percentHeight(1f, rootTable));
 
-        rootTable.add(sidePanelManager.getLayout())
+        rootTable.add(rightInfoLayout)
                 .width(Value.percentWidth(0.2f, rootTable))
                 .expandY()
                 .fill();
-
-        // TODO remove this line once we are done with layout
-        stage.setDebugAll(true);
     }
 
     @Override

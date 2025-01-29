@@ -6,7 +6,7 @@ bounds:1034,426,48,48
 blueKing
 bounds:2,218,256,256
 field
-bounds:168,168,48,48
+bounds:1034,276,48,48
 forest
 bounds:1134,426,48,48
 greenCastle
@@ -17,6 +17,9 @@ highlight
 bounds:2,152,64,64
 lake
 bounds:1084,376,48,48
+leftTable
+bounds:168,168,48,48
+split:0,5,0,0
 mine
 bounds:1084,426,48,48
 noCrown
@@ -29,12 +32,15 @@ pinkKing
 bounds:776,218,256,256
 plains
 bounds:1034,376,48,48
+rightTable
+bounds:1134,376,48,48
+split:5,0,0,0
 swamps
 bounds:1034,326,48,48
 threeCrown
-bounds:1084,326,48,48
+bounds:1184,426,48,48
 twoCrown
-bounds:1034,276,48,48
+bounds:1084,326,48,48
 yellowCastle
 bounds:2,52,48,48
 yellowKing

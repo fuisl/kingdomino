@@ -59,7 +59,10 @@ public class SidePanelManager extends Actor {
         Table layout = new Table();
 
         for (int i = 0; i < kingCount; i++) {
-            layout.add(generateContainer(sideBoardActors[i])).expand().fill();
+            layout.add(generateContainer(sideBoardActors[i]))
+                    .expand()
+                    .fill()
+                    .pad(0, 10, 0, 0);
             layout.row();
         }
 
