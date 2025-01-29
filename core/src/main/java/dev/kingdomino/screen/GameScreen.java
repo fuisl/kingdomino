@@ -46,6 +46,9 @@ public class GameScreen extends AbstractScreen {
 
     private NinePatchDrawable leftInfoBackground;
     private NinePatchDrawable rightInfoBackground;
+    private NinePatchDrawable bezel;
+    private NinePatchDrawable bezelBackground;
+    private NinePatchDrawable whiteBezel;
 
     // TODO: Allow this value to be changed, if I can get there...
     private final boolean SHADER_TOGGLE = true;
@@ -59,7 +62,7 @@ public class GameScreen extends AbstractScreen {
         super(spriteBatch, assetManager);
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
-        gameManager = new GameManager();        
+        gameManager = new GameManager();
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -108,8 +111,12 @@ public class GameScreen extends AbstractScreen {
 
         leftInfoBackground = new NinePatchDrawable(atlas.createPatch("leftTable"));
         rightInfoBackground = new NinePatchDrawable(atlas.createPatch("rightTable"));
+        bezel = new NinePatchDrawable(atlas.createPatch("bezel"));
+        whiteBezel = new NinePatchDrawable(atlas.createPatch("whiteBezel"));
+        bezelBackground = new NinePatchDrawable(atlas.createPatch("bezelBackground"));
 
-        turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle);
+        turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle, bezel,
+                whiteBezel, bezelBackground);
         leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, headerStyle, crownOverlay,
                 atlas.findRegion("highlight"));
@@ -157,10 +164,9 @@ public class GameScreen extends AbstractScreen {
         leftInfoLayout.setBackground(leftInfoBackground);
 
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
-                .height(Value.percentHeight(0.25f, leftInfoLayout))
                 .expandX()
                 .fill()
-                .pad(5);
+                .pad(15);
 
         leftInfoLayout.row();
 
@@ -168,7 +174,7 @@ public class GameScreen extends AbstractScreen {
                 .height(Value.percentHeight(0.27f, leftInfoLayout))
                 .expandX()
                 .fill()
-                .pad(5);
+                .pad(15);
 
         leftInfoLayout.row();
 
@@ -176,7 +182,7 @@ public class GameScreen extends AbstractScreen {
                 .height(Value.percentHeight(0.27f, leftInfoLayout))
                 .expandX()
                 .fill()
-                .pad(5);
+                .pad(15);
 
         /**
          * Central Game Layout
@@ -199,7 +205,7 @@ public class GameScreen extends AbstractScreen {
         /**
          * Right Information Layout
          */
-        
+
         Table rightInfoLayout = sidePanelManager.getLayout();
         rightInfoLayout.setBackground(rightInfoBackground);
 
@@ -208,7 +214,6 @@ public class GameScreen extends AbstractScreen {
          */
 
         rootTable.add(leftInfoLayout)
-                .width(Value.percentWidth(0.16f, rootTable))
                 .expandY()
                 .fill();
 
@@ -219,7 +224,7 @@ public class GameScreen extends AbstractScreen {
                 .maxHeight(Value.percentHeight(1f, rootTable));
 
         rootTable.add(rightInfoLayout)
-                .width(Value.percentWidth(0.16f, rootTable))
+                .width(Value.percentWidth(0.18f, rootTable))
                 .expandY()
                 .fill();
     }
@@ -242,7 +247,7 @@ public class GameScreen extends AbstractScreen {
             stage.act(delta);
             stage.draw();
             crtShader.stopBufferCapture();
-            
+
             // apply the CRT shader
             crtShader.applyCRTEffect();
         } else {

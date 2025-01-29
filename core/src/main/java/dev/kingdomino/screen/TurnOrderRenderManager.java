@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 
 import dev.kingdomino.game.GameManager;
@@ -23,37 +24,45 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
     private Label score;
     private Label.LabelStyle headerStyle;
     private Label.LabelStyle bodyStyle;
+    private NinePatchDrawable bezel;
+    private NinePatchDrawable whiteBezel;
+    private NinePatchDrawable bezelBackground;
 
-    public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle header, Label.LabelStyle body) {
+    public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle header,
+            Label.LabelStyle body, NinePatchDrawable bezel, NinePatchDrawable whiteBezel,
+            NinePatchDrawable bezelBackground) {
         super(gameManager, kingAvatar);
 
-        Label.LabelStyle redBody = new Label.LabelStyle(body);
-        redBody.fontColor = Color.RED;
+        Label.LabelStyle blackBody = new Label.LabelStyle(body);
+        blackBody.fontColor = Color.BLACK;
 
-        score = new Label("[PH]", redBody);
-        score.setColor(Color.RED);
+        score = new Label("[PH]", blackBody);
 
         this.headerStyle = header;
         this.bodyStyle = body;
+        this.bezel = bezel;
+        this.whiteBezel = whiteBezel;
+        this.bezelBackground = bezelBackground;
     }
 
     public Table getLayout() {
         Table layout = new Table();
+        layout.background(bezelBackground);
 
         Label header = new Label("Current Player", headerStyle);
         header.setAlignment(Align.center);
 
         layout.add(header)
-                .width(Value.percentWidth(0.9f, layout))
-                .pad(5);
+                .pad(10);
 
         layout.row();
 
         Table currentPlayer = new Table();
+        currentPlayer.background(bezel);
 
         currentPlayer.add(generateContainer(playerIconActors[0]))
-                .height(Value.percentHeight(0.3f, layout))
-                .width(Value.percentWidth(0.5f, currentPlayer))
+                .height(Value.percentHeight(0.35f, layout))
+                .width(Value.percentWidth(0.4f, layout))
                 .align(Align.center)
                 .fill()
                 .pad(5);
@@ -64,29 +73,39 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
                 .pad(5);
 
         playerScore.row();
-        playerScore.add(score)
+
+        Table scoreWrapper = new Table();
+        scoreWrapper.setBackground(whiteBezel);
+
+        scoreWrapper.add(score);
+
+        playerScore.add(scoreWrapper)
+                .pad(0, 0, 10, 0);
+
+        currentPlayer.add(playerScore)
+                .expandX();
+
+        layout.add(currentPlayer)
+                .fill()
                 .pad(5);
 
-        currentPlayer.add(playerScore);
-
-        layout.add(currentPlayer).fill();
         layout.row();
 
         Table upcomingPlayers = new Table();
 
-        upcomingPlayers.add(new Label("Next:", bodyStyle))
-                .pad(5);
+        upcomingPlayers.add(new Label("Next:", bodyStyle));
 
         for (int i = 1; i < kingCount; i++) {
             upcomingPlayers.add(generateContainer(playerIconActors[i]))
-                    .height(Value.percentHeight(0.15f, layout))
+                    .height(Value.percentHeight(0.18f, layout))
                     .align(Align.center)
                     .expand()
-                    .fill()
-                    .pad(5);
+                    .fill();
         }
 
-        layout.add(upcomingPlayers).fill().pad(10, 0, 0, 0);
+        layout.add(upcomingPlayers)
+                .fill()
+                .pad(10, 5, 10, 0);
 
         return layout;
     }
