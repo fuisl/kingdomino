@@ -63,6 +63,7 @@ public class BackgroundShader {
         backgroundShader.setUniformf("u_contrast", refTable.get("u_contrast")); 
         
         // color
+        BackgroundManager.updateColors();
         backgroundShader.setUniformf("u_colour1", colorTable.get("u_color1"));
         backgroundShader.setUniformf("u_colour2", colorTable.get("u_color2"));
         backgroundShader.setUniformf("u_colour3", colorTable.get("u_color3"));

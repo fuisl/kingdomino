@@ -1,5 +1,6 @@
 package dev.kingdomino.effects;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.Color;
@@ -13,7 +14,21 @@ import dev.kingdomino.game.EventManager;
 public class BackgroundManager {
     private static final Map<String, Float> refTable = BackgroundShader.refTable; // ref to BackgroundShader.refTable
     private static final Map<String, Color> colorTable = BackgroundShader.colorTable;
+    public static final Map<String, Color[]> colorMap = new HashMap<>();
     private static final EventManager eventManager = EventManager.getInstance();
+    private static final Map<String, Map<String, Float>> tempTables = new HashMap<>();
+
+    static {
+        // TODO: populate color map
+        colorMap.put("default_blue",
+                new Color[] { Color.valueOf("02394A"), Color.valueOf("043565"), Color.valueOf("5158BB") });
+        colorMap.put("default_red",
+                new Color[] { Color.valueOf("4A0707"), Color.valueOf("5C0B0B"), Color.valueOf("A61B1B") });
+        colorMap.put("default_green",
+                new Color[] { Color.valueOf("0B4A0B"), Color.valueOf("0B5C0B"), Color.valueOf("1BA61B") });
+        colorMap.put("default_yellow",
+                new Color[] { Color.valueOf("4A4A07"), Color.valueOf("5C5C0B"), Color.valueOf("A6A61B") });
+    }
 
     static {
         // init refTable
@@ -63,4 +78,53 @@ public class BackgroundManager {
                 new Ease(EaseType.LERP, refTable, "u_spinAmount", 0.15f, 0.5f, null));
         eventManager.addEvent(startSpinCurve.copy(), "background", false);
     }
+
+    // update single color
+    public static void updateColor(String colorName, Map<String, Float> tempTable) {
+        colorTable.get(colorName).set(tempTable.get("r"), tempTable.get("g"), tempTable.get("b"), tempTable.get("a"));
+    }
+
+    // update all colors
+
+    public static HashMap<String, Float> colorLerp(Color current, Color target, float duration) {
+        HashMap<String, Float> tempTable = new HashMap<>();
+        tempTable.put("r", current.r);
+        tempTable.put("g", current.g);
+        tempTable.put("b", current.b);
+        tempTable.put("a", current.a);
+
+        Ease redEase = new Ease(EaseType.LERP, tempTable, "r", target.r, duration, null);
+        Ease greenEase = new Ease(EaseType.LERP, tempTable, "g", target.g, duration, null);
+        Ease blueEase = new Ease(EaseType.LERP, tempTable, "b", target.b, duration, null);
+        Ease alphaEase = new Ease(EaseType.LERP, tempTable, "a", target.a, duration, null);
+
+        Event redEvent = new Event(TriggerType.EASE, true, false, null, null, null, null, redEase);
+        Event greenEvent = new Event(TriggerType.EASE, true, false, null, null, null, null, greenEase);
+        Event blueEvent = new Event(TriggerType.EASE, true, false, null, null, null, null, blueEase);
+        Event alphaEvent = new Event(TriggerType.EASE, true, false, null, null, null, null, alphaEase);
+
+        eventManager.addEvent(redEvent, "color", false);
+        eventManager.addEvent(greenEvent, "color", false);
+        eventManager.addEvent(blueEvent, "color", false);
+        eventManager.addEvent(alphaEvent, "color", false);
+        // eventManager.addEvent(changeColor.copy(), "color", false);
+        return tempTable;
+    }
+
+    public static void colorSwitch(Color[] colors, float duration) {
+        tempTables.put("u_color1", colorLerp(colorTable.get("u_color1"), colors[0], duration));
+        tempTables.put("u_color2", colorLerp(colorTable.get("u_color2"), colors[1], duration));
+        tempTables.put("u_color3", colorLerp(colorTable.get("u_color3"), colors[2], duration));
+    }
+
+    public static void colorSwitch(Color[] colors) {
+        colorSwitch(colors, 0.2f);
+    }
+
+    public static void updateColors() {
+        for (Map.Entry<String, Map<String, Float>> entry : tempTables.entrySet()) {
+            updateColor(entry.getKey(), entry.getValue());
+        }
+    }
+
 }

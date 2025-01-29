@@ -128,7 +128,7 @@ public class GameManager {
 
                 // if (draftInputHandler.show == false) {
                 // draftInputHandler.show = true;
-                    updateTurn();
+                updateTurn();
                 // }
                 break;
             case TURN_PLACING:
@@ -179,6 +179,8 @@ public class GameManager {
             currentTurn.selectDomino(kings[i], i);
         }
 
+        BackgroundManager.startSpin();
+
         // set game state to SETUP
         currentState = GameState.SETUP;
     }
@@ -210,7 +212,22 @@ public class GameManager {
             boardInputHandler.reset();
 
             // start spinning background
-            BackgroundManager.startSpin();
+
+            // TODO: change color
+            switch (currentKing.getId()) {
+                case 0:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_blue"));
+                    break;
+                case 1:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_green"));
+                    break;
+                case 2:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_red"));
+                    break;
+                case 3:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_yellow"));
+                    break;
+            }
         }
     }
 
@@ -238,6 +255,9 @@ public class GameManager {
         if (draftInputHandler.exit) {
             currentState = GameState.TURN_END;
             choosingDomino = false;
+
+            // rewind and forward spinning background
+            BackgroundManager.rewindSpin();
         }
     }
 
@@ -252,9 +272,6 @@ public class GameManager {
                 currentTurn = nextTurn.copy(); // weird
                 nextTurn = null;
                 currentState = GameState.SETUP;
-
-                // rewind and forward spinning background
-                BackgroundManager.rewindSpin();
             }
         }
 
