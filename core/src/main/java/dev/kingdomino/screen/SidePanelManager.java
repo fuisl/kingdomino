@@ -62,7 +62,7 @@ public class SidePanelManager extends Actor {
             layout.add(generateContainer(sideBoardActors[i]))
                     .expand()
                     .fill()
-                    .pad(0, 10, 0, 0);
+                    .pad(0, 10, 0, 5);
             layout.row();
         }
 
