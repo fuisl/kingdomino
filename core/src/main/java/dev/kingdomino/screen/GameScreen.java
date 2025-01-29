@@ -57,7 +57,19 @@ public class GameScreen extends AbstractScreen {
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
         gameManager = new GameManager();
-        
+
+        // logging GPU info before shader init.
+        // TODO move to loading screen, if I managed to get there in time
+        // UPDATE: init before update GameManager to start all timers.
+        Gdx.app.log("GPU Info", "Vendor: " + Gdx.gl.glGetString(GL20.GL_VENDOR));
+        Gdx.app.log("GPU Info", "Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER));
+        Gdx.app.log("GPU Info", "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION));
+        Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+
+        OrthographicCamera shaderSharedCamera = new OrthographicCamera();
+
+        this.backgroundShader = new BackgroundShader(shaderSharedCamera);
+        this.crtShader = new CRTShader(shaderSharedCamera);
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -105,18 +117,6 @@ public class GameScreen extends AbstractScreen {
         mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
         controlHintManager = new ControlHintManager(gameManager, skin);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
-
-        // logging GPU info before shader init
-        // TODO move to loading screen, if I managed to get there in time
-        Gdx.app.log("GPU Info", "Vendor: " + Gdx.gl.glGetString(GL20.GL_VENDOR));
-        Gdx.app.log("GPU Info", "Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER));
-        Gdx.app.log("GPU Info", "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION));
-        Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
-
-        OrthographicCamera shaderSharedCamera = new OrthographicCamera();
-
-        this.backgroundShader = new BackgroundShader(shaderSharedCamera);
-        this.crtShader = new CRTShader(shaderSharedCamera);
     }
 
     @Override
@@ -208,7 +208,7 @@ public class GameScreen extends AbstractScreen {
             stage.act(delta);
             stage.draw();
             crtShader.stopBufferCapture();
-            
+
             // apply the CRT shader
             crtShader.applyCRTEffect();
         } else {
