@@ -126,10 +126,10 @@ public class GameManager {
 
                 // eventManager.addEvent(autoContinue.copy(), "base", false);
 
-                if (draftInputHandler.show == false) {
-                    draftInputHandler.show = true;
+                // if (draftInputHandler.show == false) {
+                // draftInputHandler.show = true;
                     updateTurn();
-                }
+                // }
                 break;
             case TURN_PLACING:
                 placeDomino();
