@@ -25,6 +25,7 @@ public class BackgroundShader {
     private GameTimer gameTimer;
 
     public static HashMap<String, Float> refTable;
+    public static HashMap<String, Color> colorTable;
 
     public BackgroundShader(OrthographicCamera camera) {
         // These assets need its own specific loader if I want to delegate it to
@@ -46,10 +47,7 @@ public class BackgroundShader {
 
         // init refTable
         refTable = new HashMap<>();
-        refTable.put("u_time", 0f); // control overall color bleeding. CURRENTLY UNUSED
-        refTable.put("u_spinTime", 0.0f); // control spining. [-1, 1] should go with the spinAmount
-        refTable.put("u_spinAmount", 0.18f); // control the shape of the spin. 0.2f is the sweet spot
-        refTable.put("u_contrast", 1.5f); // control contrast
+        colorTable = new HashMap<>();
     }
 
     public void render() {
@@ -65,9 +63,9 @@ public class BackgroundShader {
         backgroundShader.setUniformf("u_contrast", refTable.get("u_contrast")); 
         
         // color
-        backgroundShader.setUniformf("u_colour1", Color.valueOf("02394A"));
-        backgroundShader.setUniformf("u_colour2", Color.valueOf("043565"));
-        backgroundShader.setUniformf("u_colour3", Color.valueOf("5158BB"));
+        backgroundShader.setUniformf("u_colour1", colorTable.get("u_color1"));
+        backgroundShader.setUniformf("u_colour2", colorTable.get("u_color2"));
+        backgroundShader.setUniformf("u_colour3", colorTable.get("u_color3"));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
