@@ -1,4 +1,9 @@
-package dev.kingdomino.game;
+
+
+import dev.kingdomino.game.Event;
+import dev.kingdomino.game.EventManager;
+import dev.kingdomino.game.GameTimer;
+import dev.kingdomino.game.Event.TriggerType;
 
 public class TestEventManager {
     public static void main(String[] args) {

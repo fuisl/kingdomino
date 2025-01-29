@@ -1,4 +1,9 @@
-package dev.kingdomino.game;
+
+
+import dev.kingdomino.game.Board;
+import dev.kingdomino.game.Direction;
+import dev.kingdomino.game.Domino;
+import dev.kingdomino.game.DominoDeck;
 
 public class TestDomino {
     public static void main(String[] args) {

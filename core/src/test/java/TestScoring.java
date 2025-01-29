@@ -1,4 +1,8 @@
-package dev.kingdomino.game;
+
+
+import dev.kingdomino.game.ScoringSystem;
+import dev.kingdomino.game.TerrainType;
+import dev.kingdomino.game.Tile;
 
 public class TestScoring {
     final static int SIZE = 9;

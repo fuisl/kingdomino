@@ -1,8 +1,17 @@
-package dev.kingdomino.game;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import dev.kingdomino.game.Board;
+import dev.kingdomino.game.Deck;
+import dev.kingdomino.game.Direction;
+import dev.kingdomino.game.Domino;
+import dev.kingdomino.game.DominoController;
+import dev.kingdomino.game.Position;
+import dev.kingdomino.game.TerrainType;
+import dev.kingdomino.game.Tile;
 
 public class TestBoard {
     public static void main(String[] args) throws IOException, InterruptedException {
