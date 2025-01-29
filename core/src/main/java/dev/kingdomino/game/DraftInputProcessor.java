@@ -1,11 +1,10 @@
 package dev.kingdomino.game;
 
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 
 import dev.kingdomino.game.Event.TriggerType;
 
-public class DraftInputProcessor implements InputProcessor {
+public class DraftInputProcessor extends AbstractInputProcessor {
     private EventManager eventManager = EventManager.getInstance();
     private GameManager gameManager;
     private Turn nextTurn;
@@ -50,6 +49,7 @@ public class DraftInputProcessor implements InputProcessor {
             updated = true;
             return false;
         }
+
         Event e = null;
 
         switch (keycode) {
@@ -100,46 +100,5 @@ public class DraftInputProcessor implements InputProcessor {
         }
 
         return true;
-
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 }

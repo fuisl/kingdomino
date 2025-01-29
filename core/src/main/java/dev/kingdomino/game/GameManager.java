@@ -89,11 +89,7 @@ public class GameManager {
                 // }, null, null, null);
 
                 // eventManager.addEvent(autoContinue.copy(), "base", false);
-
-                if (draftInputProcessor.show == false) {
-                    draftInputProcessor.show = true;
-                    updateTurn();
-                }
+                updateTurn();
                 break;
             case TURN_PLACING:
                 placeDomino();
