@@ -213,7 +213,7 @@ public class GameScreen extends AbstractScreen {
          */
 
         rootTable.add(leftInfoLayout)
-                .width(Value.percentWidth(0.14f, rootTable))
+                .width(Value.percentWidth(0.16f, rootTable))
                 .expandY()
                 .fill();
 
@@ -224,7 +224,7 @@ public class GameScreen extends AbstractScreen {
                 .maxHeight(Value.percentHeight(1f, rootTable));
 
         rootTable.add(rightInfoLayout)
-                .width(Value.percentWidth(0.2f, rootTable))
+                .width(Value.percentWidth(0.16f, rootTable))
                 .expandY()
                 .fill();
     }

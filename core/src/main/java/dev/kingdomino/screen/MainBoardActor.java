@@ -14,6 +14,7 @@ import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.Position;
 import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.Tile;
+import dev.kingdomino.game.GameManager.GameState;
 
 /**
  * An {@link Actor} specialize in drawing the Game Board. Unlike other Actors,
@@ -67,6 +68,11 @@ public class MainBoardActor extends Actor {
                     batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length - i - 1, 1, 1);
                 }
             }
+        }
+
+        if (gameManager.getCurrentState() != GameState.TURN_PLACING) {
+            endCustomRender(batch);
+            return;
         }
 
         Tile tileA = currentDomino.getTileA();

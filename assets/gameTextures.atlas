@@ -19,7 +19,7 @@ lake
 bounds:1084,376,48,48
 leftTable
 bounds:168,168,48,48
-split:0,5,0,0
+split:0,7,0,0
 mine
 bounds:1084,426,48,48
 noCrown
@@ -34,7 +34,7 @@ plains
 bounds:1034,376,48,48
 rightTable
 bounds:1134,376,48,48
-split:5,0,0,0
+split:7,0,0,0
 swamps
 bounds:1034,326,48,48
 threeCrown
