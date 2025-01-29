@@ -8,6 +8,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.controllers.Controllers;
 
+import dev.kingdomino.effects.BackgroundSpinManager;
+
 // import dev.kingdomino.game.Event.TriggerType;
 
 public class GameManager {
@@ -206,6 +208,9 @@ public class GameManager {
 
             draftInputHandler.reset();
             boardInputHandler.reset();
+
+            // start spinning background
+            BackgroundSpinManager.startSpin();
         }
     }
 
@@ -247,6 +252,9 @@ public class GameManager {
                 currentTurn = nextTurn.copy(); // weird
                 nextTurn = null;
                 currentState = GameState.SETUP;
+
+                // rewind and forward spinning background
+                BackgroundSpinManager.rewindSpin();
             }
         }
 
