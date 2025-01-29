@@ -25,7 +25,7 @@ public class EventManager {
 
         // Initialize default queues
         this.queues.put("base", new ConcurrentLinkedQueue<>());
-        this.queues.put("tutorial", new ConcurrentLinkedQueue<>());
+        this.queues.put("background", new ConcurrentLinkedQueue<>());
         this.queues.put("achievement", new ConcurrentLinkedQueue<>());
         this.queues.put("other", new ConcurrentLinkedQueue<>());
         this.queues.put("input", new ConcurrentLinkedQueue<>());
