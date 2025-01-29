@@ -302,8 +302,8 @@ public class GameScreen extends AbstractScreen {
     }
 
     public void initBackgroundShader() {
-        String vertexShader = Gdx.files.internal("assets/shaders/background.vert").readString();
-        String fragmentShader = Gdx.files.internal("assets/shaders/background.frag").readString();
+        String vertexShader = Gdx.files.internal("shaders/background.vert").readString();
+        String fragmentShader = Gdx.files.internal("shaders/background.frag").readString();
 
         backgroundShader = new ShaderProgram(vertexShader, fragmentShader);
         this.screenQuad = new Mesh(true, 4, 6, new VertexAttribute(Usage.Position, 3, "a_position"),
@@ -320,8 +320,8 @@ public class GameScreen extends AbstractScreen {
 
         crtFbo = new FrameBuffer(Pixmap.Format.RGBA8888, w, h, false);
 
-        crtShader = new ShaderProgram(Gdx.files.internal("assets/shaders/crt.vert"),
-                Gdx.files.internal("assets/shaders/crt.frag"));
+        crtShader = new ShaderProgram(Gdx.files.internal("shaders/crt.vert"),
+                Gdx.files.internal("shaders/crt.frag"));
 
         if (!crtShader.isCompiled()) {
             System.out.println(crtShader.getLog());
