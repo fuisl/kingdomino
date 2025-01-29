@@ -1,4 +1,7 @@
-package dev.kingdomino.game;
+
+
+import dev.kingdomino.game.Domino;
+import dev.kingdomino.game.DominoDeck;
 
 public class TestRotation {
     public static void main(String[] args) {

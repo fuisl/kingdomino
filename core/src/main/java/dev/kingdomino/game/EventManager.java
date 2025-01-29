@@ -1,6 +1,8 @@
 package dev.kingdomino.game;
 
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -23,9 +25,10 @@ public class EventManager {
 
         // Initialize default queues
         this.queues.put("base", new ConcurrentLinkedQueue<>());
-        this.queues.put("tutorial", new ConcurrentLinkedQueue<>());
+        this.queues.put("background", new ConcurrentLinkedQueue<>());
         this.queues.put("achievement", new ConcurrentLinkedQueue<>());
         this.queues.put("other", new ConcurrentLinkedQueue<>());
+        this.queues.put("input", new ConcurrentLinkedQueue<>());
 
         this.queueTimer = 0f;
         this.queueDt = 1f / 60f;
@@ -67,9 +70,8 @@ public class EventManager {
      * Clears all events in a specific queue or all queues if queue is null.
      * 
      * @param queue        Name of the queue to clear, or null to clear all.
-     * @param keepNoDelete If you have a concept of "no_delete" events,
-     *                     you can skip removing them here. (Implementation
-     *                     optional)
+     * @param keepNoDelete keep "no_delete" events,
+     *                     you can skip removing (TODO: implement this)
      */
     public void clearQueue(String queue, boolean keepNoDelete) {
         if (queue == null) {

@@ -57,6 +57,11 @@ public class MainBoardActor extends Actor {
                 if (boardTiles[i][j] != null) {
                     // the coordinate system of the screen has origin at bottom left instead of top
                     // left
+                    if (boardTiles[i][j].getTerrain() == TerrainType.CASTLE) {
+                        batch.draw(boardTiles[i][j].getTerrain().getCastleTexture(gameManager.getCurrentKing().getId()), j, boardTiles[0].length - i - 1, 1, 1);
+                        continue;
+                    }
+
                     batch.draw(boardTiles[i][j].getTerrain().getTexture(), j, boardTiles[0].length - i - 1, 1, 1);
                     batch.draw(crownOverlay[boardTiles[i][j].getCrown()], j, boardTiles[0].length - i - 1, 1, 1);
                 }
