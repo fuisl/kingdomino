@@ -26,13 +26,13 @@ public class BackgroundManager {
     static {
         // TODO: populate color map
         colorMap.put("default_blue",
-                new Color[] { Color.valueOf("02394A"), Color.valueOf("043565"), Color.valueOf("5158BB") });
+                new Color[] { Color.valueOf("#020608"), Color.valueOf("#12445d"), Color.valueOf("#2382b2") });
         colorMap.put("default_red",
-                new Color[] { Color.valueOf("4A0707"), Color.valueOf("5C0B0B"), Color.valueOf("A61B1B") });
+                new Color[] { Color.valueOf("#1c1a19"), Color.valueOf("#790f14"), Color.valueOf("#9e1b32") });
         colorMap.put("default_green",
-                new Color[] { Color.valueOf("0B4A0B"), Color.valueOf("0B5C0B"), Color.valueOf("1BA61B") });
+                new Color[] { Color.valueOf("#1c2434"), Color.valueOf("#045c4b"), Color.valueOf("#00373a") }); //
         colorMap.put("default_yellow",
-                new Color[] { Color.valueOf("4A4A07"), Color.valueOf("5C5C0B"), Color.valueOf("A6A61B") });
+                new Color[] { Color.valueOf("#103f78"), Color.valueOf("#f09526"), Color.valueOf("#f09526") });
     }
 
     static {
