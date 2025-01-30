@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import dev.kingdomino.effects.AudioManager;
 import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
@@ -40,6 +41,7 @@ public class GameScreen extends AbstractScreen {
     private ControlHintManager controlHintManager;
     private Table rootTable;
     private Skin skin;
+    private AudioManager audioManager;
 
     private CRTShader crtShader;
     private BackgroundShader backgroundShader;
@@ -70,6 +72,12 @@ public class GameScreen extends AbstractScreen {
 
         this.backgroundShader = new BackgroundShader(shaderSharedCamera);
         this.crtShader = new CRTShader(shaderSharedCamera);
+
+        // load audio
+        audioManager = AudioManager.getInstance();
+        audioManager.load();
+        audioManager.playMusic();
+        
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
