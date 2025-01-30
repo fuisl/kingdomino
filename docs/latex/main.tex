@@ -362,9 +362,117 @@ methods:
 This is particularly useful for animations such as screen shaking when an invalid move is made, or color transitions when switching player turns.
 
 \subsection{Input Handling}
-Kingdomino implements manual input event processing instead of relying on
-LibGDX’s built-in event loop. The \texttt{BoardInputHandler} class captures
-user input and translates it into structured events.
+Kingdomino implements manual input event processing instead of relying on LibGDX’s built-in event loop. The input handling is divided into two main components: \texttt{BoardInputController} and \texttt{BoardInputProcessor}, which handle input from controllers and keyboards, respectively. These components translate user inputs into structured events that are processed by the system.
+
+\subsubsection{BoardInputController}
+The \texttt{BoardInputController} class handles input from game controllers. It captures axis movements and button presses, translating them into actions such as moving, rotating, placing, or discarding a domino. The controller input is processed with a dead zone to ignore small, unintended movements, ensuring precise control.
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputController.java
+public class BoardInputController extends AbstractController {
+    // ...existing code...
+    @Override
+    public boolean axisMoved(Controller controller, int axisCode, float value) {
+        // ...existing code...
+        Action action = translateAxisToAction(axisX, axisY);
+        if (action != Action.NONE) {
+            return boardInputHandler.keyDown(action); // Trigger movement
+        } else {
+            return boardInputHandler.keyUp(action); // Stop movement
+        }
+    }
+    // ...existing code...
+}
+\end{lstlisting}
+
+\subsubsection{BoardInputProcessor}
+The \texttt{BoardInputProcessor} class handles input from the keyboard. It maps key presses to actions such as moving, rotating, placing, or discarding a domino. This class ensures that keyboard inputs are correctly translated into game actions.
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputProcessor.java
+public class BoardInputProcessor extends AbstractInputProcessor {
+    // ...existing code...
+    @Override
+    public boolean keyDown(int keycode) {
+        GameManager.setInputDevice(InputDevice.KEYBOARD);
+        return boardInputHandler.keyDown(translateKeycodeToAction(keycode));
+    }
+    // ...existing code...
+}
+\end{lstlisting}
+
+\subsubsection{Input Handlers}
+The \texttt{BoardInputHandler} and \texttt{DraftInputHandler} classes are responsible for translating the inputs received from the \texttt{BoardInputController} and \texttt{BoardInputProcessor} into signals that the system can process. These handlers manage the state of the game and ensure that inputs are processed correctly based on the current game state.
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputHandler.java
+public class BoardInputHandler {
+    // ...existing code...
+    public boolean keyDown(Action action) {
+        if (gameManager.getCurrentState() != GameManager.GameState.TURN_PLACING) {
+            return false;
+        }
+        update(); // update states
+        Event e = null;
+        switch (action) {
+            case MOVE_UP:
+                // ...existing code...
+            case MOVE_DOWN:
+                // ...existing code...
+            case MOVE_LEFT:
+                // ...existing code...
+            case MOVE_RIGHT:
+                // ...existing code...
+            case ROTATE_CLOCKWISE:
+                // ...existing code...
+            case ROTATE_COUNTERCLOCKWISE:
+                // ...existing code...
+            case PLACE_DOMINO:
+                // ...existing code...
+            case DISCARD_DOMINO:
+                // ...existing code...
+            default:
+                break;
+        }
+        if (e != null) {
+            eventManager.addEvent(e.copy(), "input", false);
+            updated = true;
+        }
+        return true; // returning true indicates the event was handled
+    }
+    // ...existing code...
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/DraftInputHandler.java
+public class DraftInputHandler extends AbstractInputProcessor {
+    // ...existing code...
+    public boolean keyDown(Action action) {
+        if (gameManager.getCurrentState() != GameManager.GameState.TURN_CHOOSING) {
+            updated = true;
+            return false;
+        }
+        Event e = null;
+        switch (action) {
+            case MOVE_UP:
+                // ...existing code...
+            case MOVE_DOWN:
+                // ...existing code...
+            case SELECT_DOMINO:
+                // ...existing code...
+            default:
+                break;
+        }
+        if (e != null) {
+            eventManager.addEvent(e, "base", false);
+            updated = true;
+        }
+        return true;
+    }
+    // ...existing code...
+}
+\end{lstlisting}
 
 \subsubsection{Key Features of Input Handling}
 \begin{itemize}
@@ -393,14 +501,6 @@ audioManager.playSound(AudioManager.SoundType.CANCEL);
 BackgroundManager.screenShake();
     \end{lstlisting}
 \end{enumerate}
-This approach ensures efficient, responsive, and user-friendly interactions.
-
-\subsection{Benefits}
-\begin{itemize}
-    \item \textbf{Improved Responsiveness}: Actions are processed only when necessary, reducing redundant calculations.
-    \item \textbf{Modularity and Scalability}: New game mechanics (e.g., AI, online multiplayer) can be easily integrated as event handlers.
-    \item \textbf{Concurrency and Performance Optimization}: Parallel event queues prevent input lag and improve game fluidity.
-\end{itemize}
 
 %======================================================
 \section{Implementation Details}
@@ -646,13 +746,6 @@ Below is the actual implementation of the flood-fill algorithm in Kingdomino:
                 floodFill(x, y - 1, terrain, visited);
         }
     \end{lstlisting}
-
-\subsection{Input Handling}
-% -- Describe how user inputs are processed and handled (keyboard and controller).
-
-\subsubsection{Board Navigation}
-
-\subsubsection{Domino Selection}
 
 \subsection{UML/Class Diagram}
 % -- Provide an overview of classes, relationships. 
