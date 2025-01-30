@@ -151,7 +151,7 @@ public class BackgroundManager {
 
     public static void screenShake() {
         Event shakeEvent = new Event(TriggerType.EASE, true, false, null, null, null, null,
-                new Ease(EaseType.ELASTIC, refTable, "u_shake", 2.0f, 0.18f, null));
+                new Ease(EaseType.ELASTIC, refTable, "u_shake", 8.0f, 0.18f, null));
 
         Event stopShakeEvent = new Event(TriggerType.EASE, false, true, null, null, null, null,
                 new Ease(EaseType.LERP, refTable, "u_shake", 0.0f, 0.18f, null));
