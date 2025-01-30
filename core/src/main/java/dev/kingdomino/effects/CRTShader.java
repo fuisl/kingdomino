@@ -127,10 +127,14 @@ public class CRTShader {
 
     public void replaceBuffer(int width, int height) {
         if (crtFbo != null) {
-            crtFbo.dispose();
+            try {
+                FrameBuffer tempFbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+                crtFbo.dispose();
+                crtFbo = tempFbo;
+            } catch (IllegalStateException e) {
+                Gdx.app.log("CRT Shader Exception", e.getMessage());
+            }
         }
-
-        crtFbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
 
         float[] newVertices = new float[] {
                 0, 0, 0, 0, 0,
