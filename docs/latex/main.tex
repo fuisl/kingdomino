@@ -52,7 +52,6 @@
 \maketitle
 
 \begin{abstract}
-    % -- Abstract (single paragraph, up to 200 words) --
     This paper presents a digital adaptation of the board game Kingdomino,
     developed using Java and the LibGDX framework. Our implementation leverages an
     event-driven architecture, a flood-fill algorithm for scoring, and shader-based
@@ -65,7 +64,6 @@
 \end{abstract}
 
 \begin{IEEEkeywords}
-    % -- Provide up to five keywords here (comma-separated) --
     Kingdomino, boardgame, implementation, game development, OOP
 \end{IEEEkeywords}
 
@@ -444,7 +442,39 @@ Domino would be added. Domino will then be discarded.
 
 \subsection{Tile Placement and Board Validation}
 
-Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
+The \texttt{TileValidator} class is responsible for validating the placement of tiles on the game board. It ensures that tiles are placed within bounds and are free from occupation. The following code snippet shows the implementation of the \texttt{TileValidator} class:
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/TileValidator.java
+public class TileValidator {
+    // ...existing code...
+    public boolean isTilePlaceable(Tile tile, int x, int y) {
+        return isTileFree(x, y) && isTileWithinBound(x, y);
+    }
+    // ...existing code...
+    public boolean isTileWithinBound(int x, int y) {
+        if (x < minX || x > maxX) {
+            if (abs(x - minX) + 1 > size || abs(x - maxX) + 1 > size) {
+                return false;
+            }
+        }
+        if (y < minY || y > maxY) {
+            if (abs(y - minY) + 1 > size || abs(y - maxY) + 1 > size) {
+                return false;
+            }
+        }
+        return true;
+    }
+    // ...existing code...
+    public boolean isTileFree(int x, int y) {
+        if (isTileWithinLand(x, y)) {
+            return land[y][x] == null;
+        }
+        return false;
+    }
+    // ...existing code...
+}
+\end{lstlisting}
 
 \subsubsection{Placing Domino}
 
@@ -455,8 +485,6 @@ Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
 \end{figure}
 
 \subsubsection{Rotating Domino}
-
-Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.55\textwidth]{assets/rotate.png}}
@@ -472,116 +500,27 @@ The rotation logic for the domino can be described as follows:
     \text{If rotating counter-clockwise:} \quad\boxed{\text{index} = (\text{index} + 3) \mod 4}
 \]
 
-\subsubsection{Validating Domino}
-
 \subsection{Scoring Mechanism}
-% -- Explain the flood-fill algorithm and its application in Kingdomino.
 
-The flood-fill algorithm is a computer graphics algorithm used to determine the
-area connected to a given node in a multi-dimensional array. It is commonly
-used in tools like paint bucket in graphics editors to fill bounded areas with
-color.
-
-In the context of Kingdomino, the flood-fill algorithm is utilized to calculate
-the score by identifying and evaluating connected groups of the same terrain
-type. The algorithm traverses the game board, starting from a given tile, and
-recursively explores all adjacent tiles of the same terrain type. This allows
-the game to efficiently compute the size of each connected terrain group and
-apply the scoring rules based on the number of crowns within these groups.
-
-Below is a pseudocode representation of the recursive 4-way flood-fill
-algorithm:
-
-\begin{algorithm}[htbp]
-    \caption{Flood-fill Algorithm}
-    \KwIn{Tile}
-    \KwOut{Flood-filled region}
-    \If{Tile is not inside Region}{
-        \Return\;
-    }
-    Set the node\;
-    Perform Flood-fill one step to the south of Tile\;
-    Perform Flood-fill one step to the north of Tile\;
-    Perform Flood-fill one step to the west of Tile\;
-    Perform Flood-fill one step to the east of Tile\;
-    \Return\;
-\end{algorithm}
-
-This algorithm is in its original form. For Kingdomino with multiplicative
-scoring system, we need to modify the algorithm to calculate both the spanned
-region (area) and also count the number of crowns within the connected group.
-See Listing~\ref{lst:floodfill} for the implementation details.
-
-To better illustrate the concept of flood-fill, consider the following example
-with a 9$\times$9 grid:
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-start.png}}
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-detected.png}}
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-continue.png}}
-    % \caption{}\label{fig:floodfill-start}
-\end{figure}
-
-In this example, the algorithm starts at the selected tile (highlighted in
-red). It then recursively explores all adjacent tiles of the same terrain type,
-marking them as visited and counting the number of crowns within the connected
-group. The process continues until all connected tiles of the same terrain type
-have been evaluated, resulting in the final score for that terrain group.
-
-\subsection{Input Handling}
-% -- Describe how user inputs are processed and handled (keyboard and controller).
-
-\subsubsection{Board Navigation}
-
-\subsubsection{Domino Selection}
-
-\subsection{UML/Class Diagram}
-% -- Provide an overview of classes, relationships. 
-%    Reference the figure in text.
-
-\subsection{Used Libraries and Environment}
-% -- Mention languages, frameworks, libraries, operating systems, version details, etc.
-
-\subsection{Important Code Snippets}
-% -- Show the relevant or tricky parts of your code with explanations.
+The flood-fill algorithm is used to calculate the score by identifying and evaluating connected groups of the same terrain type. The following code snippet shows the implementation of the flood-fill algorithm:
 
 \begin{lstlisting}[language=Java, caption={Flood-Fill Algorithm}, label={lst:floodfill}]
 private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
     if (x < 0 || x >= land.length || y < 0 || y >= land.length) {
         return 0;
     }
-
     if (land[y][x] == null || visited[y][x] || land[y][x].getTerrain() != terrain) {
         return 0;
     }
-    
-
     totalCrown += land[y][x].getCrown();
     visited[y][x] = true;
-
     return 1 +
             floodFill(x + 1, y, terrain, visited) +
             floodFill(x - 1, y, terrain, visited) +
             floodFill(x, y + 1, terrain, visited) +
             floodFill(x, y - 1, terrain, visited);
-    }
+}
 \end{lstlisting}
-
-%======================================================
-% -- mainly UI
-
-\section{Graphical Enhancement and Visual Effects}
-% -- Describe the interface design, layout, main widgets.
-
-\subsection{Shader-Based Rendering}
-
-\subsection{Dynamic UI Elements}
-
-\subsection{Background Shader}
-
-\subsection{CRT Shader Overlay}
-
-\subsection{Visual and Effects}
 
 %======================================================
 \section{Experimental Results}
