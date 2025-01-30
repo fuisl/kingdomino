@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.BackgroundManager;
 import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
@@ -45,6 +46,7 @@ public class GameScreen extends AbstractScreen {
 
     private CRTShader crtShader;
     private BackgroundShader backgroundShader;
+    private OrthographicCamera shaderSharedCamera = new OrthographicCamera();
 
     // TODO: Allow this value to be changed, if I can get there...
     private final boolean SHADER_TOGGLE = true;
@@ -68,16 +70,16 @@ public class GameScreen extends AbstractScreen {
         Gdx.app.log("GPU Info", "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION));
         Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
 
-        OrthographicCamera shaderSharedCamera = new OrthographicCamera();
-
         this.backgroundShader = new BackgroundShader(shaderSharedCamera);
         this.crtShader = new CRTShader(shaderSharedCamera);
+
+        // important for screenshake
+        BackgroundManager.setCamera(shaderSharedCamera);
 
         // load audio
         audioManager = AudioManager.getInstance();
         audioManager.load();
         audioManager.playMusic();
-        
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -230,6 +232,7 @@ public class GameScreen extends AbstractScreen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
 
+        // update the shaders
         crtShader.replaceBuffer(width, height);
         backgroundShader.changeVertices(width, height);
     }

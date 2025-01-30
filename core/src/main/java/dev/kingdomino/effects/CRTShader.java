@@ -117,6 +117,9 @@ public class CRTShader {
         crtShader.setUniformf("mouse_screen_pos", mx, my);
 
         crtQuad.bind(crtShader);
+
+        // update camera before supplying the uniform
+        BackgroundManager.updateCameraShakePosition();
         crtShader.setUniformMatrix("u_projTrans", camera.combined);
 
         // bind the frame buffer

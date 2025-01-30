@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 
 import dev.kingdomino.game.Ease;
 import dev.kingdomino.game.Ease.EaseType;
@@ -17,6 +20,8 @@ public class BackgroundManager {
     public static final Map<String, Color[]> colorMap = new HashMap<>();
     private static final EventManager eventManager = EventManager.getInstance();
     private static final Map<String, Map<String, Float>> tempTables = new HashMap<>();
+    private static OrthographicCamera sharedCamera;
+    private static Vector3 basePosition;
 
     static {
         // TODO: populate color map
@@ -36,6 +41,9 @@ public class BackgroundManager {
         refTable.put("u_spinTime", 0.0f); // control spining. [-1, 1] should go with the spinAmount
         refTable.put("u_spinAmount", 0.18f); // control the shape of the spin. 0.2f is the sweet spot
         refTable.put("u_contrast", 1.5f); // control contrast
+
+        // refTable for screen shake
+        refTable.put("u_shake", 2.0f);
 
         // init colorTable. current colors for background = u_color1, 2 and 3.
         colorTable.put("u_color1", Color.valueOf("02394A"));
@@ -125,6 +133,27 @@ public class BackgroundManager {
         for (Map.Entry<String, Map<String, Float>> entry : tempTables.entrySet()) {
             updateColor(entry.getKey(), entry.getValue());
         }
+    }
+
+    public static void setCamera(OrthographicCamera camera) {
+        sharedCamera = camera;
+    }
+
+    public static void updateCameraShakePosition() {
+        float shake = refTable.get("u_shake");
+
+        float x_random = MathUtils.random(shake) - (shake / 2);
+        float y_random = MathUtils.random(shake) - (shake / 2);
+
+        // update the camera position around [-shake/2, shake/2] for x and y
+        sharedCamera.position.set(sharedCamera.position.x + x_random, sharedCamera.position.y + y_random,
+                sharedCamera.position.z);
+        sharedCamera.update();
+    }
+
+    public static void screenShake(OrthographicCamera screenCamera) {
+        basePosition = sharedCamera.position.cpy();
+        // event
     }
 
 }
