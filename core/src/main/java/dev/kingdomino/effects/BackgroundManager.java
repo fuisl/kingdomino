@@ -43,7 +43,7 @@ public class BackgroundManager {
         refTable.put("u_contrast", 1.5f); // control contrast
 
         // refTable for screen shake
-        refTable.put("u_shake", 2.0f);
+        refTable.put("u_shake", 0.0f);
 
         // init colorTable. current colors for background = u_color1, 2 and 3.
         colorTable.put("u_color1", Color.valueOf("02394A"));
@@ -151,8 +151,15 @@ public class BackgroundManager {
         sharedCamera.update();
     }
 
-    public static void screenShake(OrthographicCamera screenCamera) {
-        basePosition = sharedCamera.position.cpy();
+    public static void screenShake() {
+        Event shakeEvent = new Event(TriggerType.EASE, true, false, null, null, null, null,
+                new Ease(EaseType.ELASTIC, refTable, "u_shake", 2.0f, 0.18f, null));
+
+        Event stopShakeEvent = new Event(TriggerType.EASE, false, true, null, null, null, null,
+                new Ease(EaseType.LERP, refTable, "u_shake", 0.0f, 0.18f, null));
+
+        eventManager.addEvent(shakeEvent.copy(), "shake", true);
+        eventManager.addEvent(stopShakeEvent.copy(), "shake", false);
         // event
     }
 

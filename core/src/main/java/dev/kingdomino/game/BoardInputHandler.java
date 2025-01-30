@@ -1,6 +1,7 @@
 package dev.kingdomino.game;
 
 import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.BackgroundManager;
 import dev.kingdomino.game.Event.TriggerType;
 import dev.kingdomino.game.GameManager.InputDevice;
 
@@ -80,9 +81,9 @@ public class BoardInputHandler {
                 audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.UP)) {
                     e = createMoveEvent(Direction.UP);
-                }
-                else {
+                } else {
                     audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    BackgroundManager.screenShake();
                 }
                 break;
             }
@@ -90,9 +91,9 @@ public class BoardInputHandler {
                 audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.DOWN)) {
                     e = createMoveEvent(Direction.DOWN);
-                }
-                else {
+                } else {
                     audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    BackgroundManager.screenShake();
                 }
                 break;
             }
@@ -100,9 +101,9 @@ public class BoardInputHandler {
                 audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.LEFT)) {
                     e = createMoveEvent(Direction.LEFT);
-                }
-                else {
+                } else {
                     audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    BackgroundManager.screenShake();
                 }
                 break;
             }
@@ -110,9 +111,9 @@ public class BoardInputHandler {
                 audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.RIGHT)) {
                     e = createMoveEvent(Direction.RIGHT);
-                }
-                else {
+                } else {
                     audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    BackgroundManager.screenShake();
                 }
                 break;
             }
@@ -120,9 +121,9 @@ public class BoardInputHandler {
                 audioManager.playSound(AudioManager.SoundType.ROTATING);
                 if (canRotate(true)) {
                     e = createRotateEvent(true);
-                }
-                else {
+                } else {
                     audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    BackgroundManager.screenShake();
                 }
                 break;
             }
@@ -130,13 +131,14 @@ public class BoardInputHandler {
                 audioManager.playSound(AudioManager.SoundType.ROTATING);
                 if (canRotate(false)) {
                     e = createRotateEvent(false);
-                }
-                else {
+                } else {
                     audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    BackgroundManager.screenShake();
                 }
                 break;
             }
             case PLACE_DOMINO: {
+                BackgroundManager.screenShake();
                 audioManager.playSound(AudioManager.SoundType.PLACING);
                 if (!keylocked) {
                     e = createPlaceDominoEvent();
@@ -144,6 +146,7 @@ public class BoardInputHandler {
                 break;
             }
             case DISCARD_DOMINO: {
+                BackgroundManager.screenShake();
                 audioManager.playSound(AudioManager.SoundType.CANCEL);
                 e = createDiscardDominoEvent();
                 break;
