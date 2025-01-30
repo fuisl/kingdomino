@@ -623,6 +623,30 @@ marking them as visited and counting the number of crowns within the connected
 group. The process continues until all connected tiles of the same terrain type
 have been evaluated, resulting in the final score for that terrain group.
 
+Below is the actual implementation of the flood-fill algorithm in Kingdomino:
+
+\begin{lstlisting}[language=Java, caption={Flood-Fill Algorithm}, label={lst:floodfill}]
+    private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
+        if (x < 0 || x >= land.length || y < 0 || y >= land.length) {
+            return 0;
+        }
+    
+        if (land[y][x] == null || visited[y][x] || land[y][x].getTerrain() != terrain) {
+            return 0;
+        }
+        
+    
+        totalCrown += land[y][x].getCrown();
+        visited[y][x] = true;
+    
+        return 1 +
+                floodFill(x + 1, y, terrain, visited) +
+                floodFill(x - 1, y, terrain, visited) +
+                floodFill(x, y + 1, terrain, visited) +
+                floodFill(x, y - 1, terrain, visited);
+        }
+    \end{lstlisting}
+
 \subsection{Input Handling}
 % -- Describe how user inputs are processed and handled (keyboard and controller).
 
@@ -637,53 +661,54 @@ have been evaluated, resulting in the final score for that terrain group.
 \subsection{Used Libraries and Environment}
 % -- Mention languages, frameworks, libraries, operating systems, version details, etc.
 
-\subsection{Important Code Snippets}
-% -- Show the relevant or tricky parts of your code with explanations.
-
-\begin{lstlisting}[language=Java, caption={Flood-Fill Algorithm}, label={lst:floodfill}]
-private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
-    if (x < 0 || x >= land.length || y < 0 || y >= land.length) {
-        return 0;
-    }
-
-    if (land[y][x] == null || visited[y][x] || land[y][x].getTerrain() != terrain) {
-        return 0;
-    }
-    
-
-    totalCrown += land[y][x].getCrown();
-    visited[y][x] = true;
-
-    return 1 +
-            floodFill(x + 1, y, terrain, visited) +
-            floodFill(x - 1, y, terrain, visited) +
-            floodFill(x, y + 1, terrain, visited) +
-            floodFill(x, y - 1, terrain, visited);
-    }
-\end{lstlisting}
-
 %======================================================
 % -- mainly UI
 
 \section{Graphical Enhancement and Visual Effects}
 % -- Describe the interface design, layout, main widgets.
 
-\subsection{Shader-Based Rendering}
+\subsection{Visual and Effects}
+Kingdomino's digital adaptation incorporates various visual and audio effects
+to enhance the user experience, making the game feel more responsive and
+engaging. Inspired by the talk ``Juice it or lose it'' by Martin Jonasson \&
+Petri Purho, we aimed to create a game that feels alive and responds to player
+actions with minimal input.
+
+\subsubsection{Background Effects}
+The \texttt{BackgroundManager} class manages dynamic background effects using
+shader-based rendering. Key features include:
+\begin{itemize}
+    \item \textbf{Color Transitions}: Smooth transitions between different background colors to indicate changes in game states or player turns.
+    \item \textbf{Spinning Effects}: Controlled spinning of the background to add a sense of motion and excitement during gameplay.
+    \item \textbf{Screen Shake}: A subtle screen shake effect to provide feedback for significant events, such as invalid moves or special actions.
+\end{itemize}
+
+\subsubsection{Audio Effects}
+The \texttt{AudioManager} class handles the game's audio effects, providing
+immediate feedback for player actions. Key features include:
+\begin{itemize}
+    \item \textbf{Background Music}: Continuous background music that sets the tone for the game.
+    \item \textbf{Sound Effects}: Various sound effects for actions such as tile placement, selection, rotation, and scoring. Each sound effect is carefully chosen to enhance the player's sense of interaction and immersion.
+\end{itemize}
+
+\subsubsection{Shader-Based Rendering}
 Kingdomino leverages shader-based rendering using OpenGL Shader language to
 enhance visual effects and provide a more immersive experience. Two primary
-shaders are used: the CRT shader and the background shader.
+shaders are used: the CRT shader and the background shader. The shader codes
+are an adaptation of existing shaders of Balatro\cite{wiki:balatro} which
+adapted from Löve2D written in Lua to LibGDX Framework using with Java.
 
-\subsubsection{CRT Shader}
+\paragraph{CRT Shader}
 The CRT shader simulates the appearance of an old CRT monitor, adding effects
 such as distortion, scanlines, noise, and bloom. It consists of a vertex shader
 and a fragment shader.
 
 \begin{itemize}
-    \item \textbf{Vertex Shader (crt.vert)}: Applies transformations to simulate a parallax effect based on mouse position and screen scale.
+    \item \textbf{Vertex Shader (crt.vert)}: Applies transformations to simulate a parallax effect based on screen scale.
     \item \textbf{Fragment Shader (crt.frag)}: Implements various visual effects, including barrel distortion, edge feathering, glitch offsets, chromatic aberration, scanlines, and noise overlay.
 \end{itemize}
 
-\subsubsection{Background Shader}
+\paragraph{Background Shader}
 The background shader creates dynamic and visually appealing backgrounds with
 effects like spinning and color transitions.
 
@@ -692,17 +717,9 @@ effects like spinning and color transitions.
     \item \textbf{Fragment Shader (background.frag)}: Applies pixelation, swirl, and paint effects based on time and spin parameters, along with color blending for a vibrant background.
 \end{itemize}
 
-\subsection{Dynamic UI Elements}
-% ...existing code...
-
-\subsection{Background Shader}
-% ...existing code...
-
-\subsection{CRT Shader Overlay}
-% ...existing code...
-
-\subsection{Visual and Effects}
-% ...existing code...
+These visual and audio enhancements contribute to a more engaging and immersive
+gaming experience, making Kingdomino not just a digital adaptation but a lively
+and responsive game that captivates players.
 
 %======================================================
 \section{Experimental Results}
