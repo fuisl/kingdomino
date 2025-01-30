@@ -46,9 +46,9 @@ public class BackgroundManager {
         refTable.put("u_shake", 0.0f);
 
         // init colorTable. current colors for background = u_color1, 2 and 3.
-        colorTable.put("u_color1", Color.valueOf("02394A"));
-        colorTable.put("u_color2", Color.valueOf("043565"));
-        colorTable.put("u_color3", Color.valueOf("5158BB"));
+        colorTable.put("u_color1", Color.valueOf("020608"));
+        colorTable.put("u_color2", Color.valueOf("020608"));
+        colorTable.put("u_color3", Color.valueOf("020608"));
     }
 
     public static void startSpin() {
