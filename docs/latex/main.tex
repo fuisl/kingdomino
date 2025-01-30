@@ -53,14 +53,15 @@
 
 \begin{abstract}
     % -- Abstract (single paragraph, up to 200 words) --
-    This document provides a brief overview of our implementation of the board game
-    ``Kingdomino'' and its associated algorithms. We discuss problem formulation,
-    related work, and our teamwork structure. Our approach includes input/output
-    techniques, a proposed algorithmic methodology, and implementation details with
-    a graphical user interface. We present simulation results and statistical tests
-    to evaluate performance under various conditions. Finally, we highlight the
-    conclusions drawn from our development process and outline potential future
-    work.
+    This paper presents a digital adaptation of the board game Kingdomino,
+    developed using Java and the LibGDX framework. Our implementation leverages an
+    event-driven architecture, a flood-fill algorithm for scoring, and shader-based
+    rendering to enhance the user experience. We explore key aspects of game logic,
+    including tile placement validation, turn-based mechanics, and dynamic UI
+    interactions. The paper details the design choices, algorithms, and modular
+    structure of the system, ensuring efficiency and scalability. Additionally, we
+    evaluate game performance through experimental results and discuss future
+    improvements, such as AI integration and multiplayer capabilities.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -91,7 +92,7 @@ The game concludes once each player fills their 5$\times$5 grid or can no
 longer place tiles. Scoring is determined by the size of connected terrain
 groups and the number of crowns they contain. Kingdomino's blend of simple
 rules and strategic depth has garnered popularity, making it an excellent
-subject for developing and analyzing game-based algorithms and AI strategies.
+subject for developing and analyzing game-based algorithms.
 
 %======================================================
 \section{Problem Description}
@@ -310,36 +311,171 @@ aligned with the project's goals.
 % -- Process flow diagram (if necessary).
 % summary of the section
 
-\subsection{Input/Output Technique}
-% -- Explanation of data formats, how the program interacts with users.
+\subsection{Event-Driven Architecture}
+% -- Explanation of the event-driven architecture, how is it involved in the game.
 
-The program accepts input from users through a graphical user interface (GUI).
-Users interact with the program by using keyboard button. The input data is
-then handled within the Screen and then processed by the InputProcessor
-provided by LibGDX Framework to interact with system and update the game state.
+Kingdomino’s digital adaptation uses an event-driven architecture to manage user interactions, game state transitions, and visual effects efficiently. This approach decouples game logic, input handling, and rendering, improving performance, modularity, and maintainability.
 
-\subsubsection{Data Formats}
-Data is encapsulate in each classes and Objects being govern by a single
-GameManager and EventManager.
+\subsection{Core Components}
+\subsubsection{Event Class}
+The \texttt{Event} class encapsulates actions that can be executed immediately or after a delay. It supports different types of triggers:
+\begin{itemize}
+    \item \textbf{IMMEDIATE}: Executes the event as soon as it is created.
+    \item \textbf{BEFORE}: Executes an action and then enforces a delay before completing.
+    \item \textbf{AFTER}: Executes an action only after a specified delay.
+    \item \textbf{CONDITION}: Executes when a certain condition is met.
+    \item \textbf{EASE}: Implements smooth transitions for visual effects.
+\end{itemize}
+Each event has attributes such as blocking, blockable, complete, and delay, allowing for controlled execution within the game loop.
+
+\subsubsection{EventManager}
+The \texttt{EventManager} acts as the central execution hub for all game-related events. It maintains multiple concurrent event queues, categorized into:
+\begin{itemize}
+    \item \textbf{Base}: Core gameplay logic (e.g., turn transitions, score updates).
+    \item \textbf{Input}: Player interactions (e.g., movement, rotation, placement).
+    \item \textbf{Background}: Visual effects and animations.
+    \item \textbf{Sound}: Audio effects (e.g., movement, tile placement, invalid moves).
+    \item \textbf{Other}: Miscellaneous actions.
+\end{itemize}
+The event manager ensures concurrency safety using \texttt{ConcurrentLinkedQueue}, preventing race conditions when processing multiple asynchronous actions.
+
+\subsubsection{GameTimer}
+The \texttt{GameTimer} class tracks real-time, total elapsed time, and background animation timing. It synchronizes event execution by accumulating delta time (dt) and updating event processing intervals accordingly. The timer provides a consistent timing reference for executing delayed events and easing functions.
+
+\subsubsection{Ease}
+The \texttt{Ease} class facilitates smooth animations for background effects, screen transitions, and UI enhancements. It supports different interpolation methods:
+\begin{itemize}
+    \item \textbf{LERP (Linear Interpolation)}: Gradually changes a value over time.
+    \item \textbf{ELASTIC}: Simulates spring-like motion for dynamic effects.
+    \item \textbf{QUAD}: Creates a smooth acceleration effect.
+\end{itemize}
+This is particularly useful for animations such as screen shaking when an invalid move is made, or color transitions when switching player turns.
+
+\subsection{Input Handling}
+Kingdomino implements manual input event processing instead of relying on LibGDX’s built-in event loop. The \texttt{BoardInputHandler} class captures user input and translates it into structured events.
+
+\subsubsection{Key Features of Input Handling}
+\begin{itemize}
+    \item \textbf{Deferred Execution}: Input actions are queued and processed asynchronously.
+    \item \textbf{State-Based Processing}: Input is processed only in relevant game states.
+    \item \textbf{Feedback Integration}: Invalid actions trigger audio and visual feedback.
+\end{itemize}
+
+\subsubsection{Example: Handling Movement Events}
+When a player moves a domino using the keyboard or controller:
+\begin{enumerate}
+    \item Input is captured (WASD keys or joystick).
+    \item \texttt{BoardInputHandler} checks validity (e.g., ensuring the move is within bounds).
+    \item If valid, an event is created and queued:
+    \begin{lstlisting}[language=Java]
+Event moveEvent = new Event(
+    TriggerType.BEFORE, true, true, 0.15f, // Delay for smooth input
+    () -> currentDomino.moveDomino(Direction.UP),
+    null, null, null);
+eventManager.addEvent(moveEvent, "input", false);
+    \end{lstlisting}
+    \item The event executes smoothly without blocking the main loop.
+    \item If the move is invalid, audio and visual feedback are triggered:
+    \begin{lstlisting}[language=Java]
+audioManager.playSound(AudioManager.SoundType.CANCEL);
+BackgroundManager.screenShake();
+    \end{lstlisting}
+\end{enumerate}
+This approach ensures efficient, responsive, and user-friendly interactions.
+
+\subsection{Benefits}
+\begin{itemize}
+    \item \textbf{Improved Responsiveness}: Actions are processed only when necessary, reducing redundant calculations.
+    \item \textbf{Modularity and Scalability}: New game mechanics (e.g., AI, online multiplayer) can be easily integrated as event handlers.
+    \item \textbf{Concurrency and Performance Optimization}: Parallel event queues prevent input lag and improve game fluidity.
+\end{itemize}
+
+%======================================================
+\section{Implementation Details}
+% 6. IMPLEMENTATION DETAILS
+% -- Application structure, GUI details, UML/Class Diagram, used libraries, important code snippets.
+
+\subsection{Game States}
+
+In the implementation of Kingdomino, the game progresses through a series of
+well-defined states. Each state represents a distinct phase of the game,
+ensuring a structured flow from the beginning to the end. The primary game
+states include:
+
+\begin{itemize}
+    \item \textbf{Init}: The initial state where the game components are set up and initialized.
+    \item \textbf{Setup}: This state involves preparing the game board, shuffling tiles, and setting up players for the game.
+    \item \textbf{Turn Start}: Marks the beginning of a player's turn, where the current player and available tiles are determined.
+    \item \textbf{Turn Placing}: The state where the player places their selected tile on the board according to the game rules.
+    \item \textbf{Turn Choosing}: The state where the player selects a tile for the next round.
+    \item \textbf{Turn End}: Concludes the current player's turn and transitions to the next player.
+    \item \textbf{Game Over}: The final state when the game ends, and no more moves can be made.
+    \item \textbf{Results}: Displays the final scores and determines the winner based on the game rules.
+\end{itemize}
+
+Each state transitions to the next based on player actions and game logic. The
+following diagram illustrates the state transitions:
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/GameManager.png}}
-    \caption{Data Encapsulation.}\label{fig:gamemanager}
+    \centerline{\includegraphics[width=0.55\textwidth]{assets/states.png}}
+    \caption{Game State Transitions.}\label{fig:game_states}
 \end{figure}
 
-\subsubsection{User Interaction}
-The user interface consists of several screens, including the main menu, game
-screen, and settings. Each screen is designed to be intuitive and
-user-friendly. For example, the main menu provides options to start a new game,
-load a saved game, and access settings. During gameplay, users can interact
-with the game through keyboard and consolve inputs.
+\subsection{Game Units and High-Level Architecture}
+% -- High-level architecture. Possibly a diagram.
+
+Tile is the essential, smallest accessible unit for this game. Tile holds 2
+most important attributes: TerrainType and Number of Crowns.
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/interaction.png}}
-    \caption{Interfaces from User to Game Logic.}\label{fig:interaction}
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/unit.png}}
+    \caption{Units of Tile.}\label{fig:unit}
 \end{figure}
 
-\subsection{Algorithm and Pseudocode}
+Board is 2-dimensional array of type Tile. Though Board has more attributes and
+methods which supports interactions between GameManager and Board, Tile[][] is
+where Tiles being store and perform logic on.
+
+On the other hand, Domino is an interface between human player and Board. It
+holds informations about location, validator, etc., which related to action
+that can be performed on Board (like moving, rotating or placing Domino). The
+actual Domino will not be placed in Board, only the two Tiles that composes
+Domino would be added. Domino will then be discarded.
+
+\subsection{Tile Placement and Board Validation}
+
+Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
+
+\subsubsection{Placing Domino}
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-1.png}}
+    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-2.png}}
+    \caption{Placing Domino.}\label{fig:placing}
+\end{figure}
+
+\subsubsection{Rotating Domino}
+
+Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.55\textwidth]{assets/rotate.png}}
+    \caption{Rotate Domino by moving TileB relative to TileA.}\label{fig:rotate}
+\end{figure}
+
+The rotation logic for the domino can be described as follows:
+
+\[
+    \text{If rotating clockwise:} \quad\boxed{\text{index} = (\text{index} + 1) \mod 4}
+\]
+\[
+    \text{If rotating counter-clockwise:} \quad\boxed{\text{index} = (\text{index} + 3) \mod 4}
+\]
+
+\subsubsection{Validating Domino}
+
+\subsection{Scoring Mechanism}
+% -- Explain the flood-fill algorithm and its application in Kingdomino.
 
 The flood-fill algorithm is a computer graphics algorithm used to determine the
 area connected to a given node in a multi-dimensional array. It is commonly
@@ -392,86 +528,12 @@ marking them as visited and counting the number of crowns within the connected
 group. The process continues until all connected tiles of the same terrain type
 have been evaluated, resulting in the final score for that terrain group.
 
-%======================================================
-\section{Implementation Details}
-% 6. IMPLEMENTATION DETAILS
-% -- Application structure, GUI details, UML/Class Diagram, used libraries, important code snippets.
+\subsection{Input Handling}
+% -- Describe how user inputs are processed and handled (keyboard and controller).
 
-\subsection{Game States}
+\subsubsection{Board Navigation}
 
-In the implementation of Kingdomino, the game progresses through a series of well-defined states. Each state represents a distinct phase of the game, ensuring a structured flow from the beginning to the end. The primary game states include:
-
-\begin{itemize}
-    \item \textbf{Init}: The initial state where the game components are set up and initialized.
-    \item \textbf{Setup}: This state involves preparing the game board, shuffling tiles, and setting up players for the game.
-    \item \textbf{Turn Start}: Marks the beginning of a player's turn, where the current player and available tiles are determined.
-    \item \textbf{Turn Placing}: The state where the player places their selected tile on the board according to the game rules.
-    \item \textbf{Turn Choosing}: The state where the player selects a tile for the next round.
-    \item \textbf{Turn End}: Concludes the current player's turn and transitions to the next player.
-    \item \textbf{Game Over}: The final state when the game ends, and no more moves can be made.
-    \item \textbf{Results}: Displays the final scores and determines the winner based on the game rules.
-\end{itemize}
-
-Each state transitions to the next based on player actions and game logic. The
-following diagram illustrates the state transitions:
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.55\textwidth]{assets/states.png}}
-    \caption{Game State Transitions.}\label{fig:game_states}
-\end{figure}
-
-\subsection{Application Structure}
-% -- High-level architecture. Possibly a diagram.
-
-\subsubsection{Units of Tile}
-
-Tile is the essential, smallest accessible unit for this game. Tile holds 2
-most important attributes: TerrainType and Number of Crowns.
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.48\textwidth]{assets/unit.png}}
-    \caption{Units of Tile.}\label{fig:unit}
-\end{figure}
-
-Board is 2-dimensional array of type Tile. Though Board has more attributes and
-methods which supports interactions between GameManager and Board, Tile[][] is
-where Tiles being store and perform logic on.
-
-On the other hand, Domino is an interface between human player and Board. It
-holds informations about location, validator, etc., which related to action
-that can be performed on Board (like moving, rotating or placing Domino). The
-actual Domino will not be placed in Board, only the two Tiles that composes
-Domino would be added. Domino will then be discarded.
-
-\subsubsection{Placing Domino}
-
-Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-1.png}}
-    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-2.png}}
-    \caption{Placing Domino.}\label{fig:placing}
-\end{figure}
-
-\subsubsection{Rotating Domino}
-
-Irem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nunc nec nisl
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.55\textwidth]{assets/rotate.png}}
-    \caption{Rotate Domino by moving TileB relative to TileA.}\label{fig:rotate}
-\end{figure}
-
-The rotation logic for the domino can be described as follows:
-
-\[
-    \text{If rotating clockwise:} \quad\boxed{\text{index} = (\text{index} + 1) \mod 4}
-\]
-\[
-    \text{If rotating counter-clockwise:} \quad\boxed{\text{index} = (\text{index} + 3) \mod 4}
-\]
-\subsection{Graphical User Interface (GUI)}
-% -- Describe the interface design, layout, main widgets.
+\subsubsection{Domino Selection}
 
 \subsection{UML/Class Diagram}
 % -- Provide an overview of classes, relationships. 
@@ -506,14 +568,34 @@ private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
 \end{lstlisting}
 
 %======================================================
-\section{Experimental Results, Statistical Tests, Running Scenarios}
+% -- mainly UI
+
+\section{Graphical Enhancement and Visual Effects}
+% -- Describe the interface design, layout, main widgets.
+
+\subsection{Shader-Based Rendering}
+
+\subsection{Dynamic UI Elements}
+
+\subsection{Background Shader}
+
+\subsection{CRT Shader Overlay}
+
+\subsection{Visual and Effects}
+
+%======================================================
+\section{Experimental Results}
 % 7. EXPERIMENTAL RESULTS, STATISTICAL TESTS, RUNNING SCENARIOS
 % -- Provide tables, charts, and discussion of the experiments you ran.
 
-\subsection{Simulation Setup}
+\subsection{Performance Analysis}
+% -- Discuss the performance of the game, any bottlenecks, optimizations.
+framerate, input lag event-driven vs. sync update
+
+\subsection{Correctness and Scalability}
 % -- Describe your environment, parameter choices, etc.
 
-\subsection{Results and Evaluations}
+\subsection{UI/Gameplay Smoothness}
 % -- Insert tables and charts with relevant data and evaluations.
 
 % \begin{table}[htbp]
@@ -538,9 +620,6 @@ private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
 %    lessons learned, and possible future improvements.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-
-\subsection{Team Reflection}
-% -- Summarize teamwork, synergy, challenges, etc.
 
 \subsection{What We Learned}
 % -- Key lessons from implementing or analyzing the game.
