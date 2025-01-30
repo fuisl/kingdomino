@@ -6,7 +6,6 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector3;
 
 import dev.kingdomino.game.Ease;
 import dev.kingdomino.game.Ease.EaseType;
@@ -21,7 +20,6 @@ public class BackgroundManager {
     private static final EventManager eventManager = EventManager.getInstance();
     private static final Map<String, Map<String, Float>> tempTables = new HashMap<>();
     private static OrthographicCamera sharedCamera;
-    private static Vector3 basePosition;
 
     static {
         // TODO: populate color map

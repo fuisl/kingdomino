@@ -18,11 +18,11 @@ import dev.kingdomino.game.GameTimer;
  * @author fuisl
  */
 public class CRTShader {
-    private ShaderProgram crtShader;
+    private final ShaderProgram crtShader;
     private FrameBuffer crtFbo;
-    private Mesh crtQuad;
-    private OrthographicCamera camera;
-    private GameTimer gameTimer;
+    private final Mesh crtQuad;
+    private final OrthographicCamera camera;
+    private final GameTimer gameTimer;
     private float crtValue;
 
     public float getCrtValue() {

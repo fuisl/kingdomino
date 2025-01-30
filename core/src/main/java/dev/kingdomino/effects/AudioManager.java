@@ -134,4 +134,18 @@ public class AudioManager {
     public void dispose() {
         music.dispose();
     }
+
+    public void setMasterVolume(float volume) {
+        masterVolume = volume;
+        music.setVolume(musicVolume * masterVolume);
+    }
+
+    public void setMusicVolume(float volume) {
+        musicVolume = volume;
+        music.setVolume(musicVolume * masterVolume);
+    }
+
+    public void setEffectsVolume(float volume) {
+        effectsVolume = volume;
+    }
 }

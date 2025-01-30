@@ -77,7 +77,7 @@ public class GameScreen extends AbstractScreen {
         Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
 
         this.backgroundShader = new BackgroundShader(shaderSharedCamera);
-        this.crtShader = new CRTShader(shaderSharedCamera, 20f);
+        this.crtShader = new CRTShader(shaderSharedCamera, 25f);
 
         // important for screenshake
         BackgroundManager.setCamera(shaderSharedCamera);
