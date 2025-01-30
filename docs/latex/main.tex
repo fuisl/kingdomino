@@ -312,11 +312,15 @@ aligned with the project's goals.
 \subsection{Event-Driven Architecture}
 % -- Explanation of the event-driven architecture, how is it involved in the game.
 
-Kingdomino’s digital adaptation uses an event-driven architecture to manage user interactions, game state transitions, and visual effects efficiently. This approach decouples game logic, input handling, and rendering, improving performance, modularity, and maintainability.
+Kingdomino’s digital adaptation uses an event-driven architecture to manage
+user interactions, game state transitions, and visual effects efficiently. This
+approach decouples game logic, input handling, and rendering, improving
+performance, modularity, and maintainability.
 
 \subsection{Core Components}
 \subsubsection{Event Class}
-The \texttt{Event} class encapsulates actions that can be executed immediately or after a delay. It supports different types of triggers:
+The \texttt{Event} class encapsulates actions that can be executed immediately
+or after a delay. It supports different types of triggers:
 \begin{itemize}
     \item \textbf{IMMEDIATE}: Executes the event as soon as it is created.
     \item \textbf{BEFORE}: Executes an action and then enforces a delay before completing.
@@ -327,7 +331,9 @@ The \texttt{Event} class encapsulates actions that can be executed immediately o
 Each event has attributes such as blocking, blockable, complete, and delay, allowing for controlled execution within the game loop.
 
 \subsubsection{EventManager}
-The \texttt{EventManager} acts as the central execution hub for all game-related events. It maintains multiple concurrent event queues, categorized into:
+The \texttt{EventManager} acts as the central execution hub for all
+game-related events. It maintains multiple concurrent event queues, categorized
+into:
 \begin{itemize}
     \item \textbf{Base}: Core gameplay logic (e.g., turn transitions, score updates).
     \item \textbf{Input}: Player interactions (e.g., movement, rotation, placement).
@@ -338,10 +344,16 @@ The \texttt{EventManager} acts as the central execution hub for all game-related
 The event manager ensures concurrency safety using \texttt{ConcurrentLinkedQueue}, preventing race conditions when processing multiple asynchronous actions.
 
 \subsubsection{GameTimer}
-The \texttt{GameTimer} class tracks real-time, total elapsed time, and background animation timing. It synchronizes event execution by accumulating delta time (dt) and updating event processing intervals accordingly. The timer provides a consistent timing reference for executing delayed events and easing functions.
+The \texttt{GameTimer} class tracks real-time, total elapsed time, and
+background animation timing. It synchronizes event execution by accumulating
+delta time (dt) and updating event processing intervals accordingly. The timer
+provides a consistent timing reference for executing delayed events and easing
+functions.
 
 \subsubsection{Ease}
-The \texttt{Ease} class facilitates smooth animations for background effects, screen transitions, and UI enhancements. It supports different interpolation methods:
+The \texttt{Ease} class facilitates smooth animations for background effects,
+screen transitions, and UI enhancements. It supports different interpolation
+methods:
 \begin{itemize}
     \item \textbf{LERP (Linear Interpolation)}: Gradually changes a value over time.
     \item \textbf{ELASTIC}: Simulates spring-like motion for dynamic effects.
@@ -350,7 +362,9 @@ The \texttt{Ease} class facilitates smooth animations for background effects, sc
 This is particularly useful for animations such as screen shaking when an invalid move is made, or color transitions when switching player turns.
 
 \subsection{Input Handling}
-Kingdomino implements manual input event processing instead of relying on LibGDX’s built-in event loop. The \texttt{BoardInputHandler} class captures user input and translates it into structured events.
+Kingdomino implements manual input event processing instead of relying on
+LibGDX’s built-in event loop. The \texttt{BoardInputHandler} class captures
+user input and translates it into structured events.
 
 \subsubsection{Key Features of Input Handling}
 \begin{itemize}
@@ -365,7 +379,7 @@ When a player moves a domino using the keyboard or controller:
     \item Input is captured (WASD keys or joystick).
     \item \texttt{BoardInputHandler} checks validity (e.g., ensuring the move is within bounds).
     \item If valid, an event is created and queued:
-    \begin{lstlisting}[language=Java]
+          \begin{lstlisting}[language=Java]
 Event moveEvent = new Event(
     TriggerType.BEFORE, true, true, 0.15f, // Delay for smooth input
     () -> currentDomino.moveDomino(Direction.UP),
@@ -374,7 +388,7 @@ eventManager.addEvent(moveEvent, "input", false);
     \end{lstlisting}
     \item The event executes smoothly without blocking the main loop.
     \item If the move is invalid, audio and visual feedback are triggered:
-    \begin{lstlisting}[language=Java]
+          \begin{lstlisting}[language=Java]
 audioManager.playSound(AudioManager.SoundType.CANCEL);
 BackgroundManager.screenShake();
     \end{lstlisting}
@@ -442,7 +456,86 @@ Domino would be added. Domino will then be discarded.
 
 \subsection{Tile Placement and Board Validation}
 
-The \texttt{TileValidator} class is responsible for validating the placement of tiles on the game board. It ensures that tiles are placed within bounds and are free from occupation. The following code snippet shows the implementation of the \texttt{TileValidator} class:
+\subsubsection{Domino and DominoController}
+
+The \texttt{Domino} class represents a domino in the game, consisting of two
+tiles and a controller. It provides methods to rotate, move, and set the
+position of the domino. The \texttt{DominoController} class handles the
+rotation and placement of dominos, maintaining the state of the tiles and their
+positions.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-1.png}}
+    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-2.png}}
+    \caption{Placing Domino.}\label{fig:placing}
+\end{figure}
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/Domino.java
+public class Domino {
+    // ...existing code...
+    public void rotateDomino(boolean clockwise, boolean shouldOffset) {
+        dominoController.rotateDomino(clockwise, shouldOffset);
+    }
+    // ...existing code...
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/DominoController.java
+public class DominoController {
+    // ...existing code...
+    public void rotateDomino(boolean clockwise, boolean shouldOffset) {
+        lastRotationIndex = rotationIndex;
+        rotationIndex = (rotationIndex + (clockwise ? 1 : 3)) % 4;
+
+        // rotate the 2nd Tile with 1st Tile as center
+        tileRotator.rotate(posTileA, posTileB, rotationIndex, shouldOffset);
+
+        lastAction = 1;
+    }
+    // ...existing code...
+}
+\end{lstlisting}
+
+\subsubsection{TileRotator}
+
+The \texttt{TileRotator} class is responsible for rotating tiles around a
+center position. It uses a predefined set of directions to determine the new
+position of the tile after rotation.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.55\textwidth]{assets/rotate.png}}
+    \caption{Rotate Domino by moving TileB relative to TileA.}\label{fig:rotate}
+\end{figure}
+
+The rotation logic for the domino can be described as follows:
+
+\[
+    \text{If rotating clockwise:} \quad\boxed{\text{index} = (\text{index} + 1) \mod 4}
+\]
+\[
+    \text{If rotating counter-clockwise:} \quad\boxed{\text{index} = (\text{index} + 3) \mod 4}
+\]
+
+\begin{lstlisting}[language=Java]
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/TileRotator.java
+public class TileRotator {
+    // ...existing code...
+    public void rotate(Position center, Position tilePos, int rotationIndex, boolean shouldOffset) {
+        Position newPos = center.add(directions[rotationIndex]);
+        tilePos.set(newPos);
+    }
+    // ...existing code...
+}
+\end{lstlisting}
+
+\subsubsection{Tile Placement Validation}
+
+The \texttt{TileValidator} class is responsible for validating the placement of
+tiles on the game board. It ensures that tiles are placed within bounds and are
+free from occupation. The following code snippet shows the implementation of
+the \texttt{TileValidator} class:
 
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/TileValidator.java
@@ -476,51 +569,114 @@ public class TileValidator {
 }
 \end{lstlisting}
 
-\subsubsection{Placing Domino}
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-1.png}}
-    \centerline{\includegraphics[width=0.18\textwidth]{assets/placing-2.png}}
-    \caption{Placing Domino.}\label{fig:placing}
-\end{figure}
-
-\subsubsection{Rotating Domino}
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.55\textwidth]{assets/rotate.png}}
-    \caption{Rotate Domino by moving TileB relative to TileA.}\label{fig:rotate}
-\end{figure}
-
-The rotation logic for the domino can be described as follows:
-
-\[
-    \text{If rotating clockwise:} \quad\boxed{\text{index} = (\text{index} + 1) \mod 4}
-\]
-\[
-    \text{If rotating counter-clockwise:} \quad\boxed{\text{index} = (\text{index} + 3) \mod 4}
-\]
-
 \subsection{Scoring Mechanism}
+% -- Explain the flood-fill algorithm and its application in Kingdomino.
 
-The flood-fill algorithm is used to calculate the score by identifying and evaluating connected groups of the same terrain type. The following code snippet shows the implementation of the flood-fill algorithm:
+The flood-fill algorithm is a computer graphics algorithm used to determine the
+area connected to a given node in a multi-dimensional array. It is commonly
+used in tools like paint bucket in graphics editors to fill bounded areas with
+color.
+
+In the context of Kingdomino, the flood-fill algorithm is utilized to calculate
+the score by identifying and evaluating connected groups of the same terrain
+type. The algorithm traverses the game board, starting from a given tile, and
+recursively explores all adjacent tiles of the same terrain type. This allows
+the game to efficiently compute the size of each connected terrain group and
+apply the scoring rules based on the number of crowns within these groups.
+
+Below is a pseudocode representation of the recursive 4-way flood-fill
+algorithm:
+
+\begin{algorithm}[htbp]
+    \caption{Flood-fill Algorithm}
+    \KwIn{Tile}
+    \KwOut{Flood-filled region}
+    \If{Tile is not inside Region}{
+        \Return\;
+    }
+    Set the node\;
+    Perform Flood-fill one step to the south of Tile\;
+    Perform Flood-fill one step to the north of Tile\;
+    Perform Flood-fill one step to the west of Tile\;
+    Perform Flood-fill one step to the east of Tile\;
+    \Return\;
+\end{algorithm}
+
+This algorithm is in its original form. For Kingdomino with multiplicative
+scoring system, we need to modify the algorithm to calculate both the spanned
+region (area) and also count the number of crowns within the connected group.
+See Listing~\ref{lst:floodfill} for the implementation details.
+
+To better illustrate the concept of flood-fill, consider the following example
+with a 9$\times$9 grid:
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-start.png}}
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-detected.png}}
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/floodfill-continue.png}}
+    % \caption{}\label{fig:floodfill-start}
+\end{figure}
+
+In this example, the algorithm starts at the selected tile (highlighted in
+red). It then recursively explores all adjacent tiles of the same terrain type,
+marking them as visited and counting the number of crowns within the connected
+group. The process continues until all connected tiles of the same terrain type
+have been evaluated, resulting in the final score for that terrain group.
+
+\subsection{Input Handling}
+% -- Describe how user inputs are processed and handled (keyboard and controller).
+
+\subsubsection{Board Navigation}
+
+\subsubsection{Domino Selection}
+
+\subsection{UML/Class Diagram}
+% -- Provide an overview of classes, relationships. 
+%    Reference the figure in text.
+
+\subsection{Used Libraries and Environment}
+% -- Mention languages, frameworks, libraries, operating systems, version details, etc.
+
+\subsection{Important Code Snippets}
+% -- Show the relevant or tricky parts of your code with explanations.
 
 \begin{lstlisting}[language=Java, caption={Flood-Fill Algorithm}, label={lst:floodfill}]
 private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
     if (x < 0 || x >= land.length || y < 0 || y >= land.length) {
         return 0;
     }
+
     if (land[y][x] == null || visited[y][x] || land[y][x].getTerrain() != terrain) {
         return 0;
     }
+    
+
     totalCrown += land[y][x].getCrown();
     visited[y][x] = true;
+
     return 1 +
             floodFill(x + 1, y, terrain, visited) +
             floodFill(x - 1, y, terrain, visited) +
             floodFill(x, y + 1, terrain, visited) +
             floodFill(x, y - 1, terrain, visited);
-}
+    }
 \end{lstlisting}
+
+%======================================================
+% -- mainly UI
+
+\section{Graphical Enhancement and Visual Effects}
+% -- Describe the interface design, layout, main widgets.
+
+\subsection{Shader-Based Rendering}
+
+\subsection{Dynamic UI Elements}
+
+\subsection{Background Shader}
+
+\subsection{CRT Shader Overlay}
+
+\subsection{Visual and Effects}
 
 %======================================================
 \section{Experimental Results}
