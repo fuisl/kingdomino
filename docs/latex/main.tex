@@ -669,14 +669,40 @@ private int floodFill(int x, int y, TerrainType terrain, boolean[][] visited) {
 % -- Describe the interface design, layout, main widgets.
 
 \subsection{Shader-Based Rendering}
+Kingdomino leverages shader-based rendering using OpenGL Shader language to
+enhance visual effects and provide a more immersive experience. Two primary
+shaders are used: the CRT shader and the background shader.
+
+\subsubsection{CRT Shader}
+The CRT shader simulates the appearance of an old CRT monitor, adding effects
+such as distortion, scanlines, noise, and bloom. It consists of a vertex shader
+and a fragment shader.
+
+\begin{itemize}
+    \item \textbf{Vertex Shader (crt.vert)}: Applies transformations to simulate a parallax effect based on mouse position and screen scale.
+    \item \textbf{Fragment Shader (crt.frag)}: Implements various visual effects, including barrel distortion, edge feathering, glitch offsets, chromatic aberration, scanlines, and noise overlay.
+\end{itemize}
+
+\subsubsection{Background Shader}
+The background shader creates dynamic and visually appealing backgrounds with
+effects like spinning and color transitions.
+
+\begin{itemize}
+    \item \textbf{Vertex Shader (background.vert)}: Passes texture coordinates to the fragment shader.
+    \item \textbf{Fragment Shader (background.frag)}: Applies pixelation, swirl, and paint effects based on time and spin parameters, along with color blending for a vibrant background.
+\end{itemize}
 
 \subsection{Dynamic UI Elements}
+% ...existing code...
 
 \subsection{Background Shader}
+% ...existing code...
 
 \subsection{CRT Shader Overlay}
+% ...existing code...
 
 \subsection{Visual and Effects}
+% ...existing code...
 
 %======================================================
 \section{Experimental Results}
