@@ -1,11 +1,14 @@
 package dev.kingdomino.game;
 
+import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.AudioManager.SoundType;
 import dev.kingdomino.game.Event.TriggerType;
 import dev.kingdomino.game.GameManager.InputDevice;
 
 public class DraftInputHandler extends AbstractInputProcessor {
     private final EventManager eventManager = EventManager.getInstance();
     private final GameManager gameManager;
+    private final AudioManager audioManager = AudioManager.getInstance();
     private Turn nextTurn;
     public int selectionIndex;
     public int remainingDrafts;
@@ -64,12 +67,15 @@ public class DraftInputHandler extends AbstractInputProcessor {
 
         switch (action) {
             case MOVE_UP:
+                audioManager.playSound(SoundType.SELECTING);
                 e = createMoveUpEvent();
                 break;
             case MOVE_DOWN:
+                audioManager.playSound(SoundType.SELECTING);
                 e = createMoveDownEvent();
                 break;
             case SELECT_DOMINO:
+                audioManager.playSound(SoundType.CONFIRMSELECTING);
                 e = createSelectDominoEvent();
                 break;
             default:

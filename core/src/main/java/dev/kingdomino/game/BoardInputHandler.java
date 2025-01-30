@@ -1,5 +1,6 @@
 package dev.kingdomino.game;
 
+import dev.kingdomino.effects.AudioManager;
 import dev.kingdomino.game.Event.TriggerType;
 import dev.kingdomino.game.GameManager.InputDevice;
 
@@ -17,6 +18,7 @@ public class BoardInputHandler {
     private GameManager gameManager;
     private Board board;
     private Domino currentDomino;
+    private final AudioManager audioManager = AudioManager.getInstance();
     private final Position[] tileBOffsets = {
             Direction.RIGHT.get(),
             Direction.DOWN.get(),
@@ -75,48 +77,74 @@ public class BoardInputHandler {
         Event e = null;
         switch (action) {
             case MOVE_UP: {
+                audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.UP)) {
                     e = createMoveEvent(Direction.UP);
+                }
+                else {
+                    audioManager.playSound(AudioManager.SoundType.CANCEL);
                 }
                 break;
             }
             case MOVE_DOWN: {
+                audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.DOWN)) {
                     e = createMoveEvent(Direction.DOWN);
+                }
+                else {
+                    audioManager.playSound(AudioManager.SoundType.CANCEL);
                 }
                 break;
             }
             case MOVE_LEFT: {
+                audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.LEFT)) {
                     e = createMoveEvent(Direction.LEFT);
+                }
+                else {
+                    audioManager.playSound(AudioManager.SoundType.CANCEL);
                 }
                 break;
             }
             case MOVE_RIGHT: {
+                audioManager.playSound(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.RIGHT)) {
                     e = createMoveEvent(Direction.RIGHT);
+                }
+                else {
+                    audioManager.playSound(AudioManager.SoundType.CANCEL);
                 }
                 break;
             }
             case ROTATE_CLOCKWISE: {
+                audioManager.playSound(AudioManager.SoundType.ROTATING);
                 if (canRotate(true)) {
                     e = createRotateEvent(true);
+                }
+                else {
+                    audioManager.playSound(AudioManager.SoundType.CANCEL);
                 }
                 break;
             }
             case ROTATE_COUNTERCLOCKWISE: {
+                audioManager.playSound(AudioManager.SoundType.ROTATING);
                 if (canRotate(false)) {
                     e = createRotateEvent(false);
+                }
+                else {
+                    audioManager.playSound(AudioManager.SoundType.CANCEL);
                 }
                 break;
             }
             case PLACE_DOMINO: {
+                audioManager.playSound(AudioManager.SoundType.PLACING);
                 if (!keylocked) {
                     e = createPlaceDominoEvent();
                 }
                 break;
             }
             case DISCARD_DOMINO: {
+                audioManager.playSound(AudioManager.SoundType.CANCEL);
                 e = createDiscardDominoEvent();
                 break;
             }
@@ -206,6 +234,7 @@ public class BoardInputHandler {
                         valid = true;
                         exit = true;
                     } else {
+                        audioManager.playSound(AudioManager.SoundType.HIGHLIGHT);
                         eventManager.addEvent(invalidEffect.copy(), "input", false);
                         valid = false;
                         keylocked = true;
