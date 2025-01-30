@@ -53,7 +53,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
         header.setAlignment(Align.center);
 
         layout.add(header)
-                .pad(10);
+                .pad(5);
 
         layout.row();
 
@@ -107,6 +107,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
                 .fill()
                 .pad(10, 5, 10, 0);
 
+        layout.validate();
         return layout;
     }
 

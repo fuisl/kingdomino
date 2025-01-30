@@ -48,8 +48,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
         String[] label = { "1st", "2nd", "3rd", "4th" };
 
         layout.add(new Label("Leaderboard", headerStyle))
-                .pad(0, 0, 5, 0)
-                .colspan(2);
+                .pad(5);
 
         layout.row();
 
@@ -61,7 +60,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
                     .expand();
 
             entry.add(generateContainer(playerIconActors[i]))
-                    .height(Value.percentHeight(0.7f, entry))
+                    .height(Value.percentHeight(0.6f, entry))
                     .width(Value.percentWidth(0.33f, entry))
                     .fill();
 
@@ -70,11 +69,13 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
 
             layout.add(entry)
                     .fill()
-                    .expandX();
+                    .expandX()
+                    .pad(5);
           
             layout.row();  
         }
 
+        layout.validate();
         return layout;
     }
 

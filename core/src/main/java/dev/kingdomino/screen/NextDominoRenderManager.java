@@ -2,8 +2,9 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 
 import dev.kingdomino.game.Domino;
 import dev.kingdomino.game.DraftInputHandler;
@@ -20,50 +21,68 @@ import dev.kingdomino.game.Turn;
  */
 public class NextDominoRenderManager extends AbstractRenderManager {
     private DominoActor[] dominoActors;
-    private HighlightActor[] highlightActors;
     private DraftInputHandler draftInputHandler;
     private Label.LabelStyle headerStyle;
+    private NinePatchDrawable bezel;
+    private NinePatchDrawable whiteBezel;
+    private NinePatchDrawable bezelBackground;
+    private Table[] rows;
 
     public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
-            TextureRegion[] crownOverlay, TextureRegion selectionOverlay) {
+            TextureRegion[] crownOverlay, NinePatchDrawable bezel, NinePatchDrawable whiteBezel,
+            NinePatchDrawable bezelBackground) {
 
         super(gameManager, kingAvatar);
 
         dominoActors = new DominoActor[kingCount];
-        highlightActors = new HighlightActor[kingCount];
 
         for (int i = 0; i < kingCount; i++) {
             dominoActors[i] = new DominoActor(crownOverlay);
-            highlightActors[i] = new HighlightActor(selectionOverlay);
         }
 
         draftInputHandler = gameManager.getDraftInputHandler();
 
         this.headerStyle = headerStyle;
+        this.rows = new Table[kingCount];
+        this.bezel = bezel;
+        this.whiteBezel = whiteBezel;
+        this.bezelBackground = bezelBackground;
     }
 
     @Override
     public Table getLayout() {
         Table layout = new Table();
+        layout.setBackground(bezelBackground);
 
-        layout.add(new Label("Next Dominoes", headerStyle));
+        layout.add(new Label("Next Dominoes", headerStyle)).pad(5);
         layout.row();
 
         for (int i = 0; i < kingCount; i++) {
-            Stack stack = new Stack();
-            stack.add(generateContainer(highlightActors[i]));
-
             Table row = new Table();
-            row.pad(5);
-            row.add(generateContainer(dominoActors[i])).expand().fill();
-            row.add(generateContainer(playerIconActors[i])).expand().fill();
 
-            stack.add(row);
+            row.add(generateContainer(dominoActors[i]))
+                    .height(Value.percentWidth(0.2f, row))
+                    .expandX()
+                    .fill();
 
-            layout.add(stack).expand().fill();
+            row.add(generateContainer(playerIconActors[i]))
+                    .height(Value.percentWidth(0.2f, row))
+                    .expandX()
+                    .fill();
+
+            row.setBackground(bezel);
+
+            rows[i] = row;
+
+            layout.add(row)
+                    .fill()
+                    .expandX()
+                    .pad(5);
+
             layout.row();
         }
 
+        layout.validate();
         return layout;
     }
 
@@ -98,7 +117,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
         int currentSelection = draftInputHandler.getSelectionIndex();
 
-        highlightActors[currentSelection].setVisible(true);
+        rows[currentSelection].setBackground(whiteBezel);
     }
 
     /**
@@ -106,7 +125,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
      */
     private void hideAllHighlighter() {
         for (int i = 0; i < kingCount; i++) {
-            highlightActors[i].setVisible(false);
+            rows[i].setBackground(bezel);
+            ;
         }
     }
 }
