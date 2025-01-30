@@ -37,7 +37,8 @@ public class ControlHintManager extends Actor {
     }
 
     private boolean checkIdenticalGameState(GameState currentState) {
-        if (lastGameState == currentState) return true;
+        if (lastGameState == currentState)
+            return true;
 
         lastGameState = currentState;
         return false;
@@ -45,17 +46,19 @@ public class ControlHintManager extends Actor {
 
     @Override
     public void act(float delta) {
-        if (checkIdenticalGameState(gameManager.getCurrentState())) return;
+        if (checkIdenticalGameState(gameManager.getCurrentState()))
+            return;
 
         switch (gameManager.getCurrentState()) {
             case RESULTS:
                 break;
             case TURN_CHOOSING:
+                // TODO: add control hint for choosing domino
                 controlHint.setText(
-                        "Use W, S to choose the domino to play on next round, X to confirm.\nThe position determine the play order next round.");
+                        "[W, S] move, [X] confirm.\nThe position determine the play order next round.");
                 break;
             case TURN_PLACING:
-                controlHint.setText("Use W, A, S, D to move the domino; Q, E to rotate; X to place; C to discard.");
+                controlHint.setText("[W, A, S, D] move the domino;\n[Q, E] rotate; [X] place; [C] discard.");
                 break;
             case INIT:
             case SETUP:
