@@ -102,7 +102,7 @@ public class CRTShader {
         crtShader.setUniformf("crt_intensity", intensity);
 
         // glitch
-        crtShader.setUniformf("glitch_intensity", 0.2f); // or a higher value
+        crtShader.setUniformf("glitch_intensity", 0.05f); // or a higher value
 
         // scanlines
         crtShader.setUniformf("scanlines", Gdx.graphics.getHeight() * 0.75f);
@@ -117,6 +117,9 @@ public class CRTShader {
         crtShader.setUniformf("mouse_screen_pos", mx, my);
 
         crtQuad.bind(crtShader);
+
+        // update camera before supplying the uniform
+        BackgroundManager.updateCameraShakePosition();
         crtShader.setUniformMatrix("u_projTrans", camera.combined);
 
         // bind the frame buffer

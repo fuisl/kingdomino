@@ -18,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.BackgroundManager;
 import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
@@ -40,9 +42,11 @@ public class GameScreen extends AbstractScreen {
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
     private ControlHintManager controlHintManager;
+    private AudioManager audioManager;
 
     private CRTShader crtShader;
     private BackgroundShader backgroundShader;
+    private OrthographicCamera shaderSharedCamera = new OrthographicCamera();
 
     private NinePatchDrawable leftInfoBackground;
     private NinePatchDrawable rightInfoBackground;
@@ -63,6 +67,25 @@ public class GameScreen extends AbstractScreen {
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
         gameManager = new GameManager();
+
+        // logging GPU info before shader init.
+        // TODO move to loading screen, if I managed to get there in time
+        // UPDATE: init before update GameManager to start all timers.
+        Gdx.app.log("GPU Info", "Vendor: " + Gdx.gl.glGetString(GL20.GL_VENDOR));
+        Gdx.app.log("GPU Info", "Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER));
+        Gdx.app.log("GPU Info", "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION));
+        Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+
+        this.backgroundShader = new BackgroundShader(shaderSharedCamera);
+        this.crtShader = new CRTShader(shaderSharedCamera, 20f);
+
+        // important for screenshake
+        BackgroundManager.setCamera(shaderSharedCamera);
+
+        // load audio
+        audioManager = AudioManager.getInstance();
+        audioManager.load();
+        audioManager.playMusic();
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -123,18 +146,6 @@ public class GameScreen extends AbstractScreen {
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
         controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
-
-        // logging GPU info before shader init
-        // TODO move to loading screen, if I managed to get there in time
-        Gdx.app.log("GPU Info", "Vendor: " + Gdx.gl.glGetString(GL20.GL_VENDOR));
-        Gdx.app.log("GPU Info", "Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER));
-        Gdx.app.log("GPU Info", "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION));
-        Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
-
-        OrthographicCamera shaderSharedCamera = new OrthographicCamera();
-
-        this.backgroundShader = new BackgroundShader(shaderSharedCamera);
-        this.crtShader = new CRTShader(shaderSharedCamera, 20f);
     }
 
     @Override
@@ -261,6 +272,7 @@ public class GameScreen extends AbstractScreen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
 
+        // update the shaders
         crtShader.replaceBuffer(width, height);
         backgroundShader.changeVertices(width, height);
     }

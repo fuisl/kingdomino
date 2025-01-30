@@ -1,5 +1,7 @@
 package dev.kingdomino.effects;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -22,6 +24,9 @@ public class BackgroundShader {
     private OrthographicCamera camera;
     private GameTimer gameTimer;
 
+    public static HashMap<String, Float> refTable;
+    public static HashMap<String, Color> colorTable;
+
     public BackgroundShader(OrthographicCamera camera) {
         // These assets need its own specific loader if I want to delegate it to
         // AssetManager. Too much work! - @LunaciaDev
@@ -39,24 +44,29 @@ public class BackgroundShader {
 
         this.camera = camera;
         this.gameTimer = GameTimer.getInstance();
+
+        // init refTable
+        refTable = new HashMap<>();
+        colorTable = new HashMap<>();
     }
 
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         backgroundShader.bind();
-        // define the uniform
+
+        // spin
         backgroundShader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        backgroundShader.setUniformf("u_time", gameTimer.totalTime); // control color bleeding.
-        backgroundShader.setUniformf("u_spinTime", gameTimer.totalTime * 0.0f); // control spining. set to
-                                                                                // 0f to stop spining. set
-                                                                                // negative to spin in
-                                                                                // opposite direction
-        backgroundShader.setUniformf("u_contrast", 1.5f);
-        backgroundShader.setUniformf("u_spinAmount", 0.2f); // control the shape of the spin
-        backgroundShader.setUniformf("u_colour1", Color.valueOf("02394A"));
-        backgroundShader.setUniformf("u_colour2", Color.valueOf("043565"));
-        backgroundShader.setUniformf("u_colour3", Color.valueOf("5158BB"));
+        backgroundShader.setUniformf("u_time", gameTimer.backgroundTime);  // always color bleeding
+        backgroundShader.setUniformf("u_spinTime", gameTimer.backgroundTime);
+        backgroundShader.setUniformf("u_spinAmount", refTable.get("u_spinAmount")); 
+        backgroundShader.setUniformf("u_contrast", refTable.get("u_contrast")); 
+        
+        // color
+        BackgroundManager.updateColors();
+        backgroundShader.setUniformf("u_colour1", colorTable.get("u_color1"));
+        backgroundShader.setUniformf("u_colour2", colorTable.get("u_color2"));
+        backgroundShader.setUniformf("u_colour3", colorTable.get("u_color3"));
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();

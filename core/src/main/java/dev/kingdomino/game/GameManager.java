@@ -6,17 +6,23 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.controllers.Controllers;
+
+import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.AudioManager.SoundType;
+
+import dev.kingdomino.effects.BackgroundManager;
 
 // import dev.kingdomino.game.Event.TriggerType;
 
 public class GameManager {
     private int kingCount = 4;
-    private Deck deck;
-    private Board[] boards;
+    private final Deck deck;
+    private final Board[] boards;
     private Board currentBoard;
     private Domino currentDomino;
     private Turn currentTurn;
-    private King[] kings;
+    private final King[] kings;
     private King currentKing;
     private Turn nextTurn;
     private boolean placingDomino = false;
@@ -24,12 +30,41 @@ public class GameManager {
     private Map<King, int[]> scores;
     private boolean finalTurn = false; // set true for debugging
 
-    private GameTimer gameTimer = GameTimer.getInstance();
-    private GameState currentState = GameState.SETUP;
+    private final GameTimer gameTimer = GameTimer.getInstance();
+    public static GameState currentState = GameState.SETUP;
 
-    private EventManager eventManager;
-    private BoardInputProcessor boardInputProcessor;
-    private DraftInputProcessor draftInputProcessor;
+    private final EventManager eventManager;
+    private final BoardInputHandler boardInputHandler;
+    private final BoardInputProcessor boardInputProcessor;
+    private final BoardInputController boardInputController;
+
+    private final DraftInputHandler draftInputHandler;
+    private final DraftInputProcessor draftInputProcessor;
+    private final DraftInputController draftInputController;
+
+    public static InputDevice currentInputDevice; // use for displaying accordingly
+
+    private final AudioManager audioManager = AudioManager.getInstance();
+
+    Event scoreSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCORE);
+    }, null, null, null);
+
+    Event scoreSound2 = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCORE2);
+    }, null, null, null);
+
+    Event scoreIncreasingSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCOREINCREASING);
+    }, null, null, null);
+
+    Event scoreIncreasingSound2 = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCOREINCREASING2);
+    }, null, null, null);
+
+    Event scoreReducingSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCOREREDUCING);
+    }, null, null, null);
 
     public enum GameState {
         INIT,
@@ -42,11 +77,37 @@ public class GameManager {
         RESULTS
     }
 
+    public enum InputDevice {
+        KEYBOARD,
+        CONTROLLER
+    }
+
+    public static void setInputDevice(InputDevice device) {
+        switch (device) {
+            case KEYBOARD:
+                currentInputDevice = InputDevice.KEYBOARD;
+                break;
+            case CONTROLLER:
+                currentInputDevice = InputDevice.CONTROLLER;
+                break;
+            default:
+                break;
+        }
+    }
+
     public GameManager() {
         // initialize game manager
         eventManager = EventManager.getInstance();
-        boardInputProcessor = new BoardInputProcessor(this);
-        draftInputProcessor = new DraftInputProcessor(this);
+        boardInputHandler = new BoardInputHandler(this);
+        boardInputProcessor = new BoardInputProcessor(boardInputHandler);
+        boardInputController = new BoardInputController(boardInputHandler);
+
+        draftInputHandler = new DraftInputHandler(this);
+        draftInputProcessor = new DraftInputProcessor(draftInputHandler);
+        draftInputController = new DraftInputController(draftInputHandler);
+
+        Controllers.addListener(boardInputController);
+        Controllers.addListener(draftInputController);
         Gdx.input.setInputProcessor(new InputMultiplexer(boardInputProcessor, draftInputProcessor));
 
         // initialize game components
@@ -55,10 +116,12 @@ public class GameManager {
         boards = new Board[kingCount];
         currentTurn = null;
         nextTurn = null;
+        scores = new LinkedHashMap<King, int[]>();
 
         for (int i = 0; i < kingCount; i++) {
             boards[i] = new Board();
             kings[i] = new King(i, boards[i]);
+            scores.put(kings[i], new int[] { 0, 0, 0 });
         }
 
         // initialize game state
@@ -117,7 +180,7 @@ public class GameManager {
 
         // // test end game
         // for (int i = 0; i < 44; i++) {
-        //     deck.drawCard();
+        // deck.drawCard();
         // }
 
         // game init for 3 kings (removing 12 dominos)
@@ -132,12 +195,15 @@ public class GameManager {
         for (int i = 0; i < kingCount; i++) {
             draft_current[i] = deck.drawCard();
         }
+
         currentTurn = new Turn(draft_current);
 
         // setup the kings for first turn. TODO: add random later.
         for (int i = 0; i < kingCount; i++) {
             currentTurn.selectDomino(kings[i], i);
         }
+
+        BackgroundManager.startSpin();
 
         // set game state to SETUP
         currentState = GameState.SETUP;
@@ -155,6 +221,8 @@ public class GameManager {
             finalTurn = true;
         }
 
+        audioManager.playSound(SoundType.NEWTURN);
+
         // set game state to TURN
         currentState = GameState.TURN_START;
     }
@@ -166,15 +234,54 @@ public class GameManager {
             currentBoard = currentKing.getBoard();
             currentState = GameState.TURN_PLACING;
 
-            draftInputProcessor.reset();
-            boardInputProcessor.reset();
+            draftInputHandler.reset();
+            boardInputHandler.reset();
+
+            // start spinning background
+
+            // TODO: change color
+            switch (currentKing.getId()) {
+                case 0:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_blue"));
+                    break;
+                case 1:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_green"));
+                    break;
+                case 2:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_red"));
+                    break;
+                case 3:
+                    BackgroundManager.colorSwitch(BackgroundManager.colorMap.get("default_yellow"));
+                    break;
+            }
         }
     }
 
     private void placeDomino() {
         placingDomino = true;
-        if (boardInputProcessor.exit && boardInputProcessor.valid) {
+        if (boardInputHandler.exit && boardInputHandler.valid) {
+            int tempScoreCurrentKing = currentKing.getBoard().getScoringSystem().getLandTotal();
+
             currentBoard.getScoringSystem().calculateLandScore();
+            results();
+
+            // playing placing sound
+            int diff = scores.get(currentKing)[2] - tempScoreCurrentKing;
+
+            if (diff >= 3) {
+                eventManager.addEvent(scoreIncreasingSound2.copy(), "sound", false);
+                eventManager.addEvent(scoreSound2.copy(), "sound", false);
+            } else if (diff > 0) {
+                eventManager.addEvent(scoreIncreasingSound.copy(), "sound", false);
+                eventManager.addEvent(scoreSound.copy(), "sound", false);
+            } else if (diff < 0 && diff >= -2) {
+                eventManager.addEvent(scoreReducingSound.copy(), "sound", false);
+                eventManager.addEvent(scoreSound.copy(), "sound", false);
+            } else if (diff <= -3) {
+                eventManager.addEvent(scoreReducingSound.copy(), "sound", false);
+                eventManager.addEvent(scoreSound2.copy(), "sound", false);
+            }
+
             // update score var after placing domino
             results();
             if (finalTurn) {
@@ -192,9 +299,12 @@ public class GameManager {
         // }
 
         choosingDomino = true;
-        if (draftInputProcessor.exit) {
+        if (draftInputHandler.exit) {
             currentState = GameState.TURN_END;
             choosingDomino = false;
+
+            // rewind and forward spinning background
+            BackgroundManager.rewindSpin();
         }
     }
 
@@ -209,7 +319,6 @@ public class GameManager {
                 currentTurn = nextTurn.copy(); // weird
                 nextTurn = null;
                 currentState = GameState.SETUP;
-                return;
             }
         }
 
@@ -227,7 +336,7 @@ public class GameManager {
     }
 
     private void results() {
-        scores = new LinkedHashMap<King, int[]>();
+        scores.clear();
 
         // get scores for render
         for (King k : kings) {
@@ -236,6 +345,8 @@ public class GameManager {
             int totalScore = k.getBoard().getScoringSystem().getBoardTotal();
             scores.put(k, new int[] { landScore, bonusScore, totalScore });
         }
+
+        // playing score sound
 
         scores = sortScores(scores, 2); // sort by total
     }
@@ -298,11 +409,15 @@ public class GameManager {
         return currentState;
     }
 
-    public DraftInputProcessor getDraftInputProcessor() {
-        return this.draftInputProcessor;
+    public DraftInputHandler getDraftInputHandler() {
+        return this.draftInputHandler;
     }
 
     public Map<King, int[]> getScores() {
         return scores;
+    }
+
+    public BoardInputHandler getBoardInputHandler() {
+        return this.boardInputHandler;
     }
 }

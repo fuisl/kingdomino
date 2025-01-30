@@ -6,11 +6,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import dev.kingdomino.game.Domino;
-import dev.kingdomino.game.DraftInputProcessor;
+import dev.kingdomino.game.DraftInputHandler;
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.GameManager.GameState;
 import dev.kingdomino.game.King;
 import dev.kingdomino.game.Turn;
-import dev.kingdomino.game.GameManager.GameState;
 
 /**
  * A RenderManager specialize in showing next round's {@link Domino} on the left
@@ -21,7 +21,7 @@ import dev.kingdomino.game.GameManager.GameState;
 public class NextDominoRenderManager extends AbstractRenderManager {
     private DominoActor[] dominoActors;
     private HighlightActor[] highlightActors;
-    private DraftInputProcessor draftInputProcessor;
+    private DraftInputHandler draftInputHandler;
     private Label.LabelStyle headerStyle;
 
     public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
@@ -37,7 +37,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             highlightActors[i] = new HighlightActor(selectionOverlay);
         }
 
-        draftInputProcessor = gameManager.getDraftInputProcessor();
+        draftInputHandler = gameManager.getDraftInputHandler();
 
         this.headerStyle = headerStyle;
     }
@@ -96,7 +96,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         if (gameManager.getCurrentState() != GameState.TURN_CHOOSING)
             return;
 
-        int currentSelection = draftInputProcessor.getSelectionIndex();
+        int currentSelection = draftInputHandler.getSelectionIndex();
 
         highlightActors[currentSelection].setVisible(true);
     }
