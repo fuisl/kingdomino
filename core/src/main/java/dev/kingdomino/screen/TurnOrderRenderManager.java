@@ -61,7 +61,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
         currentPlayer.background(bezel);
 
         currentPlayer.add(generateContainer(playerIconActors[0]))
-                .height(Value.percentHeight(0.35f, layout))
+                .height(Value.percentHeight(0.33f, layout))
                 .width(Value.percentWidth(0.4f, layout))
                 .align(Align.center)
                 .fill()
@@ -97,7 +97,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
 
         for (int i = 1; i < kingCount; i++) {
             upcomingPlayers.add(generateContainer(playerIconActors[i]))
-                    .height(Value.percentHeight(0.18f, layout))
+                    .height(Value.percentHeight(0.15f, layout))
                     .align(Align.center)
                     .expand()
                     .fill();

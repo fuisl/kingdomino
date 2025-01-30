@@ -140,7 +140,8 @@ public class GameScreen extends AbstractScreen {
 
         turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle, bezel,
                 whiteBezel, bezelBackground);
-        leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle);
+        leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle, bezel,
+                bezelBackground);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, headerStyle, crownOverlay,
                 atlas.findRegion("highlight"));
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
@@ -175,14 +176,13 @@ public class GameScreen extends AbstractScreen {
         leftInfoLayout.setBackground(leftInfoBackground);
 
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
-                .expandX()
                 .fill()
                 .pad(15);
 
         leftInfoLayout.row();
 
         leftInfoLayout.add(nextDominoRenderManager.getLayout())
-                .height(Value.percentHeight(0.27f, leftInfoLayout))
+                .height(Value.percentHeight(0.20f, leftInfoLayout))
                 .expandX()
                 .fill()
                 .pad(15);
@@ -190,8 +190,6 @@ public class GameScreen extends AbstractScreen {
         leftInfoLayout.row();
 
         leftInfoLayout.add(leaderboardRenderManager.getLayout())
-                .height(Value.percentHeight(0.27f, leftInfoLayout))
-                .expandX()
                 .fill()
                 .pad(15);
 
@@ -238,6 +236,8 @@ public class GameScreen extends AbstractScreen {
                 .width(Value.percentWidth(0.18f, rootTable))
                 .expandY()
                 .fill();
+
+        stage.setDebugAll(true);
     }
 
     @Override
