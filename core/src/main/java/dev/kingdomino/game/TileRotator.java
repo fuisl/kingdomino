@@ -2,6 +2,13 @@ package dev.kingdomino.game;
 
 /**
  * Rotates tiles around a center position.
+ * 
+ * @see Position
+ * @see Direction
+ * @see Tile
+ * 
+ * @author @fuisl
+ * @version 1.0
  */
 public class TileRotator {
     private static final Position[] directions = {

@@ -1,8 +1,13 @@
 package dev.kingdomino.game;
 
+import java.util.Arrays;
+
 /**
  * Represents the game board for Kingdomino.
  * Manages the placement and validation of tiles and dominos.
+ * 
+ * @author @fuisl
+ * @version 1.0
  */
 public class Board {
 
@@ -14,6 +19,8 @@ public class Board {
 
     /**
      * Initializes the game board with a castle at the center.
+     * 
+     * @param size the size of the board.
      */
     public Board(int size) {
         this.CENTER = size - 1;
@@ -23,6 +30,9 @@ public class Board {
         this.score = new ScoringSystem(land, size);
     }
 
+    /**
+     * Initializes the game board with a default size of 5x5.
+     */
     public Board() {
         this(5); // default size is 5x5 (but data stored in 9x9 array)
     }
@@ -36,14 +46,12 @@ public class Board {
     public Tile[][] getLand() {
         // deep copy
 
-        Tile[][] land = new Tile[9][9];
+        Tile[][] landCopy = new Tile[9][9];
         for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                land[i][j] = this.land[i][j];
-            }
+            landCopy[i] = Arrays.copyOf(this.land[i], 9);
         }
 
-        return land;
+        return landCopy;
     }
 
     /**
@@ -123,12 +131,22 @@ public class Board {
         return -1; // may use other return code to indicate the reason
     }
 
+    /**
+     * Creates a copy of the current board.
+     * 
+     * @return a new Board object that is a copy of the current board.
+     */
     public Board copy() {
         Board board = new Board();
         board.land = getLand();
         return board;
     }
 
+    /**
+     * Retrieves the scoring system associated with the board.
+     * 
+     * @return the scoring system.
+     */
     public ScoringSystem getScoringSystem() {
         return score;
     }

@@ -13,9 +13,20 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import dev.kingdomino.game.GameTimer;
 
 /**
- * TODO: Javadocs
+ * Applies a CRT (Cathode Ray Tube) shader effect to the game screen.
+ * This effect simulates the look of an old CRT monitor.
  * 
- * @author fuisl
+ * @author @fuisl
+ * @version 1.0
+ * 
+ * refactored by @LunaciaDev
+ * 
+ * @see ShaderProgram
+ * @see FrameBuffer
+ * @see Mesh
+ * @see OrthographicCamera
+ * @see GameTimer
+ * @see Gdx
  */
 public class CRTShader {
     private final ShaderProgram crtShader;
@@ -25,14 +36,30 @@ public class CRTShader {
     private final GameTimer gameTimer;
     private float crtValue;
 
+    /**
+     * Gets the current CRT effect value.
+     * 
+     * @return the current CRT effect value.
+     */
     public float getCrtValue() {
         return crtValue;
     }
 
+    /**
+     * Sets the CRT effect value.
+     * 
+     * @param crtValue the new CRT effect value.
+     */
     public void setCrtValue(float crtValue) {
         this.crtValue = crtValue;
     }
 
+    /**
+     * Constructs a new CRTShader.
+     * 
+     * @param camera the camera used for rendering.
+     * @param crtValue the initial CRT effect value.
+     */
     public CRTShader(OrthographicCamera camera, float crtValue) {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
@@ -64,14 +91,23 @@ public class CRTShader {
         this.crtValue = crtValue;
     }
 
+    /**
+     * Starts capturing the frame buffer.
+     */
     public void startBufferCapture() {
         crtFbo.begin();
     }
 
+    /**
+     * Stops capturing the frame buffer.
+     */
     public void stopBufferCapture() {
         crtFbo.end();
     }
 
+    /**
+     * Applies the CRT effect to the captured frame buffer.
+     */
     public void applyCRTEffect() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -128,6 +164,12 @@ public class CRTShader {
         crtQuad.render(crtShader, GL20.GL_TRIANGLES);
     }
 
+    /**
+     * Replaces the frame buffer with a new one of the specified width and height.
+     * 
+     * @param width the new width of the frame buffer.
+     * @param height the new height of the frame buffer.
+     */
     public void replaceBuffer(int width, int height) {
         if (crtFbo != null) {
             try {
@@ -152,6 +194,9 @@ public class CRTShader {
         camera.update();
     }
 
+    /**
+     * Disposes of the resources used by this shader.
+     */
     public void dispose() {
         crtQuad.dispose();
         crtShader.dispose();

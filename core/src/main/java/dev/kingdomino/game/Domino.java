@@ -2,12 +2,18 @@ package dev.kingdomino.game;
 
 /**
  * Represents a domino in the game, consisting of two tiles and a controller.
+ * 
+ * @see Tile
+ * @see DominoController
+ * 
+ * @author @fuisl
+ * @version 1.0
  */
 public class Domino {
-    private int id;
+    private final int id;
     private Tile tileA;
     private Tile tileB;
-    private DominoController dominoController;
+    private final DominoController dominoController;
 
     /**
      * Constructs a Domino with the specified id, tiles, and controller.
@@ -24,6 +30,11 @@ public class Domino {
         this.dominoController = dominoController;
     }
 
+    /**
+     * Constructs a copy of the specified domino.
+     *
+     * @param other the domino to copy
+     */
     public Domino(Domino other) {
         this.id = other.id;
         this.tileA = other.tileA.copy();
@@ -31,6 +42,11 @@ public class Domino {
         this.dominoController = other.dominoController.copy();
     }
 
+    /**
+     * Creates and returns a copy of this domino.
+     *
+     * @return a new Domino object that is a copy of this domino
+     */
     public Domino copy() {
         return new Domino(this);
     }
@@ -98,35 +114,77 @@ public class Domino {
         dominoController.rotateDomino(clockwise, true);
     }
 
+    /**
+     * Rotates the domino in the specified direction, with an option to offset.
+     * 
+     * Currently offset not implemented.
+     *
+     * @param clockwise   true to rotate clockwise, false to rotate counterclockwise
+     * @param shouldOffset true to apply offset, false otherwise
+     */
     public void rotateDomino(boolean clockwise, boolean shouldOffset) {
         dominoController.rotateDomino(clockwise, shouldOffset);
     }
 
+    /**
+     * Sets the position of this domino based on another domino's position.
+     *
+     * @param domino the domino whose position will be used
+     */
     public void setPosDomino(Domino domino) {
         setPosTileA(domino.getPosTileA());
         setPosTileB(domino.getPosTileB());
     }
 
+    /**
+     * Sets the position of the first tile.
+     *
+     * @param posTileA the new position for the first tile
+     */
     public void setPosTileA(Position posTileA) {
         dominoController.setPosTileA(posTileA);
     }
 
+    /**
+     * Sets the position of the second tile.
+     *
+     * @param posTileB the new position for the second tile
+     */
     public void setPosTileB(Position posTileB) {
         dominoController.setPosTileB(posTileB);
     }
 
+    /**
+     * Moves the domino in the specified direction.
+     *
+     * @param offset the direction to move the domino
+     * @see Direction
+     */
     public void moveDomino(Direction offset) {
         dominoController.moveDomino(offset);
     }
 
+    /**
+     * Sets the first tile of the domino.
+     *
+     * @param tileA the new first tile
+     */
     public void setTileA(Tile tileA) {
         this.tileA = tileA;
     }
 
+    /**
+     * Sets the second tile of the domino.
+     *
+     * @param tileB the new second tile
+     */
     public void setTileB(Tile tileB) {
         this.tileB = tileB;
     }
 
+    /**
+     * Undoes the last action performed on the domino.
+     */
     public void undo() {
         dominoController.undo();
     }

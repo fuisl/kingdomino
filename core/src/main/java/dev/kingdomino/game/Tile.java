@@ -2,6 +2,12 @@ package dev.kingdomino.game;
 
 /**
  * Represents a tile in the game with a terrain type and crown count.
+ * 
+ * @see TerrainType
+ * @see Board
+ * 
+ * @author @fuisl
+ * @version 1.0
  */
 public class Tile {
     private TerrainType terrain;

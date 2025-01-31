@@ -6,18 +6,28 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Manages game events and their processing.
+ * 
+ * @see Event
+ * 
+ * @author @fuisl
+ * @version 1.0
+ * 
+ *          Adapted from Balatro game.
+ */
 public class EventManager {
     private static EventManager instance;
     // Each queue is a ConcurrentLinkedQueue of Events under a specific category/key
-    private Map<String, ConcurrentLinkedQueue<Event>> queues;
+    private final Map<String, ConcurrentLinkedQueue<Event>> queues;
 
     // For controlling how often to process event queues
     private float queueTimer;
-    private float queueDt; // e.g., process queue every 1/60th of a second
+    private final float queueDt; // e.g., process queue every 1/60th of a second
 
     // A reference to some timer system that your game uses
     @SuppressWarnings("unused")
-    private GameTimer timer;
+    private final GameTimer timer;
 
     private EventManager() {
         this.timer = GameTimer.getInstance();

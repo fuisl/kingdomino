@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * Enum representing the different terrain types in the game.
  */
 public enum TerrainType {
+    // TODO: minimize the number of terrain types
     FIELD,
     FOREST,
     LAKE,

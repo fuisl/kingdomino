@@ -5,6 +5,25 @@ import java.util.function.Supplier;
 
 /**
  * Represents a condition that must be satisfied for an event to trigger.
+ * 
+ * <p>
+ * Conditions are used to check if a certain value in a reference table
+ * matches a target value. This is useful for checking if a game state
+ * condition is met, such as if a player has reached a certain score.
+ * 
+ * <p>
+ * Conditions are used in conjunction with {@link Event}s to trigger
+ * game events when certain conditions are met.
+ * 
+ * Currently not used in the game, but can be used for future expansion.
+ * 
+ * @see Event
+ * @see EventManager
+ * 
+ * @author @fuisl
+ * @version 1.0
+ * 
+ *          Adapted from Balatro Game
  */
 public class Condition {
 
@@ -19,7 +38,7 @@ public class Condition {
      * If none is provided, we default to checking equality (==) between
      * the refTable[refValue] and stopVal.
      */
-    private Supplier<Boolean> conditionCheck;
+    private final Supplier<Boolean> conditionCheck;
 
     /**
      * Constructor with a custom condition-checking function.

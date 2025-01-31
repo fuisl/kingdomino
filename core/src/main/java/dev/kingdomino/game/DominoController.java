@@ -5,17 +5,15 @@ package dev.kingdomino.game;
  */
 public class DominoController {
     private int rotationIndex;
-    private Position posTileA; // tileA is always at the center
-    private Position posTileB; // tileB is always at the right of tileA -> relative position
-    private TileRotator tileRotator;
+    private final Position posTileA; // tileA is always at the center
+    private final Position posTileB; // tileB is always at the right of tileA -> relative position
+    private final TileRotator tileRotator;
     private Direction lastDirection; // last direction moved
     private int lastRotationIndex;
     private int lastAction; // last action performed {0: move, 1: rotate}
 
     /**
      * Constructs a new DominoController with the specified tile rotator.
-     *
-     * @param tileRotator the tile rotator to use for rotating tiles
      */
     public DominoController() {
         this.rotationIndex = 0;
@@ -24,6 +22,11 @@ public class DominoController {
         this.tileRotator = new TileRotator();
     }
 
+    /**
+     * Constructs a new DominoController by copying another DominoController.
+     *
+     * @param other the DominoController to copy
+     */
     public DominoController(DominoController other) {
         this.rotationIndex = other.rotationIndex;
         this.posTileA = new Position(other.posTileA);
@@ -31,6 +34,11 @@ public class DominoController {
         this.tileRotator = new TileRotator();
     }
 
+    /**
+     * Creates a copy of this DominoController.
+     *
+     * @return a new DominoController that is a copy of this one
+     */
     public DominoController copy() {
         return new DominoController(this);
     }
@@ -42,6 +50,7 @@ public class DominoController {
      * @param newRotationIndex the new rotation index
      * @return true if the offset is valid, false otherwise
      */
+    @SuppressWarnings("unused")
     boolean testOffset(int oldRotationIndex, int newRotationIndex) {
         return true; // true if test passed
     }
@@ -63,6 +72,9 @@ public class DominoController {
         lastAction = 1; // last action is rotate
     }
 
+    /**
+     * Undoes the last rotation of the domino.
+     */
     public void undoRotateDomino() {
         rotationIndex = lastRotationIndex;
         tileRotator.rotate(posTileA, posTileB, rotationIndex, true);
@@ -109,7 +121,7 @@ public class DominoController {
     /**
      * Sets the position of tile A.
      *
-     * @param posTileA the new position of tile A
+     * @param newPosTileA the new position of tile A
      */
     public void setPosTileA(Position newPosTileA) {
         this.posTileA.set(newPosTileA);
@@ -118,7 +130,7 @@ public class DominoController {
     /**
      * Sets the position of tile B.
      *
-     * @param posTileB the new position of tile B
+     * @param newPosTileB the new position of tile B
      */
     public void setPosTileB(Position newPosTileB) {
         this.posTileB.set(newPosTileB);
@@ -135,34 +147,51 @@ public class DominoController {
     }
 
     /**
-     * Moves the domino by the specified offset.
+     * Moves the domino by the specified direction.
      *
-     * @param offset the offset to apply to the current position
-     * @see Direction
+     * @param direction the direction to move the domino
      */
     public void moveDomino(Direction direction) {
-        Position posTileA = direction.apply(getPosTileA());
-        setPosDomino(posTileA);
+        Position newPosTileA = direction.apply(getPosTileA());
+        setPosDomino(newPosTileA);
         lastDirection = direction;
         lastAction = 0;
     }
 
+    /**
+     * Moves the domino by the specified direction, optionally in the opposite
+     * direction.
+     *
+     * @param direction the direction to move the domino
+     * @param opposite  true to move in the opposite direction, false otherwise
+     */
     public void moveDomino(Direction direction, boolean opposite) {
-        Position posTileA = opposite ? direction.opposite().apply(getPosTileA())
+        Position newposTileA = opposite ? direction.opposite().apply(getPosTileA())
                 : direction.apply(getPosTileA());
-        setPosDomino(posTileA);
+        setPosDomino(newposTileA);
         lastDirection = direction;
         lastAction = 0;
     }
 
+    /**
+     * Undoes the last move of the domino.
+     */
     public void undoMoveDomino() {
         moveDomino(lastDirection, true);
     }
 
+    /**
+     * Gets the current rotation index of the domino.
+     *
+     * @return the current rotation index
+     */
     public int getRotationIndex() {
         return this.rotationIndex;
     }
 
+    /**
+     * Undoes the last action performed on the domino.
+     */
     public void undo() {
         if (lastAction == 0) {
             undoMoveDomino();

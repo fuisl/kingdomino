@@ -12,7 +12,10 @@ import dev.kingdomino.game.GameManager.InputDevice;
  * in mobile platform,
  * thus make sure that there is no instance of this before generating a new one.
  * 
- * @author fuisl
+ * @author @fuisl
+ * @version 1.0
+ * 
+ *          refactored by @LunaciaDev
  */
 public class BoardInputHandler {
     private EventManager eventManager = EventManager.getInstance();
@@ -27,9 +30,24 @@ public class BoardInputHandler {
             Direction.UP.get()
     };
 
+    /**
+     * Indicates if the board has been updated.
+     */
     public boolean updated;
+
+    /**
+     * Indicates if the exit condition has been met.
+     */
     public boolean exit;
+
+    /**
+     * Indicates if the current state is valid.
+     */
     public boolean valid;
+
+    /**
+     * Indicates if the keys are locked.
+     */
     public boolean keylocked = false;
 
     public enum Action {
@@ -44,6 +62,11 @@ public class BoardInputHandler {
         NONE
     }
 
+    /**
+     * Constructs a new BoardInputHandler.
+     * 
+     * @param gameManager the game manager instance
+     */
     public BoardInputHandler(GameManager gameManager) {
         this.gameManager = gameManager;
         this.currentDomino = gameManager.getCurrentDomino();
@@ -52,23 +75,41 @@ public class BoardInputHandler {
         this.exit = false;
     }
 
+    /**
+     * Updates the current domino and board states.
+     */
     public void update() {
         currentDomino = gameManager.getCurrentDomino();
         board = gameManager.getBoard();
     }
 
+    /**
+     * Resets the handler state.
+     */
     public void reset() {
         this.updated = true;
         this.exit = false;
         this.valid = false;
     }
 
+    /**
+     * Handles key up events.
+     * 
+     * @param action the action to perform
+     * @return true if the event was handled
+     */
     public boolean keyUp(Action action) {
         eventManager.clearQueue("input", false);
         reset();
         return true;
     }
 
+    /**
+     * Handles key down events.
+     * 
+     * @param action the action to perform
+     * @return true if the event was handled
+     */
     public boolean keyDown(Action action) {
         if (gameManager.getCurrentState() != GameManager.GameState.TURN_PLACING) {
             return false;
@@ -163,6 +204,12 @@ public class BoardInputHandler {
         return true; // returning true indicates the event was handled
     }
 
+    /**
+     * Checks if the domino can move in the specified direction.
+     * 
+     * @param direction the direction to move
+     * @return true if the domino can move
+     */
     private boolean canMove(Direction direction) {
         int tileAx = currentDomino.getPosTileA().x();
         int tileAy = currentDomino.getPosTileA().y();
@@ -183,6 +230,12 @@ public class BoardInputHandler {
         }
     }
 
+    /**
+     * Checks if the domino can rotate.
+     * 
+     * @param clockwise true if rotating clockwise, false otherwise
+     * @return true if the domino can rotate
+     */
     private boolean canRotate(boolean clockwise) {
         int rotationIndex = currentDomino.getDominoController().getRotationIndex();
         int newIndex = clockwise ? (rotationIndex + 1) % 4 : (rotationIndex + 3) % 4;
@@ -193,6 +246,12 @@ public class BoardInputHandler {
                 && tileAy + tileBOffsets[newIndex].y() >= 0 && tileAy + tileBOffsets[newIndex].y() <= 8;
     }
 
+    /**
+     * Creates a move event.
+     * 
+     * @param direction the direction to move
+     * @return the move event
+     */
     private Event createMoveEvent(Direction direction) {
         float moveCooldown = 0.0f;
         if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {
@@ -214,6 +273,12 @@ public class BoardInputHandler {
                 null);
     }
 
+    /**
+     * Creates a rotate event.
+     * 
+     * @param clockwise true if rotating clockwise, false otherwise
+     * @return the rotate event
+     */
     private Event createRotateEvent(boolean clockwise) {
         return new Event(
                 TriggerType.IMMEDIATE,
@@ -226,6 +291,11 @@ public class BoardInputHandler {
                 null);
     }
 
+    /**
+     * Creates a place domino event.
+     * 
+     * @return the place domino event
+     */
     private Event createPlaceDominoEvent() {
         return new Event(
                 TriggerType.IMMEDIATE,
@@ -248,6 +318,11 @@ public class BoardInputHandler {
                 null);
     }
 
+    /**
+     * Creates a discard domino event.
+     * 
+     * @return the discard domino event
+     */
     private Event createDiscardDominoEvent() {
         return new Event(
                 TriggerType.IMMEDIATE,

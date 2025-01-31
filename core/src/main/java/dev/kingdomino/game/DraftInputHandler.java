@@ -5,6 +5,17 @@ import dev.kingdomino.effects.AudioManager.SoundType;
 import dev.kingdomino.game.Event.TriggerType;
 import dev.kingdomino.game.GameManager.InputDevice;
 
+/**
+ * Handles the input for the draft phase of the game.
+ * 
+ * This class listens for input events and translates them into game actions.
+ * 
+ * @see AbstractInputProcessor
+ * @see GameManager
+ * 
+ * @author @fuisl
+ * @version 1.0
+ */
 public class DraftInputHandler extends AbstractInputProcessor {
     private final EventManager eventManager = EventManager.getInstance();
     private final GameManager gameManager;
@@ -17,6 +28,9 @@ public class DraftInputHandler extends AbstractInputProcessor {
     public boolean exit;
     public boolean show;
 
+    /**
+     * Enum representing possible actions during the draft phase.
+     */
     public enum Action {
         MOVE_UP,
         MOVE_DOWN,
@@ -24,6 +38,11 @@ public class DraftInputHandler extends AbstractInputProcessor {
         NONE
     }
 
+    /**
+     * Constructs a new DraftInputHandler.
+     *
+     * @param gm the GameManager instance
+     */
     public DraftInputHandler(GameManager gm) {
         this.gameManager = gm;
         this.updated = true;
@@ -32,6 +51,9 @@ public class DraftInputHandler extends AbstractInputProcessor {
 
     }
 
+    /**
+     * Resets the draft input handler for the next turn.
+     */
     public void reset() {
         nextTurn = gameManager.getNextTurn();
         remainingDrafts = nextTurn.getDraft().length;
@@ -45,15 +67,32 @@ public class DraftInputHandler extends AbstractInputProcessor {
         }
     }
 
+    /**
+     * Gets the current selection index.
+     *
+     * @return the selection index
+     */
     public int getSelectionIndex() {
         return this.selectionIndex;
     }
 
+    /**
+     * Handles key up events.
+     *
+     * @param action the action to perform
+     * @return true if the event was handled, false otherwise
+     */
     public boolean keyUp(Action action) {
         eventManager.clearQueue("input", false);
         return true;
     }
 
+    /**
+     * Handles key down events.
+     *
+     * @param action the action to perform
+     * @return true if the event was handled, false otherwise
+     */
     public boolean keyDown(Action action) {
         if (gameManager.getCurrentState() == GameManager.GameState.TURN_START) {
             show = false;
@@ -91,6 +130,11 @@ public class DraftInputHandler extends AbstractInputProcessor {
 
     }
 
+    /**
+     * Creates an event for selecting a domino.
+     *
+     * @return the event
+     */
     private Event createSelectDominoEvent() {
         return new Event(
                 TriggerType.IMMEDIATE,
@@ -106,6 +150,11 @@ public class DraftInputHandler extends AbstractInputProcessor {
                 null);
     }
 
+    /**
+     * Creates an event for moving up in the draft selection.
+     *
+     * @return the event
+     */
     private Event createMoveUpEvent() {
         float delay = 0.0f;
         if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {
@@ -130,6 +179,11 @@ public class DraftInputHandler extends AbstractInputProcessor {
                 null);
     }
 
+    /**
+     * Creates an event for moving down in the draft selection.
+     *
+     * @return the event
+     */
     private Event createMoveDownEvent() {
         float delay = 0.0f;
         if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {

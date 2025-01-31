@@ -14,9 +14,19 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import dev.kingdomino.game.GameTimer;
 
 /**
- * TODO: Javadoc
+ * Applies a background shader effect to the game screen.
+ * This effect handles the background rendering with various visual effects.
  * 
- * @author fuisl
+ * @author @fuisl
+ * @version 1.0
+ * 
+ * refactored by @LunaciaDev
+ * 
+ * @see ShaderProgram
+ * @see Mesh
+ * @see OrthographicCamera
+ * @see GameTimer
+ * @see Gdx
  */
 public class BackgroundShader {
     private final ShaderProgram backgroundShader;
@@ -27,6 +37,11 @@ public class BackgroundShader {
     public static HashMap<String, Float> refTable;
     public static HashMap<String, Color> colorTable;
 
+    /**
+     * Constructs a new BackgroundShader.
+     * 
+     * @param camera the camera used for rendering.
+     */
     public BackgroundShader(OrthographicCamera camera) {
         // These assets need its own specific loader if I want to delegate it to
         // AssetManager. Too much work! - @LunaciaDev
@@ -50,6 +65,9 @@ public class BackgroundShader {
         colorTable = new HashMap<>();
     }
 
+    /**
+     * Renders the background with the shader effect.
+     */
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -90,11 +108,21 @@ public class BackgroundShader {
         screenQuad.render(backgroundShader, GL20.GL_TRIANGLES);
     }
 
+    /**
+     * Disposes of the resources used by this shader.
+     */
     public void dispose() {
         screenQuad.dispose();
         backgroundShader.dispose();
     }
 
+    /**
+     * Changes the vertices of the background quad to match the new width and
+     * height.
+     * 
+     * @param width  the new width of the background.
+     * @param height the new height of the background.
+     */
     public void changeVertices(int width, int height) {
         // background shader
         float[] bgVertices = new float[] {

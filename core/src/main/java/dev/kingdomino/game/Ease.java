@@ -3,6 +3,17 @@ package dev.kingdomino.game;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Handles easing animations (refTable values) for game events.
+ * 
+ * @see Event
+ * @see EventManager
+ * 
+ * @author @fuisl
+ * @version 1.0
+ * 
+ *          Adapted from Balatro game.
+ */
 public class Ease {
 
     /**
@@ -12,35 +23,37 @@ public class Ease {
         LERP, ELASTIC, QUAD
     }
 
-    private EaseType easeType;
+    private final EaseType easeType;
 
-    private Map<String, Float> refTable;
+    private final Map<String, Float> refTable;
 
     // Equivalent to self.ease.ref_value (key in the refTable)
-    private String refValue;
+    private final String refValue;
 
     // Start and end VALUES for the easing
     private float startVal;
-    private float endVal;
+    private final float endVal;
 
     // Start and end TIMES for the easing
     private float startTime;
     private float endTime;
 
     // Delay from the original event, used to compute endTime = startTime + delay
-    private float delay;
+    private final float delay;
 
     // Whether we've initialized the ease
     private boolean initialized;
 
     // Optional function that modifies the interpolated value
     // If not provided, we default to the identity function: x -> x
-    private Function<Float, Float> func;
+    private final Function<Float, Float> func;
 
     // flag complete
     private boolean complete;
 
     /**
+     * Constructs an Ease object with specified parameters.
+     * 
      * @param easeType The type of easing, e.g., LERP, ELASTIC, QUAD
      * @param refTable The table or map storing the float value to be eased
      * @param refValue The key in refTable whose value will be adjusted
@@ -68,7 +81,7 @@ public class Ease {
     }
 
     /**
-     * Update the ease with the current time.
+     * Updates the ease with the current time.
      *
      * @param currentTime The current global time, e.g. from GameTimer or
      *                    Gdx.graphics.getDeltaTime accumulations
@@ -144,7 +157,9 @@ public class Ease {
     }
 
     /**
-     * @return true if the ease has finished.
+     * Checks if the ease has finished.
+     * 
+     * @return true if the ease has finished, false otherwise
      */
     public boolean isComplete() {
         return complete;

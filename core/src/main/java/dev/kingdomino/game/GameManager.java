@@ -10,13 +10,32 @@ import com.badlogic.gdx.controllers.Controllers;
 
 import dev.kingdomino.effects.AudioManager;
 import dev.kingdomino.effects.AudioManager.SoundType;
-
 import dev.kingdomino.effects.BackgroundManager;
 
-// import dev.kingdomino.game.Event.TriggerType;
-
+/**
+ * Manages the game state and logic.
+ * 
+ * This class is responsible for managing the game state and logic, including
+ * 
+ * - initializing the game
+ * - setting up the game for the next turn
+ * - updating the current turn
+ * - handling the logic for placing a domino
+ * - handling the logic for choosing a domino
+ * - ending the current turn
+ * - handling the game over state
+ * - updating the scores and handling the results state
+ * 
+ * @see Deck
+ * @see Board
+ * @see Domino
+ * @see Turn
+ * 
+ * @author @fuisl
+ * @version 1.0
+ */
 public class GameManager {
-    private int kingCount = 4;
+    private final int kingCount = 4;
     private final Deck deck;
     private final Board[] boards;
     private Board currentBoard;
@@ -82,6 +101,11 @@ public class GameManager {
         CONTROLLER
     }
 
+    /**
+     * Sets the current input device.
+     * 
+     * @param device The input device to set.
+     */
     public static void setInputDevice(InputDevice device) {
         switch (device) {
             case KEYBOARD:
@@ -95,6 +119,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Initializes the game manager.
+     */
     public GameManager() {
         // initialize game manager
         eventManager = EventManager.getInstance();
@@ -116,7 +143,7 @@ public class GameManager {
         boards = new Board[kingCount];
         currentTurn = null;
         nextTurn = null;
-        scores = new LinkedHashMap<King, int[]>();
+        scores = new LinkedHashMap<>();
 
         for (int i = 0; i < kingCount; i++) {
             boards[i] = new Board();
@@ -128,6 +155,11 @@ public class GameManager {
         currentState = GameState.INIT;
     }
 
+    /**
+     * Updates the game state.
+     * 
+     * @param dt The delta time since the last update.
+     */
     public void update(float dt) {
         // Core game loop -- must update every frame
         gameTimer.update(dt);
@@ -176,6 +208,9 @@ public class GameManager {
 
     // ---------------------GAME STATES---------------------
 
+    /**
+     * Initializes the game.
+     */
     private void init() {
 
         // // test end game
@@ -183,11 +218,12 @@ public class GameManager {
         // deck.drawCard();
         // }
 
-        // game init for 3 kings (removing 12 dominos)
-        if (kingCount == 3) {
-            for (int i = 0; i < 12; i++)
-                deck.drawCard();
-        }
+        // TODO: change game dynamics
+        // // game init for 3 kings (removing 12 dominos)
+        // if (kingCount == 3) {
+        // for (int i = 0; i < 12; i++)
+        // deck.drawCard();
+        // }
 
         Domino[] draft_current = new Domino[kingCount];
 
@@ -209,6 +245,9 @@ public class GameManager {
         currentState = GameState.SETUP;
     }
 
+    /**
+     * Sets up the game for the next turn.
+     */
     private void setup() {
         Domino[] draft_next = new Domino[kingCount];
         // setup next turn
@@ -227,6 +266,9 @@ public class GameManager {
         currentState = GameState.TURN_START;
     }
 
+    /**
+     * Updates the current turn.
+     */
     private void updateTurn() {
         if (!placingDomino && !choosingDomino) {
             currentDomino = currentTurn.getCurrentDomino();
@@ -257,6 +299,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Handles the logic for placing a domino.
+     */
     private void placeDomino() {
         placingDomino = true;
         if (boardInputHandler.exit && boardInputHandler.valid) {
@@ -293,6 +338,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Handles the logic for choosing a domino.
+     */
     private void chooseDomino() {
         // if (nextTurn == null) {
         // currentState = GameState.TURN_END;
@@ -308,6 +356,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Ends the current turn.
+     */
     private void turnEnd() {
         currentTurn.next();
         currentState = GameState.TURN_START;
@@ -324,6 +375,9 @@ public class GameManager {
 
     }
 
+    /**
+     * Handles the game over state.
+     */
     private void game_over() {
         // recalculate scores for every kings
         for (King k : kings) {
@@ -335,6 +389,9 @@ public class GameManager {
         currentState = GameState.RESULTS;
     }
 
+    /**
+     * Updates the scores and handles the results state.
+     */
     private void results() {
         scores.clear();
 
@@ -351,6 +408,13 @@ public class GameManager {
         scores = sortScores(scores, 2); // sort by total
     }
 
+    /**
+     * Sorts the scores.
+     * 
+     * @param scores    The scores to sort.
+     * @param sortIndex The index to sort by.
+     * @return The sorted scores.
+     */
     private Map<King, int[]> sortScores(Map<King, int[]> scores, int sortIndex) {
         LinkedHashMap<King, int[]> sortedScores = scores.entrySet().stream()
                 .sorted((entry1, entry2) -> Integer.compare(entry2.getValue()[sortIndex], entry1.getValue()[sortIndex]))
@@ -358,6 +422,9 @@ public class GameManager {
         return sortedScores;
     }
 
+    /**
+     * Disposes of the game resources.
+     */
     public void dispose() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'dispose'");

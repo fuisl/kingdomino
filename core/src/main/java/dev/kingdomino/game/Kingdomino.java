@@ -9,12 +9,17 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import dev.kingdomino.screen.ScreenEnum;
 import dev.kingdomino.screen.ScreenManager;
 
-
+/**
+ * Main game class for Kingdomino.
+ */
 public class Kingdomino extends Game {
     private SpriteBatch spriteBatch;
     private AssetManager assetManager;
     private ScreenManager screenManager;
 
+    /**
+     * Initializes the game, loads assets, and sets the initial screen.
+     */
     @Override
     public void create() {
         assetManager = new AssetManager();
@@ -30,6 +35,11 @@ public class Kingdomino extends Game {
         screenManager.showScreen(ScreenEnum.GAMESCREEN, spriteBatch, assetManager);
     }
 
+    /**
+     * Queues the assets to be loaded by the AssetManager.
+     *
+     * @param assetManager the AssetManager to load assets into
+     */
     private void queueAssets(AssetManager assetManager) {
         /* 
          * there should be a better way to do this but oh well.
@@ -42,6 +52,9 @@ public class Kingdomino extends Game {
         assetManager.load("PixelifySansBody.fnt", BitmapFont.class);
     }
 
+    /**
+     * Disposes of all loaded assets.
+     */
     @Override
     public void dispose() {
         // clear all loaded asset via asset manager
