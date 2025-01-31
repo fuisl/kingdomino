@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Align;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.GameManager.GameState;
 import dev.kingdomino.game.King;
+import dev.kingdomino.game.Turn;
 
 /**
  * A RenderManager specialize in showing the turn order on the left side,
@@ -120,12 +121,9 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
 
     @Override
     public void act(float delta) {
-        if (gameManager.getNextTurn() == null)
-            return;
-
         King[] currentTurnOrder = gameManager.getCurrentTurn().getKings();
         int currentTurnIndex = gameManager.getCurrentTurn().getCurrentIndex();
-        King[] nextTurnOrder = gameManager.getNextTurn().getKings();
+        Turn nextTurn = gameManager.getNextTurn();
         int nextTurnIndex = 0;
 
         score.setText(gameManager.getCurrentKing().getBoard().getScoringSystem().getBoardTotal());
@@ -138,7 +136,12 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
                 continue;
             }
 
-            while (nextTurnOrder[nextTurnIndex] == null) {
+            if (nextTurn == null) {
+                playerIconActors[i].setKingID(-1);
+                continue;
+            }
+
+            while (nextTurn.getKings()[nextTurnIndex] == null) {
                 nextTurnIndex++;
 
                 // failsafe in case somehow there are less than kingCount in the order queue,
@@ -152,7 +155,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
                 }
             }
 
-            playerIconActors[i].setKingID(nextTurnOrder[nextTurnIndex].getId());
+            playerIconActors[i].setKingID(nextTurn.getKings()[nextTurnIndex].getId());
             nextTurnIndex++;
         }
     }

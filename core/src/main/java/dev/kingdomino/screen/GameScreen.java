@@ -55,7 +55,7 @@ public class GameScreen extends AbstractScreen {
     private NinePatchDrawable whiteBezel;
 
     // TODO: Allow this value to be changed, if I can get there...
-    private final boolean SHADER_TOGGLE = true;
+    private final boolean SHADER_TOGGLE = false;
 
     /**
      * Create an instance of GameScreen with an instance of {@link SpriteBatch} and
@@ -239,6 +239,8 @@ public class GameScreen extends AbstractScreen {
                 .width(Value.percentWidth(0.18f, rootTable))
                 .expandY()
                 .fill();
+
+        stage.setDebugAll(true);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     private NinePatchDrawable whiteBezel;
     private NinePatchDrawable bezelBackground;
     private Table[] rows;
+    private Table baseLayout;
 
     public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
             TextureRegion[] crownOverlay, NinePatchDrawable bezel, NinePatchDrawable whiteBezel,
@@ -83,6 +84,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
         layout.invalidate();
         layout.layout();
+
+        this.baseLayout = layout;
         return layout;
     }
 
@@ -91,8 +94,13 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         Turn nextTurn = gameManager.getNextTurn();
 
         if (nextTurn == null) {
-            // TODO implement end of turn view
-            // right now it break at this point
+            // Hide the domino picker when we are on the last turn
+
+            if (this.baseLayout.isVisible())
+                this.baseLayout.setVisible(false);
+                this.baseLayout.clear();
+                this.baseLayout.remove();
+
             return;
         }
 
