@@ -1,6 +1,6 @@
 package dev.kingdomino.effects;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
@@ -51,26 +51,26 @@ public class AudioManager {
         return instance;
     }
 
-    public void load() {
-        music = Gdx.audio.newMusic(Gdx.files.internal("audio/music.wav"));
+    public void load(AssetManager assetManager) {
+        music = assetManager.get("audio/music.wav");
         music.setLooping(true);
         music.setPosition(20.0f);
         music.setPan(0.5f, musicVolume * masterVolume);
 
-        movingSound = Gdx.audio.newSound(Gdx.files.internal("audio/moving.ogg"));
-        scoreSound = Gdx.audio.newSound(Gdx.files.internal("audio/scoring.ogg"));
-        placingSound = Gdx.audio.newSound(Gdx.files.internal("audio/placing.ogg"));
-        selectingSound = Gdx.audio.newSound(Gdx.files.internal("audio/selecting.ogg"));
-        rotatingSound = Gdx.audio.newSound(Gdx.files.internal("audio/rotating.ogg"));
-        cancelSound = Gdx.audio.newSound(Gdx.files.internal("audio/cancel.ogg"));
-        scoreSound2 = Gdx.audio.newSound(Gdx.files.internal("audio/scoring2.ogg"));
-        newTurnSound = Gdx.audio.newSound(Gdx.files.internal("audio/newturn.ogg"));
-        confirmSelectingSound = Gdx.audio.newSound(Gdx.files.internal("audio/confirmselecting.ogg"));
-        highlightSound = Gdx.audio.newSound(Gdx.files.internal("audio/highlight1.ogg"));
-        endGameSound = Gdx.audio.newSound(Gdx.files.internal("audio/win.ogg"));
-        reduceSound = Gdx.audio.newSound(Gdx.files.internal("audio/timpani.ogg"));
-        increaseSound = Gdx.audio.newSound(Gdx.files.internal("audio/multhit1.ogg"));
-        increaseSound2 = Gdx.audio.newSound(Gdx.files.internal("audio/multhit2.ogg"));
+        movingSound = assetManager.get("audio/moving.ogg");
+        scoreSound = assetManager.get("audio/scoring.ogg");
+        placingSound = assetManager.get("audio/placing.ogg");
+        selectingSound = assetManager.get("audio/selecting.ogg");
+        rotatingSound = assetManager.get("audio/rotating.ogg");
+        cancelSound = assetManager.get("audio/cancel.ogg");
+        scoreSound2 = assetManager.get("audio/scoring2.ogg");
+        newTurnSound = assetManager.get("audio/newturn.ogg");
+        confirmSelectingSound = assetManager.get("audio/confirmselecting.ogg");
+        highlightSound = assetManager.get("audio/highlight1.ogg");
+        endGameSound = assetManager.get("audio/win.ogg");
+        reduceSound = assetManager.get("audio/timpani.ogg");
+        increaseSound = assetManager.get("audio/multhit1.ogg");
+        increaseSound2 = assetManager.get("audio/multhit2.ogg");
     }
 
     public void playMusic() {

@@ -47,7 +47,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
 
     public Table getLayout() {
         Table layout = new Table();
-        layout.background(bezelBackground);
+        layout.setBackground(bezelBackground);
 
         Label header = new Label("Current Player", headerStyle);
         header.setAlignment(Align.center);
@@ -58,7 +58,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
         layout.row();
 
         Table currentPlayer = new Table();
-        currentPlayer.background(bezel);
+        currentPlayer.setBackground(bezel);
 
         currentPlayer.add(generateContainer(playerIconActors[0]))
                 .height(Value.percentHeight(0.33f, layout))
@@ -107,7 +107,8 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
                 .fill()
                 .pad(10, 5, 10, 0);
 
-        layout.validate();
+        layout.invalidate();
+        layout.layout();
         return layout;
     }
 

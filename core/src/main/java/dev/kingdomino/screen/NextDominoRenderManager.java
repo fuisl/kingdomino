@@ -59,6 +59,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
         for (int i = 0; i < kingCount; i++) {
             Table row = new Table();
+            row.setBackground(bezel);
 
             row.add(generateContainer(dominoActors[i]))
                     .height(Value.percentWidth(0.2f, row))
@@ -70,8 +71,6 @@ public class NextDominoRenderManager extends AbstractRenderManager {
                     .expandX()
                     .fill();
 
-            row.setBackground(bezel);
-
             rows[i] = row;
 
             layout.add(row)
@@ -82,7 +81,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             layout.row();
         }
 
-        layout.validate();
+        layout.invalidate();
+        layout.layout();
         return layout;
     }
 

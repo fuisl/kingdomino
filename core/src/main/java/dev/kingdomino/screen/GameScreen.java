@@ -84,7 +84,7 @@ public class GameScreen extends AbstractScreen {
 
         // load audio
         audioManager = AudioManager.getInstance();
-        audioManager.load();
+        audioManager.load(assetManager);
         audioManager.playMusic();
 
         // TODO remove later, just pinging to get it to be alive... I assume

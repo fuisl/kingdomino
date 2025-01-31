@@ -43,7 +43,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
     @Override
     public Table getLayout() {
         Table layout = new Table();
-        layout.background(bezelBackground);
+        layout.setBackground(bezelBackground);
 
         String[] label = { "1st", "2nd", "3rd", "4th" };
 
@@ -54,7 +54,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
 
         for (int i = 0; i < kingCount; i++) {
             Table entry = new Table();
-            entry.background(bezel);
+            entry.setBackground(bezel);
 
             entry.add(new Label(label[i], bodyStyle))
                     .expand();
@@ -75,7 +75,8 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
             layout.row();  
         }
 
-        layout.validate();
+        layout.invalidate();
+        layout.layout();
         return layout;
     }
 
