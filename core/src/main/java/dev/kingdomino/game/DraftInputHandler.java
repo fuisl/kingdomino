@@ -34,14 +34,18 @@ public class DraftInputHandler extends AbstractInputProcessor {
 
     public void reset() {
         nextTurn = gameManager.getNextTurn();
-        remainingDrafts = nextTurn.getDraft().length;
         updated = true;
         exit = false;
         show = true;
+        try {
+            remainingDrafts = nextTurn.getDraft().length;
 
-        selectionIndex = 0;
-        while (nextTurn.isSelected(selectionIndex)) {
-            selectionIndex = (selectionIndex + 1) % remainingDrafts;
+            selectionIndex = 0;
+
+            while (nextTurn.isSelected(selectionIndex)) {
+                selectionIndex = (selectionIndex + 1) % remainingDrafts;
+            }
+        } catch (NullPointerException e) {
         }
     }
 
