@@ -144,7 +144,7 @@ public class GameScreen extends AbstractScreen {
                 bezelBackground);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, headerStyle, crownOverlay,
                 bezel, whiteBezel, bezelBackground);
-        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
+        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar, headerStyle, bezel, bezelBackground);
         controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
     }
@@ -213,8 +213,13 @@ public class GameScreen extends AbstractScreen {
          * Right Information Layout
          */
 
-        Table rightInfoLayout = sidePanelManager.getLayout();
+        Table rightInfoLayout = new Table(); 
         rightInfoLayout.setBackground(rightInfoBackground);
+
+        rightInfoLayout.add(sidePanelManager.getLayout())
+                .expand()
+                .fill()
+                .pad(10);
 
         /**
          * Packing Everything into rootTable
