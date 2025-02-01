@@ -362,7 +362,7 @@ methods:
 This is particularly useful for animations such as screen shaking when an invalid move is made, or color transitions when switching player turns.
 
 \subsection{Input Handling}
-Kingdomino implements manual input event processing instead of relying on LibGDX’s built-in event loop. The input handling is divided into two main components: \texttt{BoardInputController} and \texttt{BoardInputProcessor}, which handle input from controllers and keyboards, respectively. These components translate user inputs into structured events that are processed by the system.
+Kingdomino implements manual input event processing instead of relying on LibGDX's built-in event loop. The input handling is divided into two main components: \texttt{BoardInputController} and \texttt{BoardInputProcessor}, which handle input from controllers and keyboards, respectively. These components translate user inputs into structured events that are processed by the system.
 
 \subsubsection{BoardInputController}
 The \texttt{BoardInputController} class handles input from game controllers. It captures axis movements and button presses, translating them into actions such as moving, rotating, placing, or discarding a domino. The controller input is processed with a dead zone to ignore small, unintended movements, ensuring precise control.
@@ -501,6 +501,19 @@ audioManager.playSound(AudioManager.SoundType.CANCEL);
 BackgroundManager.screenShake();
     \end{lstlisting}
 \end{enumerate}
+
+\subsection{User Interface}
+
+\subsubsection{User Interface Layout Design}
+
+We chose to design the user interface based on tables, where each component or table is placed within a cell as demonstrated in \ref{fig:ui-proto}.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/ui-prototype.png}}
+    \caption{First UI design prototype.}\label{fig:ui-proto}
+\end{figure}
+
+We mimic how the game state of Kingdomino is distributed in real life by having the current player's game board being placed prominently in the center of the screen, whilst other informations that the player can find are placed to the side. We also decided to show how many points each player is currently scoring with their board as well, because it could enable more strategic choice if players know exactly how their board is doing compared to other, instead of focusing on picking the tile that would yield the most point for their board.
 
 %======================================================
 \section{Implementation Details}
@@ -781,7 +794,8 @@ The \texttt{AudioManager} class handles the game's audio effects, providing
 immediate feedback for player actions. Key features include:
 \begin{itemize}
     \item \textbf{Background Music}: Continuous background music that sets the tone for the game.
-    \item \textbf{Sound Effects}: Various sound effects for actions such as tile placement, selection, rotation, and scoring. Each sound effect is carefully chosen to enhance the player's sense of interaction and immersion.
+    % -- SFX is used in order to provide immediate feedback, as often time it is not obvious that something have happened when the user interact with the game.
+    \item \textbf{Sound Effects}: Various sound effects for actions such as tile placement, selection, rotation, and scoring in order to provide immediate feedback for each action the player take.
 \end{itemize}
 
 \subsubsection{Shader-Based Rendering}
@@ -813,6 +827,15 @@ effects like spinning and color transitions.
 These visual and audio enhancements contribute to a more engaging and immersive
 gaming experience, making Kingdomino not just a digital adaptation but a lively
 and responsive game that captivates players.
+
+\subsection{Game Textures}
+
+Aside from the image of the King which was taken by Adam Carmichael \cite{github:carmichael-repo} and the font Pixelify Sans \cite{github:pixelify-sans}, all of the game's texture are hand-drawn. The tile are created from a 48x48 pixel square of the color representative of its terrain type, before applying Perlin Noise \cite{wiki:perlin-noise} so as to reduce the monotonousness of the texture. We delibrately choose low texture size as large, detailed texture would become inelligible by the CRT Shader.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/crown-design-file.png}}
+    \caption{Original design file of the Crown.}\label{fig:crown-design}
+\end{figure}
 
 %======================================================
 \section{Experimental Results}
