@@ -60,7 +60,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
                     .expand();
 
             entry.add(generateContainer(playerIconActors[i]))
-                    .height(Value.percentHeight(0.6f, entry))
+                    .height(Value.percentHeight(0.1f, layout))
                     .width(Value.percentWidth(0.33f, entry))
                     .fill();
 
@@ -69,7 +69,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
 
             layout.add(entry)
                     .fill()
-                    .expandX()
+                    .expand()
                     .pad(5);
           
             layout.row();  

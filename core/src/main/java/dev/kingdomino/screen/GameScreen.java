@@ -58,7 +58,7 @@ public class GameScreen extends AbstractScreen {
     private EndDialog endGameDialog;
 
     // TODO: Allow this value to be changed, if I can get there...
-    private final boolean SHADER_TOGGLE = false;
+    private final boolean SHADER_TOGGLE = true;
 
     /**
      * Create an instance of GameScreen with an instance of {@link SpriteBatch} and
@@ -147,11 +147,13 @@ public class GameScreen extends AbstractScreen {
                 bezelBackground);
         nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, headerStyle, crownOverlay,
                 bezel, whiteBezel, bezelBackground);
-        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar, headerStyle, bezel, bezelBackground);
+        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar, headerStyle,
+                bezel, bezelBackground);
         controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
-        
-        endGameDialog = new EndDialog(gameManager, kingAvatar, headerStyle, bodyStyle, bezel, bezelBackground, whiteBezel);
+
+        endGameDialog = new EndDialog(gameManager, kingAvatar, headerStyle, bodyStyle, bezel, bezelBackground,
+                whiteBezel, atlas.findRegion("blackSquare"));
     }
 
     @Override
@@ -218,7 +220,7 @@ public class GameScreen extends AbstractScreen {
          * Right Information Layout
          */
 
-        Table rightInfoLayout = new Table(); 
+        Table rightInfoLayout = new Table();
         rightInfoLayout.setBackground(rightInfoBackground);
 
         rightInfoLayout.add(sidePanelManager.getLayout())

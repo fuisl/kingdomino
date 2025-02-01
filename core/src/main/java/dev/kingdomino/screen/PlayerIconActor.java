@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 
 /**
  * An {@link Actor} specialize in drawing Player Icons. This actor does not
@@ -31,6 +32,16 @@ public class PlayerIconActor extends Actor {
         float offsetX = getWidth() / 2 - textureSize / 2;
 
         batch.draw(kingAvatar[kingID], getX() + offsetX, getY(), textureSize, textureSize);
+    }
+
+    @Override
+    public void setBounds(float x, float y, float width, float height) {
+        // catch setBounds from the parent to do resizing properly
+        // this Actor does not implement preferred size system and.. that break the
+        // entire layout system. Hooray! This workaround should be fine until it break
+        // hard
+        // enough that I have to implement Layout interface without any other choice.
+        super.setBounds(x, y, this.getParent().getWidth(), this.getParent().getHeight());
     }
 
     /**
