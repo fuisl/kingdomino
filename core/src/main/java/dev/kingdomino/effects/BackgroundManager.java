@@ -51,16 +51,16 @@ public class BackgroundManager {
 
     public static void startSpin() {
         Event startSpinning = new Event(TriggerType.EASE, false, false, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.8f, 0.5f, null));
+                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.5f, 0.5f, null));
         eventManager.addEvent(startSpinning.copy(), "background", false);
     }
 
     public static void rewindSpin() {
         Event stopSpinning = new Event(TriggerType.EASE, true, false, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_spinTime", -5.0f, 0.2f, null));
+                new Ease(EaseType.LERP, refTable, "u_spinTime", -5.0f, 0.15f, null));
 
         Event startSpinning = new Event(TriggerType.EASE, false, true, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.8f, 0.5f, null));
+                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.5f, 0.35f, null));
 
         eventManager.addEvent(stopSpinning.copy(), "background", false);
         eventManager.addEvent(startSpinning.copy(), "background", false);
@@ -151,10 +151,10 @@ public class BackgroundManager {
 
     public static void screenShake() {
         Event shakeEvent = new Event(TriggerType.EASE, true, false, null, null, null, null,
-                new Ease(EaseType.ELASTIC, refTable, "u_shake", 8.0f, 0.18f, null));
+                new Ease(EaseType.ELASTIC, refTable, "u_shake", 5.0f, 0.1f, null));
 
         Event stopShakeEvent = new Event(TriggerType.EASE, false, true, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_shake", 0.0f, 0.18f, null));
+                new Ease(EaseType.LERP, refTable, "u_shake", 0.0f, 0.1f, null));
 
         eventManager.addEvent(shakeEvent.copy(), "shake", true);
         eventManager.addEvent(stopShakeEvent.copy(), "shake", false);
