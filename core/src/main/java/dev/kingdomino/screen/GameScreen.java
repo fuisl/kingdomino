@@ -58,7 +58,7 @@ public class GameScreen extends AbstractScreen {
     private EndDialog endGameDialog;
 
     // TODO: Allow this value to be changed, if I can get there...
-    private final boolean SHADER_TOGGLE = false;
+    private final boolean SHADER_TOGGLE = true;
 
     /**
      * Create an instance of GameScreen with an instance of {@link SpriteBatch} and
@@ -151,7 +151,7 @@ public class GameScreen extends AbstractScreen {
         controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
         
-        endGameDialog = new EndDialog(gameManager, kingAvatar, headerStyle, bodyStyle, bezel, bezelBackground);
+        endGameDialog = new EndDialog(gameManager, kingAvatar, headerStyle, bodyStyle, bezel, bezelBackground, whiteBezel);
     }
 
     @Override
@@ -244,8 +244,6 @@ public class GameScreen extends AbstractScreen {
                 .width(Value.percentWidth(0.18f, rootTable))
                 .expandY()
                 .fill();
-
-        stage.setDebugAll(true);
     }
 
     @Override
@@ -253,6 +251,7 @@ public class GameScreen extends AbstractScreen {
         gameManager.update(delta);
 
         if (gameManager.getCurrentState() == GameState.GAME_OVER) {
+            Gdx.input.setInputProcessor(stage);
             stage.addActor(endGameDialog.getDialog());
             endGameDialog.getDialog().show(this.stage);
         }
