@@ -58,7 +58,7 @@ public class GameScreen extends AbstractScreen {
     private EndDialog endGameDialog;
 
     // TODO: Allow this value to be changed, if I can get there...
-    private final boolean SHADER_TOGGLE = true;
+    private final boolean SHADER_TOGGLE = false;
 
     /**
      * Create an instance of GameScreen with an instance of {@link SpriteBatch} and

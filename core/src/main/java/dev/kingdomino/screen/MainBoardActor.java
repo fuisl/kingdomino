@@ -4,6 +4,7 @@ import static java.lang.Math.round;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -33,6 +34,7 @@ public class MainBoardActor extends Actor {
     private ScreenViewport gameViewport;
     private Domino currentDomino;
     private GameManager gameManager;
+    private TransparencyTween transparencyTween;
 
     public MainBoardActor(TextureRegion[] crownOverlay, ScreenViewport screenViewport, GameManager gameManager) {
         this.gameManager = gameManager;
@@ -41,10 +43,15 @@ public class MainBoardActor extends Actor {
         tableViewport = new FitViewport(9, 9);
         tableViewport.getCamera().position.set(4.5f, 4.5f, 0);
         tableViewport.getCamera().update();
+        this.transparencyTween = new TransparencyTween(0.4f, 1f, 0.5f);
+        this.addAction(transparencyTween);
     }
 
     @Override
     public void act(float delta) {
+        // advance the Action system
+        super.act(delta);
+
         this.boardTiles = gameManager.getBoard().getLand();
         this.currentDomino = gameManager.getCurrentDomino();
     }
@@ -86,7 +93,7 @@ public class MainBoardActor extends Actor {
             return;
         }
 
-        batch.setColor(1f, 1f, 1f, 0.5f);
+        batch.setColor(1f, 1f, 1f, transparencyTween.getValue());
 
         batch.draw(tileA.getTerrain().getTexture(), tileAPosition.x(), 8 - tileAPosition.y(), 1, 1);
         batch.draw(crownOverlay[tileA.getCrown()], tileAPosition.x(), 8 - tileAPosition.y(), 1, 1);
@@ -101,7 +108,8 @@ public class MainBoardActor extends Actor {
     public void setBounds(float x, float y, float width, float height) {
         // catch setBounds from the parent to do resizing properly
         // this Actor does not implement preferred size system and.. that break the
-        // entire layout system. Hooray! This workaround should be fine until it break hard
+        // entire layout system. Hooray! This workaround should be fine until it break
+        // hard
         // enough that I have to implement Layout interface without any other choice.
         super.setBounds(x, y, this.getParent().getWidth(), this.getParent().getHeight());
     }
@@ -145,5 +153,64 @@ public class MainBoardActor extends Actor {
         tableViewport.apply();
         batch.setProjectionMatrix(tableViewport.getCamera().combined);
         batch.begin();
+    }
+
+    private class TransparencyTween extends Action {
+        private float startValue;
+        private float endValue;
+        private float duration;
+        private float elapsedTime;
+        private boolean reverse;
+
+        private float dist;
+
+        private float value;
+
+        /**
+         * Instantiate an Action that tween linearly between 2 value over a certain
+         * amount of time. Throw {@link IllegalArgumentException} if startValue is
+         * bigger than or equal to endValue.
+         * 
+         * @param startValue The minimum value of the tween
+         * @param endValue The maximum value of the tween
+         * @param duration How long the tween will take
+         */
+        public TransparencyTween(float startValue, float endValue, float duration) {
+            if (startValue >= endValue) {
+                throw new IllegalArgumentException("startValue must be smaller than endValue");
+            }
+
+            this.startValue = startValue;
+            this.endValue = endValue;
+            this.duration = duration;
+            this.reverse = false;
+            this.dist = endValue - startValue;
+        }
+
+        @Override
+        public boolean act(float delta) {
+            elapsedTime += delta;
+
+            if (elapsedTime > duration) {
+                elapsedTime = 0;
+                reverse = !reverse;
+            }
+
+            float interpolateFactor = elapsedTime / duration;
+
+            if (reverse) {
+                value = endValue - (dist * interpolateFactor);
+            }
+            else {
+                value = startValue + (dist * interpolateFactor);
+            }
+
+            // this action never stop. Good idea?
+            return false;
+        }
+
+        public float getValue() {
+            return value;
+        }
     }
 }
