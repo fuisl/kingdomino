@@ -24,6 +24,7 @@ import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.TerrainType;
+import dev.kingdomino.game.GameManager.GameState;
 
 /**
  * The main game screen of Kingdomino.
@@ -53,6 +54,8 @@ public class GameScreen extends AbstractScreen {
     private NinePatchDrawable bezel;
     private NinePatchDrawable bezelBackground;
     private NinePatchDrawable whiteBezel;
+
+    private EndDialog endGameDialog;
 
     // TODO: Allow this value to be changed, if I can get there...
     private final boolean SHADER_TOGGLE = false;
@@ -147,6 +150,8 @@ public class GameScreen extends AbstractScreen {
         sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar, headerStyle, bezel, bezelBackground);
         controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
+        
+        endGameDialog = new EndDialog(gameManager, kingAvatar, headerStyle, bodyStyle, bezel, bezelBackground);
     }
 
     @Override
@@ -247,11 +252,10 @@ public class GameScreen extends AbstractScreen {
     public void render(float delta) {
         gameManager.update(delta);
 
-        // update the actors with new informations
-        // TODO remove this once we have a proper screen covering this part
-        // in theory we can supplement a default board to deal with
-        if (gameManager.getCurrentKing() == null)
-            return;
+        if (gameManager.getCurrentState() == GameState.GAME_OVER) {
+            stage.addActor(endGameDialog.getDialog());
+            endGameDialog.getDialog().show(this.stage);
+        }
 
         // renderBackground();
         if (SHADER_TOGGLE) {
@@ -265,7 +269,7 @@ public class GameScreen extends AbstractScreen {
             // apply the CRT shader
             crtShader.applyCRTEffect();
         } else {
-            ScreenUtils.clear(Color.DARK_GRAY);
+            ScreenUtils.clear(Color.LIGHT_GRAY);
             stage.act(delta);
             stage.draw();
         }
