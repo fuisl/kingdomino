@@ -291,8 +291,15 @@ public class GameManager {
                 eventManager.addEvent(scoreSound2.copy(), "sound", false);
             }
 
+            King firstPositionKing = scores.entrySet().iterator().next().getKey();
             // update score var after placing domino
             results();
+
+            // animate first position if changed
+            if (!scores.entrySet().iterator().next().getKey().equals(firstPositionKing)) {
+                gameScreen.getLeaderboardRenderManager().animateFirstPosition();
+            }
+
             if (finalTurn) {
                 choosingDomino = false;
                 currentState = GameState.TURN_END;
@@ -335,7 +342,7 @@ public class GameManager {
     }
 
     private void game_over() {
-        results();
+        results(); // actually redundant -> results() is called in every placeDomino()
 
         currentState = GameState.RESULTS;
     }

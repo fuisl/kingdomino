@@ -3,11 +3,15 @@ package dev.kingdomino.screen;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
 
+import dev.kingdomino.effects.ShakeAction;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
@@ -24,6 +28,8 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
     private Label.LabelStyle bodyStyle;
     private NinePatchDrawable bezel;
     private NinePatchDrawable bezelBackground;
+
+    private Table firstPosition;
 
     public LeaderboardRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
             Label.LabelStyle bodyStyle, NinePatchDrawable bezel, NinePatchDrawable bezelBackground) {
@@ -67,12 +73,15 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
             entry.add(pointLabels[i])
                     .expand();
 
+            if (i == 0)
+                firstPosition = entry; // save first position for effects.
+
             layout.add(entry)
                     .fill()
                     .expand()
                     .pad(5);
-          
-            layout.row();  
+
+            layout.row();
         }
 
         layout.invalidate();
@@ -93,5 +102,25 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
             pointLabels[position].setText(entry.getValue()[2]);
             position++;
         }
+    }
+
+    public void animateFirstPosition() {
+        firstPosition.setTransform(true);
+
+        // Set the origin to the center of the actor
+        firstPosition.setOrigin(Align.center);
+
+        final float originalX = firstPosition.getX();
+        final float originalY = firstPosition.getY();
+
+        firstPosition.addAction(Actions.sequence(
+                Actions.parallel(
+                        Actions.scaleTo(1.25f, 1.25f, 0.05f, Interpolation.linear),
+                        new ShakeAction(0.15f, 10)),
+
+                // reset the scale and position
+                Actions.parallel(
+                        Actions.scaleTo(1f, 1f, 0.05f, Interpolation.linear),
+                        Actions.moveTo(originalX, originalY, 0.05f, Interpolation.linear))));
     }
 }

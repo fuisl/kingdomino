@@ -295,4 +295,8 @@ public class GameScreen extends AbstractScreen {
     public TurnOrderRenderManager getTurnOrderRenderManager() {
         return turnOrderRenderManager;
     }
+
+    public LeaderboardRenderManager getLeaderboardRenderManager() {
+        return leaderboardRenderManager;
+    }
 }
