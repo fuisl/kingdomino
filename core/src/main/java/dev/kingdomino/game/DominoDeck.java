@@ -6,8 +6,13 @@ import java.util.stream.Collectors;
 
 /**
  * Enum representing the deck of dominos in the game.
+ * 
+ * @see Domino
+ * @see Tile
+ * @see TerrainType
  */
 public enum DominoDeck {
+    // TODO: use the original 6 TerrainTypes.
     DOMINO_1(1, new Tile(TerrainType.FIELD, 0), new Tile(TerrainType.FIELD, 0)),
     DOMINO_2(2, new Tile(TerrainType.FIELD, 0), new Tile(TerrainType.FIELD, 0)),
     DOMINO_3(3, new Tile(TerrainType.FOREST, 0), new Tile(TerrainType.FOREST, 0)),
@@ -58,6 +63,7 @@ public enum DominoDeck {
     DOMINO_48(48, new Tile(TerrainType.FIELD, 0), new Tile(TerrainType.MINE, 3));
 
     private final Domino domino;
+
     /**
      * Constructs a DominoDeck with the specified id and tiles.
      *

@@ -4,6 +4,14 @@ import static java.lang.Math.abs;
 
 /**
  * Validates the placement of tiles on the game board.
+ * 
+ * @see Tile
+ * @see Board
+ * @see TerrainType
+ * 
+ * @author @fuisl
+ * @version 1.0
+ * 
  */
 public class TileValidator {
     private int CENTER = 4;
@@ -144,7 +152,8 @@ public class TileValidator {
     public boolean isTileAdjacentSame(Tile tile, int x, int y) {
         // check if adjacent tiles have the same terrain
         return (x > 0 && land[y][x - 1] != null && land[y][x - 1].getTerrain() == tile.getTerrain()) ||
-                (x < land[0].length - 1 && land[y][x + 1] != null && land[y][x + 1].getTerrain() == tile.getTerrain()) ||
+                (x < land[0].length - 1 && land[y][x + 1] != null && land[y][x + 1].getTerrain() == tile.getTerrain())
+                ||
                 (y > 0 && land[y - 1][x] != null && land[y - 1][x].getTerrain() == tile.getTerrain()) ||
                 (y < land.length - 1 && land[y + 1][x] != null && land[y + 1][x].getTerrain() == tile.getTerrain());
     }

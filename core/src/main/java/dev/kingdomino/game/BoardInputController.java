@@ -8,6 +8,18 @@ import dev.kingdomino.game.BoardInputHandler.Action;
 import dev.kingdomino.game.GameManager.GameState;
 import dev.kingdomino.game.GameManager.InputDevice;
 
+/**
+ * Controller class for handling board input in the game.
+ * 
+ * This class listens for controller input events and translates them into game actions.
+ * 
+ * @see AbstractController
+ * @see BoardInputHandler
+ * @see Controller
+ * 
+ * @author @fuisl
+ * @version 1.0
+ */
 public class BoardInputController extends AbstractController {
     private final BoardInputHandler boardInputHandler;
     private ControllerMapping map;
@@ -16,10 +28,20 @@ public class BoardInputController extends AbstractController {
     private float axisX = 0f; // joystickXLeft
     private float axisY = 0f; // joystickYLeft
 
+    /**
+     * Constructor for BoardInputController.
+     *
+     * @param boardInputHandler the handler for board input actions
+     */
     public BoardInputController(BoardInputHandler boardInputHandler) {
         this.boardInputHandler = boardInputHandler;
     }
 
+    /**
+     * Called when a controller is connected.
+     *
+     * @param controller the connected controller
+     */
     @Override
     public void connected(Controller controller) {
         map = controller.getMapping();
@@ -27,12 +49,25 @@ public class BoardInputController extends AbstractController {
         Gdx.app.log("Controller", "Connected: " + controller.getName());
     }
 
+    /**
+     * Called when a controller is disconnected.
+     *
+     * @param controller the disconnected controller
+     */
     @Override
     public void disconnected(Controller controller) {
         GameManager.setInputDevice(InputDevice.KEYBOARD);
         Gdx.app.log("Controller", "Disconnected: " + controller.getName());
     }
 
+    /**
+     * Called when an axis on the controller is moved.
+     *
+     * @param controller the controller
+     * @param axisCode the axis code
+     * @param value the value of the axis
+     * @return true if the input was handled, false otherwise
+     */
     @Override
     public boolean axisMoved(Controller controller, int axisCode, float value) {
         GameManager.setInputDevice(InputDevice.CONTROLLER);
@@ -59,6 +94,13 @@ public class BoardInputController extends AbstractController {
         }
     }
 
+    /**
+     * Called when a button on the controller is pressed.
+     *
+     * @param controller the controller
+     * @param buttonCode the button code
+     * @return true if the input was handled, false otherwise
+     */
     @Override
     public boolean buttonDown(Controller controller, int buttonCode) {
         GameManager.setInputDevice(InputDevice.CONTROLLER);
@@ -74,6 +116,13 @@ public class BoardInputController extends AbstractController {
         return true;
     }
 
+    /**
+     * Called when a button on the controller is released.
+     *
+     * @param controller the controller
+     * @param buttonCode the button code
+     * @return true if the input was handled, false otherwise
+     */
     @Override
     public boolean buttonUp(Controller controller, int buttonCode) {
         if (GameManager.currentState != GameState.TURN_PLACING) {
@@ -88,6 +137,13 @@ public class BoardInputController extends AbstractController {
         return true;
     }
 
+    /**
+     * Translates axis movements to game actions.
+     *
+     * @param axisX the X-axis value
+     * @param axisY the Y-axis value
+     * @return the corresponding action
+     */
     private Action translateAxisToAction(float axisX, float axisY) {
         // Handle dead zone
         if (Math.sqrt(axisX * axisX + axisY * axisY) < DEAD_ZONE) {
@@ -114,6 +170,12 @@ public class BoardInputController extends AbstractController {
         return Action.NONE;
     }
 
+    /**
+     * Translates button presses to game actions.
+     *
+     * @param buttonCode the button code
+     * @return the corresponding action
+     */
     private Action translateButtonToAction(int buttonCode) {
         if (buttonCode == map.buttonA) {
             return Action.PLACE_DOMINO;

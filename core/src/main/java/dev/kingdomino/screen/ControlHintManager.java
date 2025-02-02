@@ -53,7 +53,7 @@ public class ControlHintManager extends Actor {
             case RESULTS:
                 break;
             case TURN_CHOOSING:
-                // TODO: add control hint for choosing domino
+                // TODO: add control hint for choosing domino for CONTROLLER
                 controlHint.setText(
                         "[W, S] move, [X] confirm.\nThe position determine the play order next round.");
                 break;

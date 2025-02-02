@@ -13,10 +13,16 @@ import dev.kingdomino.game.Event;
 import dev.kingdomino.game.Event.TriggerType;
 import dev.kingdomino.game.EventManager;
 
+/**
+ * Manages background effects such as color transitions, spinning, and screen shake.
+ * 
+ * @author @fuisl
+ * @version 1.0
+ */
 public class BackgroundManager {
-    private static final Map<String, Float> refTable = BackgroundShader.refTable; // ref to BackgroundShader.refTable
-    private static final Map<String, Color> colorTable = BackgroundShader.colorTable;
-    public static final Map<String, Color[]> colorMap = new HashMap<>();
+    private static final Map<String, Float> refTable = BackgroundShader.refTable; // shader use refTable for updating realtime
+    private static final Map<String, Color> colorTable = BackgroundShader.colorTable; // shader use colorTable for updating realtime
+    public static final Map<String, Color[]> colorMap = new HashMap<>(); // color map for different color schemes
     private static final EventManager eventManager = EventManager.getInstance();
     private static final Map<String, Map<String, Float>> tempTables = new HashMap<>();
     private static OrthographicCamera sharedCamera;
@@ -49,12 +55,18 @@ public class BackgroundManager {
         colorTable.put("u_color3", Color.valueOf("020608"));
     }
 
+    /**
+     * Starts the background spinning.
+     */
     public static void startSpin() {
         Event startSpinning = new Event(TriggerType.EASE, false, false, null, null, null, null,
                 new Ease(EaseType.LERP, refTable, "u_spinTime", 0.5f, 0.5f, null));
         eventManager.addEvent(startSpinning.copy(), "background", false);
     }
 
+    /**
+     * Rewinds the background spinning and starts spinning again. (DJ like)
+     */
     public static void rewindSpin() {
         Event stopSpinning = new Event(TriggerType.EASE, true, false, null, null, null, null,
                 new Ease(EaseType.LERP, refTable, "u_spinTime", -5.0f, 0.15f, null));
@@ -66,32 +78,52 @@ public class BackgroundManager {
         eventManager.addEvent(startSpinning.copy(), "background", false);
     }
 
+    /**
+     * Stops the background spinning.
+     */
     public static void stopSpinning() {
         Event resetSpinTime = new Event(TriggerType.EASE, false, true, null, null, null, null,
                 new Ease(EaseType.LERP, refTable, "u_spinTime", 0.0f, 0.5f, null));
         eventManager.addEvent(resetSpinTime.copy(), "background", false);
     }
 
-    // TODO: code the effect for the spin curve. CURRENTLY NOT WORKING!
+    // TODO: code the effect for the spin curve. CURRENTLY NOT IN USE!
+    /**
+     * Resets the spin curve effect.
+     */
     public static void resetSpinCurve() {
         Event resetSpinCurve = new Event(TriggerType.EASE, false, true, null, null, null, null,
                 new Ease(EaseType.LERP, refTable, "u_spinAmount", 0.14f, 0.5f, null));
         eventManager.addEvent(resetSpinCurve.copy(), "background", false);
     }
 
+    /**
+     * Starts the spin curve effect.
+     */
     public static void startSpinCurve() {
         Event startSpinCurve = new Event(TriggerType.EASE, false, true, null, null, null, null,
                 new Ease(EaseType.LERP, refTable, "u_spinAmount", 0.15f, 0.5f, null));
         eventManager.addEvent(startSpinCurve.copy(), "background", false);
     }
 
-    // update single color
+    /**
+     * Updates a single color in the color table.
+     * 
+     * @param colorName the name of the color to update
+     * @param tempTable the temporary table containing the new color values
+     */
     public static void updateColor(String colorName, Map<String, Float> tempTable) {
         colorTable.get(colorName).set(tempTable.get("r"), tempTable.get("g"), tempTable.get("b"), tempTable.get("a"));
     }
 
-    // update all colors
-
+    /**
+     * Performs a linear interpolation (LERP) between the current and target colors over a duration.
+     * 
+     * @param current the current color
+     * @param target the target color
+     * @param duration the duration of the interpolation
+     * @return a temporary table containing the interpolated color values
+     */
     public static HashMap<String, Float> colorLerp(Color current, Color target, float duration) {
         HashMap<String, Float> tempTable = new HashMap<>();
         tempTable.put("r", current.r);
@@ -117,26 +149,48 @@ public class BackgroundManager {
         return tempTable;
     }
 
+    /**
+     * Switches the background colors with a specified duration.
+     * 
+     * @param colors the array of new colors
+     * @param duration the duration of the color switch
+     */
     public static void colorSwitch(Color[] colors, float duration) {
         tempTables.put("u_color1", colorLerp(colorTable.get("u_color1"), colors[0], duration));
         tempTables.put("u_color2", colorLerp(colorTable.get("u_color2"), colors[1], duration));
         tempTables.put("u_color3", colorLerp(colorTable.get("u_color3"), colors[2], duration));
     }
 
+    /**
+     * Switches the background colors with a default duration.
+     * 
+     * @param colors the array of new colors
+     */
     public static void colorSwitch(Color[] colors) {
         colorSwitch(colors, 0.2f);
     }
 
+    /**
+     * Updates all colors in the color table.
+     */
     public static void updateColors() {
         for (Map.Entry<String, Map<String, Float>> entry : tempTables.entrySet()) {
             updateColor(entry.getKey(), entry.getValue());
         }
     }
 
+    /**
+     * Sets the shared camera for background effects.
+     * 
+     * @param camera the OrthographicCamera to set
+     */
     public static void setCamera(OrthographicCamera camera) {
         sharedCamera = camera;
     }
 
+    /**
+     * Updates the camera position based on the shake effect.
+     */
     public static void updateCameraShakePosition() {
         float shake = refTable.get("u_shake");
 
@@ -149,6 +203,9 @@ public class BackgroundManager {
         sharedCamera.update();
     }
 
+    /**
+     * Initiates a screen shake effect.
+     */
     public static void screenShake() {
         Event shakeEvent = new Event(TriggerType.EASE, true, false, null, null, null, null,
                 new Ease(EaseType.ELASTIC, refTable, "u_shake", 5.0f, 0.1f, null));

@@ -8,8 +8,14 @@ import java.util.Random;
 /**
  * Represents a deck of cards (dominos) in the game. This class should be using
  * to get dominos for the game.
+ * 
+ * @see Domino
+ * @see DominoDeck
+ * 
+ * @author @fuisl
+ * @version 1.0
  */
-public class Deck {
+public final class Deck {
     // Common properties and methods for all card decks
     protected List<Domino> deck;
     protected int seed;

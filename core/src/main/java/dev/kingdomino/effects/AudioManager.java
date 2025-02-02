@@ -4,6 +4,12 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
+/**
+ * Manages audio playback for the game, including music and sound effects.
+ * 
+ * @author @fuisl
+ * @version 1.0
+ */
 public class AudioManager {
     public static AudioManager instance;
     private Music music;
@@ -27,6 +33,9 @@ public class AudioManager {
     private float musicVolume = 1.0f;
     private float effectsVolume = 1.0f;
 
+    /**
+     * Enum representing different types of sound effects.
+     */
     public enum SoundType {
         SCORE,
         SCORE2,
@@ -44,6 +53,11 @@ public class AudioManager {
         ENDGAME
     }
 
+    /**
+     * Returns the singleton instance of the AudioManager.
+     * 
+     * @return the singleton instance of the AudioManager
+     */
     public static synchronized AudioManager getInstance() {
         if (instance == null) {
             instance = new AudioManager();
@@ -51,6 +65,11 @@ public class AudioManager {
         return instance;
     }
 
+    /**
+     * Loads the audio assets for the game.
+     * 
+     * This method should be called once at the start of the game.
+     */
     public void load(AssetManager assetManager) {
         music = assetManager.get("audio/music.wav");
         music.setLooping(true);
@@ -73,14 +92,27 @@ public class AudioManager {
         increaseSound2 = assetManager.get("audio/multhit2.ogg");
     }
 
+    /**
+     * Plays the background music.
+     */
     public void playMusic() {
         music.play();
     }
 
+    /**
+     * Stops the background music.
+     */
     public void stopMusic() {
         music.stop();
     }
 
+    /**
+     * Plays a sound effect based on the specified SoundType.
+     * 
+     * The volume of the sound effect is determined by the master volume and effects volume.
+     * 
+     * @param soundType the type of sound effect to play
+     */
     public void playSound(SoundType soundType) {
         float effectVol = effectsVolume * masterVolume;
         switch (soundType) {
@@ -131,20 +163,38 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Disposes of the audio assets to free up resources.
+     */
     public void dispose() {
         music.dispose();
     }
 
+    /**
+     * Sets the master volume for all audio.
+     * 
+     * @param volume the master volume (0.0 to 1.0)
+     */
     public void setMasterVolume(float volume) {
         masterVolume = volume;
         music.setVolume(musicVolume * masterVolume);
     }
 
+    /**
+     * Sets the volume for the background music.
+     * 
+     * @param volume the music volume (0.0 to 1.0)
+     */
     public void setMusicVolume(float volume) {
         musicVolume = volume;
         music.setVolume(musicVolume * masterVolume);
     }
 
+    /**
+     * Sets the volume for sound effects.
+     * 
+     * @param volume the effects volume (0.0 to 1.0)
+     */
     public void setEffectsVolume(float volume) {
         effectsVolume = volume;
     }

@@ -2,6 +2,9 @@ package dev.kingdomino.game;
 
 /**
  * Enum representing the possible offsets for tile rotation.
+ * 
+ * @author @fuisl
+ * @version 1.0
  */
 public enum Direction {
     RIGHT(1, 0),
@@ -9,7 +12,7 @@ public enum Direction {
     LEFT(-1, 0),
     UP(0, -1);
 
-    private Position position;
+    private final Position position;
 
     /**
      * Constructs an Offset with the specified x and y values.

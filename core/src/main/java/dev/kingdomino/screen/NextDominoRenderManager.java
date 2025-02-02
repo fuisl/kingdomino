@@ -25,18 +25,18 @@ import dev.kingdomino.game.Turn;
  * @author LunaciaDev
  */
 public class NextDominoRenderManager extends AbstractRenderManager {
-    private DominoActor[] dominoActors;
-    private DraftInputHandler draftInputHandler;
-    private Label.LabelStyle headerStyle;
-    private NinePatchDrawable bezel;
-    private NinePatchDrawable whiteBezel;
-    private NinePatchDrawable bezelBackground;
-    private Table[] rows;
+    private final DominoActor[] dominoActors;
+    private final DraftInputHandler draftInputHandler;
+    private final Label.LabelStyle headerStyle;
+    private final NinePatchDrawable bezel;
+    private final NinePatchDrawable whiteBezel;
+    private final NinePatchDrawable bezelBackground;
+    private final Table[] rows;
     private Table baseLayout;
 
-    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
-            TextureRegion[] crownOverlay, NinePatchDrawable bezel, NinePatchDrawable whiteBezel,
-            NinePatchDrawable bezelBackground) {
+    public NextDominoRenderManager(final GameManager gameManager, final TextureRegion[] kingAvatar, final Label.LabelStyle headerStyle,
+            final TextureRegion[] crownOverlay, final NinePatchDrawable bezel, final NinePatchDrawable whiteBezel,
+            final NinePatchDrawable bezelBackground) {
 
         super(gameManager, kingAvatar);
 
@@ -57,30 +57,31 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
     @Override
     public Table getLayout() {
-        Table layout = new Table();
+        final Table layout = new Table();
         layout.setBackground(bezelBackground);
 
-        WavyLabel title = new WavyLabel("Next Dominoes", headerStyle);
+        final WavyLabel title = new WavyLabel("Next Dominoes", headerStyle);
         layout.add(title).pad(5);
         layout.row();
 
         for (int i = 0; i < kingCount; i++) {
-            Table row = new Table();
+            final Table row = new Table();
             row.setBackground(bezel);
 
             // Create the container for the domino actor and add the FloatAction.
-            Container<Actor> container = generateContainer(dominoActors[i]);
+            final Container<Actor> container = generateContainer(dominoActors[i]);
             container.setTransform(true);
             container.addAction(new CustomFloatAction(1.5f, 1.5f, 0.5f));
 
             // Wrap the container in a Group that we override to propagate size to its
             // children.
-            Group animatedGroup = new Group() {
+            // TODO: This is a workaround for the container not resizing its children @LunaciaDev knows how to fix.
+            final Group animatedGroup = new Group() {
                 @Override
-                public void act(float delta) {
+                public void act(final float delta) {
                     super.act(delta);
                     // Ensure the container always fills the group.
-                    for (Actor child : getChildren()) {
+                    for (final Actor child : getChildren()) {
                         child.setSize(getWidth(), getHeight());
                         child.setOrigin(Align.center);
                     }
@@ -118,10 +119,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     }
 
     @Override
-    public void act(float delta) {
-        Turn nextTurn = gameManager.getNextTurn();
-
-        if (nextTurn == null) {
+    public void act(final float delta) {
+        if (gameManager.isFinalTurn()) {
             // Hide the domino picker when we are on the last turn
 
             if (this.baseLayout.isVisible())
@@ -132,8 +131,13 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             return;
         }
 
-        Domino[] nextTurnDomino = nextTurn.getDraft();
-        King[] nextTurnPick = nextTurn.getKings();
+        final Turn nextTurn = gameManager.getNextTurn();
+
+        if (nextTurn == null)
+            return;
+
+        final Domino[] nextTurnDomino = nextTurn.getDraft();
+        final King[] nextTurnPick = nextTurn.getKings();
 
         for (int i = 0; i < kingCount; i++) {
             dominoActors[i].setDomino(nextTurnDomino[i]);
@@ -151,7 +155,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         if (gameManager.getCurrentState() != GameState.TURN_CHOOSING)
             return;
 
-        int currentSelection = draftInputHandler.getSelectionIndex();
+        final int currentSelection = draftInputHandler.getSelectionIndex();
 
         rows[currentSelection].setBackground(whiteBezel);
     }
@@ -162,7 +166,6 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     private void hideAllHighlighter() {
         for (int i = 0; i < kingCount; i++) {
             rows[i].setBackground(bezel);
-            ;
         }
     }
 }

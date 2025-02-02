@@ -6,7 +6,8 @@ import com.badlogic.gdx.InputProcessor;
  * Implement {@link InputProcessor} with all input event being rejected. Extend this class and override
  * specific input that will be handled instead of implementing {@link InputProcessor} directly.
  * 
- * @author LunaciaDev
+ * @author @LunaciaDev
+ * @version 1.0
  */
 public abstract class AbstractInputProcessor implements InputProcessor {
     @Override
