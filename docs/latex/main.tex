@@ -12,12 +12,18 @@
 \usepackage{url}
 \usepackage{listings}
 \usepackage{algorithm2e}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue,
+}
 
 % Configure the listings package
 \lstset{
     basicstyle=\ttfamily\footnotesize,
-    keywordstyle=\color{blue},
-    commentstyle=\color{green},
+    keywordstyle=\color{orange},
+    commentstyle=\color{gray},
     stringstyle=\color{red},
     numbers=left,
     numberstyle=\tiny\color{gray},
@@ -28,7 +34,9 @@
     breaklines=true,
     frame=single,
     tabsize=2,
-    captionpos=b
+    captionpos=b,
+    columns=flexible,
+    keepspaces=true
 }
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -80,17 +88,27 @@ various terrain types, such as wheat fields, lakes, and mountains. Each tile
 comprises two sections that must be connected to the existing kingdom based on
 matching terrain types.
 
-A key mechanic in Kingdomino is the tile selection order, which is influenced
-by the quality of previous choices. High-value tiles offer strategic benefits
-but may result in players selecting tiles later in subsequent rounds,
-introducing tactical decision-making. Additionally, tiles with crowns multiply
-the value of the connected terrains, significantly impacting the final score.
+This paper presents a digital adaptation of Kingdomino, developed using Java
+and the LibGDX framework. Our implementation leverages an event-driven
+architecture, a flood-fill algorithm for scoring, and shader-based rendering to
+enhance the user experience. We explore key aspects of game logic, including
+tile placement validation, turn-based mechanics, and dynamic UI interactions.
+The paper details the design choices, algorithms, and modular structure of the
+system, ensuring efficiency and scalability. Additionally, we evaluate game
+performance through experimental results and discuss future improvements, such
+as AI integration and multiplayer capabilities.
 
-The game concludes once each player fills their 5$\times$5 grid or can no
-longer place tiles. Scoring is determined by the size of connected terrain
-groups and the number of crowns they contain. Kingdomino's blend of simple
-rules and strategic depth has garnered popularity, making it an excellent
-subject for developing and analyzing game-based algorithms.
+The paper is structured as follows: Section II describes the problem and
+provides a formal description of the game mechanics. Section III reviews
+related work and relevant algorithms. Section IV discusses the teamwork and
+collaboration tools used. Section V outlines the proposed approaches, including
+the event-driven architecture and input handling. Section VI details the
+implementation, including game states, tile placement, and scoring mechanisms.
+Section VII presents experimental results and performance analysis. Finally,
+Section VIII concludes the paper and suggests future work.
+
+The source code for the Kingdomino digital adaptation can be found on GitHub at
+\url{https://github.com/fuisl/kingdomino}.
 
 %======================================================
 \section{Problem Description}
@@ -238,20 +256,59 @@ faithful and enjoyable digital representation of the original board game.
 % -- Who did what, how the tasks were divided, how you communicated and tracked progress, 
 %    brainstorming sessions, etc.
 
+We divided the project into backend (game logic) and frontend (GUI), using
+GitHub ecosystem for tracking and communication. We also followed SCRUM
+planning techniques. (Fig~\ref{fig:kanban}).
+
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.5\textwidth]{assets/github-project.png}}
     \caption{Kanban Board implements SCRUM planning technique.}\label{fig:kanban}
 \end{figure}
 
-We divided the project into game logic and GUI, using GitHub Project for tracking and communication. We followed SCRUM methodology (Fig~\ref{fig:kanban}).
-
 \subsection{Roles and Responsibilities}
-Hai Duong Tran handled backend logic, including tile placement rules, scoring, and game flow. He also integrated the flood-fill algorithm and worked on shaders and effects. Pham Minh Tuan Bui focused on the GUI, rendering game elements with LibGDX, and implemented the event-driven architecture. He also worked on visual aesthetics.
+Hai Duong Tran handled backend logic, including tile placement rules, scoring,
+and game flow. He also integrated the flood-fill algorithm and worked on
+shaders and effects. Pham Minh Tuan Bui focused on the GUI, rendering game
+elements with LibGDX, and work on creating our original assets for this
+project. He also worked on visual aesthetics. Both members contributed to the
+success of this project.
 
-We collaborated on various aspects, held regular meetings, and conducted code reviews to maintain quality and consistency. This approach enhanced productivity and understanding of the project.
+We collaborated on various aspects not just within our scope and
+responsibilities. We held regular meetings, and conducted code reviews to
+maintain quality and consistency. This approach enhanced productivity and
+understanding of the project.
 
 \subsection{Collaboration Tools and Workflow}
-We used GitHub Issues and Pull Requests for tracking and code reviews. Each member created branches for their tasks, ensuring main branch stability. Code reviews were conducted via GitHub Pull Requests (Fig~\ref{fig:github-pr}), maintaining code quality and facilitating knowledge sharing. For communication, we used Messenger and in-person meetings, documenting progress via commit messages and digital drafts.
+Most of our communication happened on Github Issues and Pull Requests. The
+tools are used for tracking and code reviews. Each member created branches for
+their tasks, ensuring main branch stability. Code reviews were conducted via
+GitHub Pull Requests (Fig~\ref{fig:github-pr}), maintaining code quality and
+facilitating knowledge sharing. For communication, we used Messenger and
+in-person meetings, documenting progress via commit messages and digital
+drafts.
+
+\subsection{Gitflow Workflow}
+We adopted the Gitflow workflow for version control, which is an
+industry-standard branching model for Git. This approach helps manage the
+development process by organizing branches and ensuring a clear path from
+development to production.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/gitflow.png}}
+    \caption{Gitflow Workflow.}\label{fig:gitflow}
+\end{figure}
+
+The Gitflow workflow consists of the following branches:
+\begin{itemize}
+    \item \textbf{main}: The main branch containing production-ready code.
+    \item \textbf{dev}: The integration branch for features and fixes.
+    \item \textbf{feature/*}: Branches for developing new features.
+    \item \textbf{release/*}: Branches for preparing releases.
+    \item \textbf{hotfix/*}: Branches for quick fixes to production code.
+\end{itemize}
+
+This workflow allows for parallel development, efficient collaboration, and a
+structured release process.
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.48\textwidth]{assets/github-pr.png}}
@@ -319,10 +376,19 @@ methods:
 This is particularly useful for animations such as screen shaking when an invalid move is made, or color transitions when switching player turns.
 
 \subsection{Input Handling}
-Kingdomino implements manual input event processing instead of relying on LibGDX's built-in event loop. The input handling is divided into two main components: \texttt{BoardInputController} and \texttt{BoardInputProcessor}, which handle input from controllers and keyboards, respectively. These components translate user inputs into structured events that are processed by the system.
+Kingdomino implements manual input event processing instead of relying on
+LibGDX's built-in event loop. The input handling is divided into two main
+components: \texttt{BoardInputController} and \texttt{BoardInputProcessor},
+which handle input from controllers and keyboards, respectively. These
+components translate user inputs into structured events that are processed by
+the system.
 
 \subsubsection{BoardInputController}
-The \texttt{BoardInputController} class handles input from game controllers. It captures axis movements and button presses, translating them into actions such as moving, rotating, placing, or discarding a domino. The controller input is processed with a dead zone to ignore small, unintended movements, ensuring precise control.
+The \texttt{BoardInputController} class handles input from game controllers. It
+captures axis movements and button presses, translating them into actions such
+as moving, rotating, placing, or discarding a domino. The controller input is
+processed with a dead zone to ignore small, unintended movements, ensuring
+precise control.
 
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputController.java
@@ -343,7 +409,10 @@ public class BoardInputController extends AbstractController {
 \end{lstlisting}
 
 \subsubsection{BoardInputProcessor}
-The \texttt{BoardInputProcessor} class handles input from the keyboard. It maps key presses to actions such as moving, rotating, placing, or discarding a domino. This class ensures that keyboard inputs are correctly translated into game actions.
+The \texttt{BoardInputProcessor} class handles input from the keyboard. It maps
+key presses to actions such as moving, rotating, placing, or discarding a
+domino. This class ensures that keyboard inputs are correctly translated into
+game actions.
 
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputProcessor.java
@@ -359,7 +428,11 @@ public class BoardInputProcessor extends AbstractInputProcessor {
 \end{lstlisting}
 
 \subsubsection{Input Handlers}
-The \texttt{BoardInputHandler} and \texttt{DraftInputHandler} classes are responsible for translating the inputs received from the \texttt{BoardInputController} and \texttt{BoardInputProcessor} into signals that the system can process. These handlers manage the state of the game and ensure that inputs are processed correctly based on the current game state.
+The \texttt{BoardInputHandler} and \texttt{DraftInputHandler} classes are
+responsible for translating the inputs received from the
+\texttt{BoardInputController} and \texttt{BoardInputProcessor} into signals
+that the system can process. These handlers manage the state of the game and
+ensure that inputs are processed correctly based on the current game state.
 
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputHandler.java
@@ -463,14 +536,21 @@ BackgroundManager.screenShake();
 
 \subsubsection{User Interface Layout Design}
 
-We chose to design the user interface based on tables, where each component or table is placed within a cell as demonstrated in \ref{fig:ui-proto}.
+We chose to design the user interface based on tables, where each component or
+table is placed within a cell as demonstrated in \ref{fig:ui-proto}.
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.48\textwidth]{assets/ui-prototype.png}}
     \caption{First UI design prototype.}\label{fig:ui-proto}
 \end{figure}
 
-We mimic how the game state of Kingdomino is distributed in real life by having the current player's game board being placed prominently in the center of the screen, whilst other informations that the player can find are placed to the side. We also decided to show how many points each player is currently scoring with their board as well, because it could enable more strategic choice if players know exactly how their board is doing compared to other, instead of focusing on picking the tile that would yield the most point for their board.
+We mimic how the game state of Kingdomino is distributed in real life by having
+the current player's game board being placed prominently in the center of the
+screen, whilst other informations that the player can find are placed to the
+side. We also decided to show how many points each player is currently scoring
+with their board as well, because it could enable more strategic choice if
+players know exactly how their board is doing compared to other, instead of
+focusing on picking the tile that would yield the most point for their board.
 
 %======================================================
 \section{Implementation Details}
@@ -754,7 +834,7 @@ The \texttt{AudioManager} class handles the game's audio effects, providing
 immediate feedback for player actions. Key features include:
 \begin{itemize}
     \item \textbf{Background Music}: Continuous background music that sets the tone for the game.
-    % -- SFX is used in order to provide immediate feedback, as often time it is not obvious that something have happened when the user interact with the game.
+          % -- SFX is used in order to provide immediate feedback, as often time it is not obvious that something have happened when the user interact with the game.
     \item \textbf{Sound Effects}: Various sound effects for actions such as tile placement, selection, rotation, and scoring in order to provide immediate feedback for each action the player take.
 \end{itemize}
 
@@ -790,7 +870,13 @@ and responsive game that captivates players.
 
 \subsection{Game Textures}
 
-Aside from the image of the King which was taken by Adam Carmichael \cite{github:carmichael-repo} and the font Pixelify Sans \cite{github:pixelify-sans}, all of the game's texture are hand-drawn. The tile are created from a 48x48 pixel square of the color representative of its terrain type, before applying Perlin Noise \cite{wiki:perlin-noise} so as to reduce the monotonousness of the texture. We delibrately choose low texture size as large, detailed texture would become inelligible by the CRT Shader.
+Aside from the image of the King which was taken by Adam Carmichael
+\cite{github:carmichael-repo} and the font Pixelify Sans
+\cite{github:pixelify-sans}, all of the game's texture are hand-drawn. The tile
+are created from a 48x48 pixel square of the color representative of its
+terrain type, before applying Perlin Noise \cite{wiki:perlin-noise} so as to
+reduce the monotonousness of the texture. We delibrately choose low texture
+size as large, detailed texture would become inelligible by the CRT Shader.
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.48\textwidth]{assets/crown-design-file.png}}
