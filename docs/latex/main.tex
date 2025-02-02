@@ -96,7 +96,9 @@ tile placement validation, turn-based mechanics, and dynamic UI interactions.
 The paper details the design choices, algorithms, and modular structure of the
 system, ensuring efficiency and scalability. Additionally, we evaluate game
 performance through experimental results and discuss future improvements, such
-as AI integration and multiplayer capabilities.\footnote{The source code for the Kingdomino digital adaptation can be found on GitHub at \url{https://github.com/fuisl/kingdomino}.}
+as AI integration and multiplayer capabilities.\footnote{The source code for
+    the Kingdomino digital adaptation can be found on GitHub at
+    \url{https://github.com/fuisl/kingdomino}.}
 
 The paper is structured as follows: Section~\ref{sec:problem_description}
 describes the problem and game mechanics. Section~\ref{sec:related_work}
@@ -261,8 +263,10 @@ faithful and enjoyable digital representation of the original board game.
 
 We divided the project into backend (game logic) and frontend (GUI), using
 GitHub ecosystem for tracking and communication. We also followed SCRUM
-planning techniques. (Fig~\ref{fig:kanban}).
+planning techniques.\footnote{see our initial planning on GitHub Project at
+    \url{https://github.com/users/fuisl/projects/15}}
 
+% (Fig~\ref{fig:kanban}).
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.5\textwidth]{assets/github-project.png}}
     \caption{Kanban Board implements SCRUM planning technique.}\label{fig:kanban}
@@ -321,11 +325,6 @@ structured release process.
 %======================================================
 \section{Proposed Approaches}
 \label{sec:proposed_approaches}
-% 5. PROPOSED APPROACHES
-% -- Input/Output technique.
-% -- Algorithm/Pseudocode.
-% -- Process flow diagram (if necessary).
-% summary of the section
 
 \subsection{Event-Driven Architecture}
 % -- Explanation of the event-driven architecture, how is it involved in the game.
@@ -335,8 +334,15 @@ user interactions, game state transitions, and visual effects efficiently. This
 approach decouples game logic, input handling, and rendering, improving
 performance, modularity, and maintainability.
 
-\subsection{Core Components}
-\subsubsection{Event Class}
+Although LibGDX does not explicitly provide an event-driven architecture, we
+designed the game to integrate LibGDX's event handling system with our custom
+event system, effectively implementing our own game engine. This hybrid
+approach allows us to leverage LibGDX's rendering and input processing
+capabilities while implementing our event-driven logic for custom background
+tasks and UI interactions.
+
+\subsection{Custom Game Engine}
+\subsubsection{Event}
 The \texttt{Event} class encapsulates actions that can be executed immediately
 or after a delay. It supports different types of triggers:
 \begin{itemize}
@@ -349,24 +355,26 @@ or after a delay. It supports different types of triggers:
 Each event has attributes such as blocking, blockable, complete, and delay, allowing for controlled execution within the game loop.
 
 \subsubsection{EventManager}
-The \texttt{EventManager} acts as the central execution hub for all
-game-related events. It maintains multiple concurrent event queues, categorized
-into:
+The \texttt{EventManager} is the central hub for executing game events,
+maintaining concurrent queues for:
 \begin{itemize}
-    \item \textbf{Base}: Core gameplay logic (e.g., turn transitions, score updates).
-    \item \textbf{Input}: Player interactions (e.g., movement, rotation, placement).
+    \item \textbf{Base}: Core gameplay logic (turn transitions, score updates).
+    \item \textbf{Input}: Player interactions (movement, rotation, placement).
     \item \textbf{Background}: Visual effects and animations.
-    \item \textbf{Sound}: Audio effects (e.g., movement, tile placement, invalid moves).
+    \item \textbf{Sound}: Audio effects (movement, tile placement, invalid moves).
     \item \textbf{Other}: Miscellaneous actions.
 \end{itemize}
-The event manager ensures concurrency safety using \texttt{ConcurrentLinkedQueue}, preventing race conditions when processing multiple asynchronous actions.
+The event manager ensures concurrency safety using \texttt{ConcurrentLinkedQueue},
+preventing race conditions when processing multiple asynchronous actions.\footnote{The event system may leak memory due to the creation of new events and their addition to the queue, but this is mitigated by garbage collection and the low trigger rate.}
 
 \subsubsection{GameTimer}
 The \texttt{GameTimer} class tracks real-time, total elapsed time, and
 background animation timing. It synchronizes event execution by accumulating
 delta time (dt) and updating event processing intervals accordingly. The timer
 provides a consistent timing reference for executing delayed events and easing
-functions.
+functions.\footnote{The GameTimer accumulates time without resetting, which can
+    eventually lead to an overflow if the game is left running for an extended
+    period}
 
 \subsubsection{Ease}
 The \texttt{Ease} class facilitates smooth animations for background effects,
