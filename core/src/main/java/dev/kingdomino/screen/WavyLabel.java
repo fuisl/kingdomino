@@ -13,11 +13,15 @@ public class WavyLabel extends Label {
     private WaveAnimation waveAnimation;
 
     /**
-     * @param text        The text of the label.
-     * @param style       The label style.
-     * @param amplitude   Maximum vertical offset (in pixels).
-     * @param frequency   Oscillation frequency (radians per second).
-     * @param phaseOffset Phase difference between consecutive characters (radians).
+     * Create a label that will wave indefinitely.
+     * 
+     * @param text Label text
+     * @param style Label style
+     * @param maxHeight Maximum y offset of label
+     * @param duration How long it take for a single character to wave
+     * @param characterTimeOffset Time offset between character next to each other
+     * 
+     * @author fuisl
      */
     public WavyLabel(CharSequence text, LabelStyle style, float maxHeight, float duration, float characterTimeOffset) {
         super(text, style);
