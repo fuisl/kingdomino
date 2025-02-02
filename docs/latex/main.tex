@@ -21,7 +21,7 @@
 
 % Configure the listings package
 \lstset{
-    basicstyle=\ttfamily\footnotesize,
+    basicstyle=\ttfamily\scriptsize,
     keywordstyle=\color{orange},
     commentstyle=\color{gray},
     stringstyle=\color{red},
@@ -395,56 +395,64 @@ which handle input from controllers and keyboards, respectively. These
 components translate user inputs into structured events that are processed by
 the system.
 
-\subsubsection{BoardInputController}
-The \texttt{BoardInputController} class handles input from game controllers. It
-captures axis movements and button presses, translating them into actions such
-as moving, rotating, placing, or discarding a domino. The controller input is
-processed with a dead zone to ignore small, unintended movements, ensuring
-precise control.
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.5\textwidth]{assets/interaction.png}}
+    \caption{Interfaces between user and game world.}\label{fig:interaction}
+\end{figure}
 
+\subsubsection{AbstractInputController}
+The \texttt{AbstractInputController} class handles input from game controllers.
+It captures axis movements and button presses, translating them into actions
+such as moving, rotating, placing, or discarding a domino. The controller input
+is processed with a dead zone to ignore small, unintended movements, ensuring
+precise control.
 \begin{lstlisting}[language=Java]
-// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputController.java
-public class BoardInputController extends AbstractController {
-    // ...existing code...
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/AbstractInputController.java
+package dev.kingdomino.game;
+
+import com.badlogic.gdx.controllers.Controller;
+
+public abstract class AbstractInputController implements ControllerListener {
     @Override
-    public boolean axisMoved(Controller controller, int axisCode, float value) {
-        // ...existing code...
-        Action action = translateAxisToAction(axisX, axisY);
-        if (action != Action.NONE) {
-            return boardInputHandler.keyDown(action); // Trigger movement
-        } else {
-            return boardInputHandler.keyUp(action); // Stop movement
-        }
-    }
-    // ...existing code...
+    public boolean buttonDown(...) { return handleStatus; }
+
+    @Override
+    public boolean buttonUp(...) { return handleStatus; }
+
+    @Override
+    public boolean axisMoved(...) { return handleStatus; }
 }
 \end{lstlisting}
 
-\subsubsection{BoardInputProcessor}
-The \texttt{BoardInputProcessor} class handles input from the keyboard. It maps
-key presses to actions such as moving, rotating, placing, or discarding a
-domino. This class ensures that keyboard inputs are correctly translated into
-game actions.
+\subsubsection{AbstractInputProcessor}
+The \texttt{AbstractInputProcessor} class implements the
+\texttt{InputProcessor} interface with all input events from keyboard. It is
+being rejected by default. Specific input events can be handled by extending
+this class and overriding the relevant methods.
 
 \begin{lstlisting}[language=Java]
-// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputProcessor.java
-public class BoardInputProcessor extends AbstractInputProcessor {
-    // ...existing code...
+// filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/AbstractInputProcessor.java
+package dev.kingdomino.game;
+
+import com.badlogic.gdx.InputProcessor;
+
+public abstract class AbstractInputProcessor implements InputProcessor {
     @Override
-    public boolean keyDown(int keycode) {
-        GameManager.setInputDevice(InputDevice.KEYBOARD);
-        return boardInputHandler.keyDown(translateKeycodeToAction(keycode));
-    }
+    public boolean keyDown(int keycode) {return false;}
+
+    @Override
+    public boolean keyUp(int keycode) {return false;}
     // ...existing code...
 }
 \end{lstlisting}
 
 \subsubsection{Input Handlers}
 The \texttt{BoardInputHandler} and \texttt{DraftInputHandler} classes are
-responsible for translating the inputs received from the
-\texttt{BoardInputController} and \texttt{BoardInputProcessor} into signals
-that the system can process. These handlers manage the state of the game and
-ensure that inputs are processed correctly based on the current game state.
+responsible for translating the inputs received from instance of
+\texttt{AbstractInputController} and \texttt{AbstractInputProcessor} into
+signals that the system can process. These handlers manage the state of the
+game and ensure that inputs are processed correctly based on the current game
+state.
 
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/BoardInputHandler.java
@@ -457,17 +465,10 @@ public class BoardInputHandler {
         update(); // update states
         Event e = null;
         switch (action) {
-            case MOVE_UP:
-                // ...existing code...
-            case MOVE_DOWN:
-                // ...existing code...
-            case MOVE_LEFT:
                 // ...existing code...
             case MOVE_RIGHT:
                 // ...existing code...
             case ROTATE_CLOCKWISE:
-                // ...existing code...
-            case ROTATE_COUNTERCLOCKWISE:
                 // ...existing code...
             case PLACE_DOMINO:
                 // ...existing code...
@@ -486,63 +487,58 @@ public class BoardInputHandler {
 }
 \end{lstlisting}
 
+To get the event from the input, each input has to translate the keycode into a
+corresponding action using the /texttt{translateKeycodeToAction} method, which
+maps specific key presses to game actions such as moving, placing, or
+discarding a domino.
+
+Simmilarly, \texttt{DraftInputHandler} class handles translated input events
+for selecting next dominoes.
+
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/DraftInputHandler.java
-public class DraftInputHandler extends AbstractInputProcessor {
+public boolean keyDown(Action action) {
     // ...existing code...
-    public boolean keyDown(Action action) {
-        if (gameManager.getCurrentState() != GameManager.GameState.TURN_CHOOSING) {
-            updated = true;
-            return false;
-        }
-        Event e = null;
-        switch (action) {
-            case MOVE_UP:
-                // ...existing code...
-            case MOVE_DOWN:
-                // ...existing code...
-            case SELECT_DOMINO:
-                // ...existing code...
-            default:
-                break;
-        }
-        if (e != null) {
-            eventManager.addEvent(e, "base", false);
-            updated = true;
-        }
-        return true;
+    switch (action) {
+        case MOVE_UP:
+            // ...existing code...
+        case MOVE_DOWN:
+            // ...existing code...
+        case SELECT_DOMINO:
+            // ...existing code...
+        default:
+            break;
     }
-    // ...existing code...
+    //...existing code...
 }
 \end{lstlisting}
 
 \subsubsection{Key Features of Input Handling}
-\begin{itemize}
-    \item \textbf{Deferred Execution}: Input actions are queued and processed asynchronously.
-    \item \textbf{State-Based Processing}: Input is processed only in relevant game states.
-    \item \textbf{Feedback Integration}: Invalid actions trigger audio and visual feedback.
-\end{itemize}
+The input handling system in Kingdomino features deferred execution, where
+actions are queued and processed asynchronously, state-based processing that
+ensures input is handled only in relevant game states, and feedback integration
+that triggers audio and visual feedback for invalid actions.
 
-\subsubsection{Example: Handling Movement Events}
-When a player moves a domino using the keyboard or controller:
-\begin{enumerate}
-    \item Input is captured (WASD keys or joystick).
-    \item \texttt{BoardInputHandler} checks validity (e.g., ensuring the move is within bounds).
-    \item If valid, an event is created and queued:
-          \begin{lstlisting}[language=Java]
-Event moveEvent = new Event(
-    TriggerType.BEFORE, true, true, 0.15f, // Delay for smooth input
-    () -> currentDomino.moveDomino(Direction.UP),
-    null, null, null);
-eventManager.addEvent(moveEvent, "input", false);
-    \end{lstlisting}
-    \item The event executes smoothly without blocking the main loop.
-    \item If the move is invalid, audio and visual feedback are triggered:
-          \begin{lstlisting}[language=Java]
-audioManager.playSound(AudioManager.SoundType.CANCEL);
-BackgroundManager.screenShake();
-    \end{lstlisting}
-\end{enumerate}
+\subsubsection{Input Handling}
+The input handling system in Kingdomino features deferred execution, where actions are queued and processed asynchronously, state-based processing that ensures input is handled only in relevant game states, and feedback integration that triggers audio and visual feedback for invalid actions.
+\begin{algorithm}[htbp]
+    \caption{Handling Movement Events}
+    \KwIn{Player input (WASD keys or joystick)}
+    \KwOut{Updated domino position}
+    \Begin{
+        Capture player input\;
+        \If{Input is valid}{
+            Create a move event with delay for smooth input\;
+            \texttt{moveEvent} $\leftarrow$ \texttt{new Event(TriggerType.BEFORE, true, true, 0.15, () -> currentDomino.moveDomino(Direction.UP), null, null, null)}\;
+            Add event to event manager queue\;
+            \texttt{eventManager.addEvent(moveEvent, "input", false)}\;
+            Play sound effect for invalid move\;
+            \texttt{audioManager.playSound(AudioManager.SoundType.CANCEL)}\;
+            Trigger screen shake effect\;
+            \texttt{BackgroundManager.screenShake()}\;
+        }
+    }
+\end{algorithm}
 
 \subsection{User Interface}
 
