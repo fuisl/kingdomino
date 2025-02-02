@@ -899,7 +899,46 @@ size as large, detailed texture would become inelligible by the CRT Shader.
 
 \subsection{Performance Analysis}
 % -- Discuss the performance of the game, any bottlenecks, optimizations.
-framerate, input lag event-driven vs. sync update
+
+To investigate the performance of the game, we used VisualVM version 2.1.10 \cite{src:visual-vm} to profile the game's resource consumption whilst running.
+The game is run on a Linux machine with Fedora Sway Spin 41 using OpenJDK Java 17.
+For profiling memory, we used the Startup Profiler plugin \cite{src:startup-profiler}, configured to Java 17 with 64-bit architecture, listen to port 5140.
+For profiling performance, we launched the game, then attached VisualVM.
+The reason is that we wanted to identify bottleneck within the game logic, but if we used Startup Profiler, it will record draw calls which would cause other performance hotspot to be drowned out, as draw calls take up majority of execution time.
+Our findings are as follow:
+
+\subsubsection{Memory Usage}
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/resource-usage.png}}
+    \caption{Resource usage graph of the game}\label{fig:resource-usage}
+\end{figure}
+
+The CPU usage spike at the start of the game is normal, as the game is loading all needed assets from disk to memory, as well as initializing its classes.
+
+% going to write in very simple term here, will rewrite this part later
+
+Memory usage graph show we are allocating a lot of objects
+Most of these object are not referenced, allowing garbage collector to remove them
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/memory-tree.png}}
+    \caption{Memory usage of game classes, sorted by live bytes at the end of the profiling session.}\label{fig:memory-tree}
+\end{figure}
+
+Show Event, Ease and Position as main culprit
+Conclude that it is not bad as 3 mins garbage collection cycle is all good
+Still is a good thing to optimize as we finalize the application
+
+\subsubsection{CPU Usage}
+
+% figure
+
+Hotspot at expected location
+Low CPU time per call, suggesting that our implementation are efficient
+
+% end of "simple term" area
+
 
 \subsection{Correctness and Scalability}
 % -- Describe your environment, parameter choices, etc.
