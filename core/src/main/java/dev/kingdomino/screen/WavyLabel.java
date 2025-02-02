@@ -30,7 +30,7 @@ public class WavyLabel extends Label {
     }
 
     public WavyLabel(CharSequence text, LabelStyle style) {
-        this(text, style, 1.5f, 4f, 0.5f);
+        this(text, style, 1.5f, 2f, 0.3f);
     }
 
     @Override
