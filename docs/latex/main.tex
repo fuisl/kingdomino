@@ -5,13 +5,13 @@
 
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
+\usepackage{algpseudocode}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{url}
 \usepackage{listings}
-\usepackage{algorithm2e}
+\usepackage{algorithm}
 \usepackage{hyperref}
 
 \hypersetup{
@@ -515,25 +515,23 @@ actions are queued and processed asynchronously, state-based processing that
 ensures input is handled only in relevant game states, and feedback integration
 that triggers audio and visual feedback for invalid actions.
 
+% why are we putting actual code in pseudocode
+
 \subsubsection{Input Handling}
 The input handling system in Kingdomino features deferred execution, where actions are queued and processed asynchronously, state-based processing that ensures input is handled only in relevant game states, and feedback integration that triggers audio and visual feedback for invalid actions.
-\begin{algorithm}[htbp]
+\begin{algorithm}
     \caption{Handling Movement Events}
-    \KwIn{Player input (WASD keys or joystick)}
-    \KwOut{Updated domino position}
-    \Begin{
-        Capture player input\;
-        \If{Input is valid}{
-            Create a move event with delay for smooth input\;
-            \texttt{moveEvent} $\leftarrow$ \texttt{new Event(TriggerType.BEFORE, true, true, 0.15, () -> currentDomino.moveDomino(Direction.UP), null, null, null)}\;
-            Add event to event manager queue\;
-            \texttt{eventManager.addEvent(moveEvent, "input", false)}\;
-            Play sound effect for invalid move\;
-            \texttt{audioManager.playSound(AudioManager.SoundType.CANCEL)}\;
-            Trigger screen shake effect\;
-            \texttt{BackgroundManager.screenShake()}\;
-        }
-    }
+    \begin{algorithmic}
+        \Require Player input (WASD keys or joystick)
+        \Ensure Updated domino position
+        \State Capture player input
+        \If{Input is valid}
+            \State Create a move event with delay for smooth input
+            \State Add event to event manager queue
+            \State Play sound effect for invalid move
+            \State Trigger screen shake effect
+        \EndIf
+    \end{algorithmic}
 \end{algorithm}
 
 \subsection{User Interface}
@@ -747,17 +745,20 @@ algorithm:
 
 \begin{algorithm}[htbp]
     \caption{Flood-fill Algorithm}
-    \KwIn{Tile}
-    \KwOut{Flood-filled region}
-    \If{Tile is not inside Region}{
-        \Return\;
-    }
-    Set the node\;
-    Perform Flood-fill one step to the south of Tile\;
-    Perform Flood-fill one step to the north of Tile\;
-    Perform Flood-fill one step to the west of Tile\;
-    Perform Flood-fill one step to the east of Tile\;
-    \Return\;
+    \begin{algorithmic}
+        \Require Tile
+        \Ensure Flood-filled Region
+        \If{Tile is not inside Region}
+            \Return
+        \EndIf
+        \State Set the node
+        \State Perform Flood-fill one step to the south of Tile
+        \State Perform Flood-fill one step to the north of Tile
+        \State Perform Flood-fill one step to the west of Tile
+        \State Perform Flood-fill one step to the east of Tile\\
+        % why arent you going down a line
+        \Return
+    \end{algorithmic}
 \end{algorithm}
 
 This algorithm is in its original form. For Kingdomino with multiplicative
