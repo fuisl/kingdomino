@@ -181,16 +181,16 @@ public class GameManager {
 
     private void init() {
 
-        // test end game with 2 turns. // TODO: remove later
-        for (int i = 0; i < 40; i++) {
-            deck.drawCard();
-        }
+        // // test end game with 2 turns. // TODO: remove later
+        // for (int i = 0; i < 40; i++) {
+        //     deck.drawCard();
+        // }
 
-        // game init for 3 kings (removing 12 dominos)
-        if (kingCount == 3) {
-            for (int i = 0; i < 12; i++)
-                deck.drawCard();
-        }
+        // // game init for 3 kings (removing 12 dominos)
+        // if (kingCount == 3) {
+        //     for (int i = 0; i < 12; i++)
+        //         deck.drawCard();
+        // }
 
         Domino[] draft_current = new Domino[kingCount];
 
