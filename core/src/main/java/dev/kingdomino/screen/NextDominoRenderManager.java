@@ -60,7 +60,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         Table layout = new Table();
         layout.setBackground(bezelBackground);
 
-        layout.add(new Label("Next Dominoes", headerStyle)).pad(5);
+        WavyLabel title = new WavyLabel("Next Dominoes", headerStyle);
+        layout.add(title).pad(5);
         layout.row();
 
         for (int i = 0; i < kingCount; i++) {

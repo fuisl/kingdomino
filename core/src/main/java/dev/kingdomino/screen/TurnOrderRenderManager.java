@@ -56,7 +56,7 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
         Table layout = new Table();
         layout.setBackground(bezelBackground);
 
-        Label header = new Label("Current Player", headerStyle);
+        WavyLabel header = new WavyLabel("Turn Order", headerStyle);
         header.setAlignment(Align.center);
 
         layout.add(header)

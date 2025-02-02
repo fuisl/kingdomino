@@ -67,7 +67,8 @@ public class SidePanelManager extends Actor {
         Table layout = new Table();
         layout.setBackground(bezelBackground);
 
-        layout.add(new Label("Opponents' Board", headerStyle))
+        WavyLabel header = new WavyLabel("Opponents' Board", headerStyle);
+        layout.add(header)
                 .pad(10);
 
         layout.row();

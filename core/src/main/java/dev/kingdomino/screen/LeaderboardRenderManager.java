@@ -53,7 +53,8 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
 
         String[] label = { "1st", "2nd", "3rd", "4th" };
 
-        layout.add(new Label("Leaderboard", headerStyle))
+        WavyLabel header = new WavyLabel("Leaderboard", headerStyle);
+        layout.add(header)
                 .pad(5);
 
         layout.row();
