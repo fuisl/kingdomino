@@ -3,7 +3,7 @@ package dev.kingdomino.effects.actions;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Action;
 
-public class LabelWaveAnimation extends Action {
+public class ShakeAnimation extends Action {
     private float duration; // Total shake time in seconds
     private float time; // Accumulated time
     private float magnitude; // Maximum offset in pixels
@@ -11,7 +11,7 @@ public class LabelWaveAnimation extends Action {
     private float originalX; // Actor's original X position
     private float originalY; // Actor's original Y position;
 
-    public LabelWaveAnimation(float duration, float magnitude) {
+    public ShakeAnimation(float duration, float magnitude) {
         this.duration = duration;
         this.magnitude = magnitude;
     }

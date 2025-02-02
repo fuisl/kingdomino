@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 
-import dev.kingdomino.effects.ShakeAction;
+import dev.kingdomino.effects.actions.ShakeAnimation;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
 
@@ -117,7 +117,7 @@ public class LeaderboardRenderManager extends AbstractRenderManager {
         firstPosition.addAction(Actions.sequence(
                 Actions.parallel(
                         Actions.scaleTo(1.25f, 1.25f, 0.05f, Interpolation.linear),
-                        new ShakeAction(0.15f, 10)),
+                        new ShakeAnimation(0.15f, 10)),
 
                 // reset the scale and position
                 Actions.parallel(

@@ -1,39 +1,41 @@
 package dev.kingdomino.screen;
 
+import java.util.Random;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
-public class WavyLabel extends Label {
-    private float elapsedTime = 0f;
-    private float amplitude; // Maximum vertical offset in pixels.
-    private float frequency; // Oscillation frequency in radians per second.
-    private float phaseOffset; // Phase difference between characters (radians).
+public class WavyLabel extends Label {   
+    private WaveAnimation waveAnimation;
 
     /**
-     * @param text        The text of the label.
-     * @param style       The label style.
-     * @param amplitude   Maximum vertical offset (in pixels).
-     * @param frequency   Oscillation frequency (radians per second).
-     * @param phaseOffset Phase difference between consecutive characters (radians).
+     * Create a label that will wave indefinitely.
+     * 
+     * @param text Label text
+     * @param style Label style
+     * @param maxHeight Maximum y offset of label
+     * @param duration How long it take for a single character to wave
+     * @param characterTimeOffset Time offset between character next to each other
+     * 
+     * @author fuisl
      */
-    public WavyLabel(CharSequence text, LabelStyle style, float amplitude, float frequency, float phaseOffset) {
+    public WavyLabel(CharSequence text, LabelStyle style, float maxHeight, float duration, float characterTimeOffset) {
         super(text, style);
-        this.amplitude = amplitude;
-        this.frequency = frequency;
-        this.phaseOffset = phaseOffset;
+        this.waveAnimation = new WaveAnimation(maxHeight, duration, characterTimeOffset);
+        this.addAction(waveAnimation);
     }
 
     public WavyLabel(CharSequence text, LabelStyle style) {
-        this(text, style, 1.5f, 1.5f, 0.75f);
+        this(text, style, 1.5f, 2f, 0.3f);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        elapsedTime += delta;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class WavyLabel extends Label {
                 continue;
 
             // Compute a vertical offset for this character.
-            float offsetY = amplitude * MathUtils.sin(frequency * elapsedTime + i * phaseOffset);
+            float offsetY = waveAnimation.getHeight(i);
             // Draw the character at currentX; baseY ensures the text is drawn higher.
             font.draw(batch, String.valueOf(ch), currentX, baseY + offsetY);
             // Advance currentX by the glyph's xadvance.
@@ -68,4 +70,36 @@ public class WavyLabel extends Label {
         }
     }
 
+    private class WaveAnimation extends Action {
+        private float maxHeight;
+        private float duration;
+        private float timeOffset;
+        
+        private float elapsedTime;
+
+        public WaveAnimation(float maxHeight, float duration, float timeOffset) {
+            this.maxHeight = maxHeight;
+            this.duration = duration;
+            this.timeOffset = timeOffset;
+
+            this.elapsedTime = new Random().nextFloat(duration);
+        }
+
+        @Override
+        public boolean act(float dt) {
+            // basically a clock, as we need to lookup the sine wave when getting height
+            elapsedTime += dt;
+
+            if (elapsedTime > duration) {
+                elapsedTime -= duration;
+            }
+
+            // always ticking
+            return false;
+        }
+
+        public float getHeight(int offsetScale) {
+            return maxHeight * MathUtils.sinDeg((elapsedTime + offsetScale * timeOffset) / duration * 360);
+        }
+    }
 }

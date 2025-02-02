@@ -11,6 +11,8 @@ public class FloatingAnimation extends Action {
     private float maxAngleOffset;
     private float timeElapsed;
 
+    private float originalY;
+
     private float distOffset;
     private float angleOffset;
 
@@ -55,7 +57,7 @@ public class FloatingAnimation extends Action {
         distOffset = sineValue * maxDistOffset;
         angleOffset = sineValue * maxAngleOffset;
 
-        actor.setPosition(actor.getX(), actor.getY() + distOffset);
+        actor.setPosition(actor.getX(), originalY + distOffset);
         actor.setRotation(angleOffset);
 
         // loop indefinitely
@@ -63,6 +65,7 @@ public class FloatingAnimation extends Action {
     }
 
     private void begin() {
+        originalY = actor.getY();
         actor.setOrigin(actor.getWidth() / 2, actor.getHeight() / 2);
     }
 }
