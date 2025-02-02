@@ -2,9 +2,11 @@ package dev.kingdomino.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import dev.kingdomino.screen.ScreenEnum;
 import dev.kingdomino.screen.ScreenManager;
@@ -38,7 +40,23 @@ public class Kingdomino extends Game {
          * At least, hopefully, I dont want to deal with that mess
          */
         assetManager.load("gameTextures.atlas", TextureAtlas.class);
-        assetManager.load("skin/uiskin.json", Skin.class);
+        assetManager.load("PixelifySansHeader.fnt", BitmapFont.class);
+        assetManager.load("PixelifySansBody.fnt", BitmapFont.class);
+        assetManager.load("audio/music.wav", Music.class);
+        assetManager.load("audio/cancel.ogg", Sound.class);
+        assetManager.load("audio/confirmselecting.ogg", Sound.class);
+        assetManager.load("audio/highlight1.ogg", Sound.class);
+        assetManager.load("audio/moving.ogg", Sound.class);
+        assetManager.load("audio/multhit1.ogg", Sound.class);
+        assetManager.load("audio/multhit2.ogg", Sound.class);
+        assetManager.load("audio/newturn.ogg", Sound.class);
+        assetManager.load("audio/placing.ogg", Sound.class);
+        assetManager.load("audio/rotating.ogg", Sound.class);
+        assetManager.load("audio/scoring.ogg", Sound.class);
+        assetManager.load("audio/scoring2.ogg", Sound.class);
+        assetManager.load("audio/selecting.ogg", Sound.class);
+        assetManager.load("audio/timpani.ogg", Sound.class);
+        assetManager.load("audio/win.ogg", Sound.class);
     }
 
     @Override

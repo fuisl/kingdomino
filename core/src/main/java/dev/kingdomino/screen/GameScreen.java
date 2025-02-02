@@ -11,15 +11,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.BackgroundManager;
 import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.game.GameManager.GameState;
 import dev.kingdomino.game.TerrainType;
 
 /**
@@ -31,18 +35,27 @@ public class GameScreen extends AbstractScreen {
     private Stage stage;
     private GameManager gameManager;
     private ScreenViewport screenViewport;
+    private Table rootTable;
+
     private MainBoardActor mainBoardActor;
     private SidePanelManager sidePanelManager;
     private TurnOrderRenderManager turnOrderRenderManager;
     private LeaderboardRenderManager leaderboardRenderManager;
     private NextDominoRenderManager nextDominoRenderManager;
-    private MainBoardHUDManager mainBoardHUDManager;
     private ControlHintManager controlHintManager;
-    private Table rootTable;
-    private Skin skin;
+    private AudioManager audioManager;
 
     private CRTShader crtShader;
     private BackgroundShader backgroundShader;
+    private OrthographicCamera shaderSharedCamera = new OrthographicCamera();
+
+    private NinePatchDrawable leftInfoBackground;
+    private NinePatchDrawable rightInfoBackground;
+    private NinePatchDrawable bezel;
+    private NinePatchDrawable bezelBackground;
+    private NinePatchDrawable whiteBezel;
+
+    private EndDialog endGameDialog;
 
     // TODO: Allow this value to be changed, if I can get there...
     private final boolean SHADER_TOGGLE = true;
@@ -56,7 +69,7 @@ public class GameScreen extends AbstractScreen {
         super(spriteBatch, assetManager);
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
-        gameManager = new GameManager();
+        gameManager = new GameManager(this);
 
         // logging GPU info before shader init.
         // TODO move to loading screen, if I managed to get there in time
@@ -66,10 +79,16 @@ public class GameScreen extends AbstractScreen {
         Gdx.app.log("GPU Info", "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION));
         Gdx.app.log("GPU Info", "GLSL Version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
 
-        OrthographicCamera shaderSharedCamera = new OrthographicCamera();
-
         this.backgroundShader = new BackgroundShader(shaderSharedCamera);
-        this.crtShader = new CRTShader(shaderSharedCamera);
+        this.crtShader = new CRTShader(shaderSharedCamera, 25f);
+
+        // important for screenshake
+        BackgroundManager.setCamera(shaderSharedCamera);
+
+        // load audio
+        audioManager = AudioManager.getInstance();
+        audioManager.load(assetManager);
+        audioManager.playMusic();
 
         // TODO remove later, just pinging to get it to be alive... I assume
         // why do you need to be pinged twice...?
@@ -77,7 +96,6 @@ public class GameScreen extends AbstractScreen {
         gameManager.update(0f);
 
         TextureAtlas atlas = assetManager.get("gameTextures.atlas");
-        skin = assetManager.get("skin/uiskin.json");
 
         for (TerrainType name : TerrainType.values()) {
             if (name == TerrainType.CASTLE) {
@@ -94,6 +112,14 @@ public class GameScreen extends AbstractScreen {
             name.setTexture(atlas.findRegion(name.name().toLowerCase()));
         }
 
+        Label.LabelStyle headerStyle = new Label.LabelStyle();
+        headerStyle.font = assetManager.get("PixelifySansHeader.fnt");
+        headerStyle.fontColor = Color.WHITE;
+
+        Label.LabelStyle bodyStyle = new Label.LabelStyle();
+        bodyStyle.font = assetManager.get("PixelifySansBody.fnt");
+        bodyStyle.fontColor = Color.WHITE;
+
         TextureRegion[] crownOverlay;
         TextureRegion[] kingAvatar;
 
@@ -109,96 +135,128 @@ public class GameScreen extends AbstractScreen {
         kingAvatar[2] = atlas.findRegion("pinkKing");
         kingAvatar[3] = atlas.findRegion("yellowKing");
 
-        turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, skin);
-        leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, skin);
-        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, skin, crownOverlay,
-                atlas.findRegion("highlight"));
-        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar);
-        mainBoardHUDManager = new MainBoardHUDManager(gameManager, kingAvatar, skin);
-        controlHintManager = new ControlHintManager(gameManager, skin);
+        leftInfoBackground = new NinePatchDrawable(atlas.createPatch("leftTable"));
+        rightInfoBackground = new NinePatchDrawable(atlas.createPatch("rightTable"));
+        bezel = new NinePatchDrawable(atlas.createPatch("bezel"));
+        whiteBezel = new NinePatchDrawable(atlas.createPatch("whiteBezel"));
+        bezelBackground = new NinePatchDrawable(atlas.createPatch("bezelBackground"));
+
+        turnOrderRenderManager = new TurnOrderRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle, bezel,
+                whiteBezel, bezelBackground);
+        leaderboardRenderManager = new LeaderboardRenderManager(gameManager, kingAvatar, headerStyle, bodyStyle, bezel,
+                bezelBackground);
+        nextDominoRenderManager = new NextDominoRenderManager(gameManager, kingAvatar, headerStyle, crownOverlay,
+                bezel, whiteBezel, bezelBackground);
+        sidePanelManager = new SidePanelManager(gameManager, crownOverlay, screenViewport, kingAvatar, headerStyle,
+                bezel, bezelBackground);
+        controlHintManager = new ControlHintManager(gameManager, bodyStyle);
         mainBoardActor = new MainBoardActor(crownOverlay, screenViewport, gameManager);
+
+        endGameDialog = new EndDialog(gameManager, kingAvatar, headerStyle, bodyStyle, bezel, bezelBackground,
+                whiteBezel, atlas.findRegion("blackSquare"));
     }
 
     @Override
     public void initScreen() {
-        // welcome to the world of Layout-by-Code. Please make yourself at home.
+        // welcome to the world of Layout-by-Code. Please make yourself feel at home.
         rootTable = new Table();
+        rootTable.setFillParent(true);
 
         Table leftInfoLayout = new Table();
         Table mainGameLayout = new Table();
 
-        rootTable.setFillParent(true);
+        /**
+         * Add non-drawing Actors to the system
+         */
+
         stage.addActor(rootTable);
         stage.addActor(turnOrderRenderManager);
         stage.addActor(leaderboardRenderManager);
         stage.addActor(nextDominoRenderManager);
         stage.addActor(sidePanelManager);
-        stage.addActor(mainBoardHUDManager);
         stage.addActor(controlHintManager);
 
+        /**
+         * Left Information Layout
+         */
+
+        leftInfoLayout.setBackground(leftInfoBackground);
+
         leftInfoLayout.add(turnOrderRenderManager.getLayout())
-                .height(Value.percentHeight(0.37f, leftInfoLayout))
-                .expandX()
                 .fill()
-                .pad(15);
+                .pad(10);
 
         leftInfoLayout.row();
 
         leftInfoLayout.add(nextDominoRenderManager.getLayout())
-                .height(Value.percentHeight(0.27f, leftInfoLayout))
-                .expandX()
                 .fill()
-                .pad(15);
+                .pad(10);
 
         leftInfoLayout.row();
 
         leftInfoLayout.add(leaderboardRenderManager.getLayout())
-                .height(Value.percentHeight(0.27f, leftInfoLayout))
-                .expandX()
                 .fill()
-                .pad(15);
+                .pad(10);
 
-        mainGameLayout.add(mainBoardHUDManager.getLayout())
-                .height(Value.percentHeight(0.08f, mainGameLayout))
-                .expandX()
+        /**
+         * Central Game Layout
+         */
+
+        Container<Actor> container = new Container<>(mainBoardActor);
+        container.fill();
+
+        mainGameLayout.add(container)
+                .maxHeight(Value.percentHeight(0.92f, mainGameLayout))
+                .minHeight(Value.percentHeight(0.5f, mainGameLayout))
+                .prefHeight(Value.percentHeight(0.88f, mainGameLayout))
+                .expand()
                 .fill();
 
         mainGameLayout.row();
 
-        Container<Actor> container = new Container<>(mainBoardActor);
-        container.fill();
-        mainGameLayout.add(container).expand().fill();
-        mainGameLayout.row();
-
         controlHintManager.setLayout(mainGameLayout);
 
+        /**
+         * Right Information Layout
+         */
+
+        Table rightInfoLayout = new Table();
+        rightInfoLayout.setBackground(rightInfoBackground);
+
+        rightInfoLayout.add(sidePanelManager.getLayout())
+                .expand()
+                .fill()
+                .pad(10);
+
+        /**
+         * Packing Everything into rootTable
+         */
+
         rootTable.add(leftInfoLayout)
-                .width(Value.percentWidth(0.14f, rootTable))
                 .expandY()
                 .fill();
 
         rootTable.add(mainGameLayout)
                 .expand()
-                .fill();
+                .fill()
+                .minHeight(Value.percentHeight(1f, rootTable))
+                .maxHeight(Value.percentHeight(1f, rootTable));
 
-        rootTable.add(sidePanelManager.getLayout())
-                .width(Value.percentWidth(0.2f, rootTable))
+        rootTable.add(rightInfoLayout)
+                .width(Value.percentWidth(0.18f, rootTable))
                 .expandY()
                 .fill();
-
-        // TODO remove this line once we are done with layout
-        stage.setDebugAll(true);
     }
 
     @Override
     public void render(float delta) {
         gameManager.update(delta);
 
-        // update the actors with new informations
-        // TODO remove this once we have a proper screen covering this part
-        // in theory we can supplement a default board to deal with
-        if (gameManager.getCurrentKing() == null)
-            return;
+        if (gameManager.getCurrentState() == GameState.GAME_OVER) {
+            Gdx.input.setInputProcessor(stage);
+            stage.addActor(endGameDialog.getDialog());
+            endGameDialog.getDialog().show(this.stage);
+        }
 
         // renderBackground();
         if (SHADER_TOGGLE) {
@@ -212,7 +270,7 @@ public class GameScreen extends AbstractScreen {
             // apply the CRT shader
             crtShader.applyCRTEffect();
         } else {
-            ScreenUtils.clear(Color.DARK_GRAY);
+            ScreenUtils.clear(Color.LIGHT_GRAY);
             stage.act(delta);
             stage.draw();
         }
@@ -222,6 +280,7 @@ public class GameScreen extends AbstractScreen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
 
+        // update the shaders
         crtShader.replaceBuffer(width, height);
         backgroundShader.changeVertices(width, height);
     }
@@ -231,5 +290,13 @@ public class GameScreen extends AbstractScreen {
         stage.dispose();
         backgroundShader.dispose();
         crtShader.dispose();
+    }
+
+    public TurnOrderRenderManager getTurnOrderRenderManager() {
+        return turnOrderRenderManager;
+    }
+
+    public LeaderboardRenderManager getLeaderboardRenderManager() {
+        return leaderboardRenderManager;
     }
 }

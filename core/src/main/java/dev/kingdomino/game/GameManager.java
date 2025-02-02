@@ -8,7 +8,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.controllers.Controllers;
 
+import dev.kingdomino.effects.AudioManager;
+import dev.kingdomino.effects.AudioManager.SoundType;
 import dev.kingdomino.effects.BackgroundManager;
+import dev.kingdomino.screen.GameScreen;
 
 // import dev.kingdomino.game.Event.TriggerType;
 
@@ -41,6 +44,30 @@ public class GameManager {
 
     public static InputDevice currentInputDevice; // use for displaying accordingly
 
+    private final AudioManager audioManager = AudioManager.getInstance();
+
+    private final GameScreen gameScreen; // for calling animations
+
+    Event scoreSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCORE);
+    }, null, null, null);
+
+    Event scoreSound2 = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCORE2);
+    }, null, null, null);
+
+    Event scoreIncreasingSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCOREINCREASING);
+    }, null, null, null);
+
+    Event scoreIncreasingSound2 = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCOREINCREASING2);
+    }, null, null, null);
+
+    Event scoreReducingSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
+        audioManager.playSound(SoundType.SCOREREDUCING);
+    }, null, null, null);
+
     public enum GameState {
         INIT,
         SETUP,
@@ -70,7 +97,8 @@ public class GameManager {
         }
     }
 
-    public GameManager() {
+    public GameManager(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
         // initialize game manager
         eventManager = EventManager.getInstance();
         boardInputHandler = new BoardInputHandler(this);
@@ -96,7 +124,7 @@ public class GameManager {
         for (int i = 0; i < kingCount; i++) {
             boards[i] = new Board();
             kings[i] = new King(i, boards[i]);
-            scores.put(kings[i], new int[]{0, 0, 0});
+            scores.put(kings[i], new int[] { 0, 0, 0 });
         }
 
         // initialize game state
@@ -127,11 +155,7 @@ public class GameManager {
                 // }, null, null, null);
 
                 // eventManager.addEvent(autoContinue.copy(), "base", false);
-
-                // if (draftInputHandler.show == false) {
-                // draftInputHandler.show = true;
                 updateTurn();
-                // }
                 break;
             case TURN_PLACING:
                 placeDomino();
@@ -146,7 +170,7 @@ public class GameManager {
                 game_over();
                 break;
             case RESULTS:
-                results();
+                // trap state
                 break;
             default:
                 break;
@@ -157,10 +181,10 @@ public class GameManager {
 
     private void init() {
 
-        // // test end game
-        // for (int i = 0; i < 44; i++) {
-        // deck.drawCard();
-        // }
+        // test end game with 2 turns. // TODO: remove later
+        for (int i = 0; i < 40; i++) {
+            deck.drawCard();
+        }
 
         // game init for 3 kings (removing 12 dominos)
         if (kingCount == 3) {
@@ -200,6 +224,8 @@ public class GameManager {
             finalTurn = true;
         }
 
+        audioManager.playSound(SoundType.NEWTURN);
+
         // set game state to TURN
         currentState = GameState.TURN_START;
     }
@@ -237,10 +263,45 @@ public class GameManager {
     private void placeDomino() {
         placingDomino = true;
         if (boardInputHandler.exit && boardInputHandler.valid) {
+            int tempScoreCurrentKing = currentKing.getBoard().getScoringSystem().getLandTotal();
+
             currentBoard.getScoringSystem().calculateLandScore();
+            results();
+
+            // playing placing sound
+            int diff = scores.get(currentKing)[2] - tempScoreCurrentKing;
+
+            // highlight score change
+            if (diff != 0) {
+                gameScreen.getTurnOrderRenderManager().animateScoreWrapper();
+            }
+
+            // select sound based on score change
+            if (diff >= 3) {
+                eventManager.addEvent(scoreIncreasingSound2.copy(), "sound", false);
+                eventManager.addEvent(scoreSound2.copy(), "sound", false);
+            } else if (diff > 0) {
+                eventManager.addEvent(scoreIncreasingSound.copy(), "sound", false);
+                eventManager.addEvent(scoreSound.copy(), "sound", false);
+            } else if (diff < 0 && diff >= -2) {
+                eventManager.addEvent(scoreReducingSound.copy(), "sound", false);
+                eventManager.addEvent(scoreSound.copy(), "sound", false);
+            } else if (diff <= -3) {
+                eventManager.addEvent(scoreReducingSound.copy(), "sound", false);
+                eventManager.addEvent(scoreSound2.copy(), "sound", false);
+            }
+
+            King firstPositionKing = scores.entrySet().iterator().next().getKey();
             // update score var after placing domino
             results();
+
+            // animate first position if changed
+            if (!scores.entrySet().iterator().next().getKey().equals(firstPositionKing)) {
+                gameScreen.getLeaderboardRenderManager().animateFirstPosition();
+            }
+
             if (finalTurn) {
+                choosingDomino = false;
                 currentState = GameState.TURN_END;
             } else {
                 currentState = GameState.TURN_CHOOSING;
@@ -281,12 +342,7 @@ public class GameManager {
     }
 
     private void game_over() {
-        // recalculate scores for every kings
-        for (King k : kings) {
-            k.getBoard().getScoringSystem().calculateScore();
-        }
-
-        // TODO: clean up
+        results(); // actually redundant -> results() is called in every placeDomino()
 
         currentState = GameState.RESULTS;
     }
@@ -301,6 +357,8 @@ public class GameManager {
             int totalScore = k.getBoard().getScoringSystem().getBoardTotal();
             scores.put(k, new int[] { landScore, bonusScore, totalScore });
         }
+
+        // playing score sound
 
         scores = sortScores(scores, 2); // sort by total
     }

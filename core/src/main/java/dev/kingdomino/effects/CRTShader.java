@@ -18,11 +18,11 @@ import dev.kingdomino.game.GameTimer;
  * @author fuisl
  */
 public class CRTShader {
-    private ShaderProgram crtShader;
+    private final ShaderProgram crtShader;
     private FrameBuffer crtFbo;
-    private Mesh crtQuad;
-    private OrthographicCamera camera;
-    private GameTimer gameTimer;
+    private final Mesh crtQuad;
+    private final OrthographicCamera camera;
+    private final GameTimer gameTimer;
     private float crtValue;
 
     public float getCrtValue() {
@@ -33,7 +33,7 @@ public class CRTShader {
         this.crtValue = crtValue;
     }
 
-    public CRTShader(OrthographicCamera camera) {
+    public CRTShader(OrthographicCamera camera, float crtValue) {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
 
@@ -61,7 +61,7 @@ public class CRTShader {
 
         this.camera = camera;
         this.gameTimer = GameTimer.getInstance();
-        this.crtValue = 30f;
+        this.crtValue = crtValue;
     }
 
     public void startBufferCapture() {
@@ -102,7 +102,7 @@ public class CRTShader {
         crtShader.setUniformf("crt_intensity", intensity);
 
         // glitch
-        crtShader.setUniformf("glitch_intensity", 0.2f); // or a higher value
+        crtShader.setUniformf("glitch_intensity", 0.001f); // or a higher value
 
         // scanlines
         crtShader.setUniformf("scanlines", Gdx.graphics.getHeight() * 0.75f);
@@ -117,6 +117,9 @@ public class CRTShader {
         crtShader.setUniformf("mouse_screen_pos", mx, my);
 
         crtQuad.bind(crtShader);
+
+        // update camera before supplying the uniform
+        BackgroundManager.updateCameraShakePosition();
         crtShader.setUniformMatrix("u_projTrans", camera.combined);
 
         // bind the frame buffer
@@ -127,10 +130,14 @@ public class CRTShader {
 
     public void replaceBuffer(int width, int height) {
         if (crtFbo != null) {
-            crtFbo.dispose();
+            try {
+                FrameBuffer tempFbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+                crtFbo.dispose();
+                crtFbo = tempFbo;
+            } catch (IllegalStateException e) {
+                Gdx.app.log("CRT Shader Exception", e.getMessage());
+            }
         }
-
-        crtFbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
 
         float[] newVertices = new float[] {
                 0, 0, 0, 0, 0,

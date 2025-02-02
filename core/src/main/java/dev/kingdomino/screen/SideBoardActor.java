@@ -43,7 +43,7 @@ public class SideBoardActor extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(kingAvatar[kingID], getX(), getY() + getHeight() - 64, 64, 64);
+        batch.draw(kingAvatar[kingID], getX(), getY() + getHeight() - 48, 48, 48);
 
         batch.end();
 

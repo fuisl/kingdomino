@@ -3,7 +3,9 @@ package dev.kingdomino.screen;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -20,10 +22,16 @@ public class SidePanelManager extends Actor {
     private FitViewport tableViewport;
     private GameManager gameManager;
     private int kingCount;
+    private NinePatchDrawable bezel;
+    private NinePatchDrawable bezelBackground;
+    private Label.LabelStyle headerStyle;
 
     public SidePanelManager(GameManager gameManager, TextureRegion[] crownOverlay, ScreenViewport screenViewport,
-            TextureRegion[] kingAvatar) {
+            TextureRegion[] kingAvatar, Label.LabelStyle headerStyle, NinePatchDrawable bezel, NinePatchDrawable bezelBackground) {
         this.gameManager = gameManager;
+        this.bezel = bezel;
+        this.bezelBackground = bezelBackground;
+        this.headerStyle = headerStyle;
         kingCount = gameManager.getKingCount();
 
         // clamping as 2 king game has 4 boards
@@ -57,9 +65,23 @@ public class SidePanelManager extends Actor {
 
     public Table getLayout() {
         Table layout = new Table();
+        layout.setBackground(bezelBackground);
+
+        WavyLabel header = new WavyLabel("Opponents' Board", headerStyle);
+        layout.add(header)
+                .pad(10);
+
+        layout.row();
 
         for (int i = 0; i < kingCount; i++) {
-            layout.add(generateContainer(sideBoardActors[i])).expand().fill();
+            Container<Actor> temp = generateContainer(sideBoardActors[i]);
+            temp.setBackground(bezel);
+
+            layout.add(temp)
+                    .expand()
+                    .fill()
+                    .pad(5);
+    
             layout.row();
         }
 

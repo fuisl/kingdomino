@@ -33,12 +33,17 @@ public class DominoActor extends Actor {
          */
         float textureSize = min(getWidth() / 2, getHeight());
         float padding = (getWidth() - textureSize * 2) / 2;
+        float yPadding = (getHeight() - textureSize) / 2;
 
-        batch.draw(domino.getTileA().getTerrain().getTexture(), padding + getX(), getY(), textureSize, textureSize);
-        batch.draw(crownOverlay[domino.getTileA().getCrown()], padding + getX(), getY(), textureSize, textureSize);
-        batch.draw(domino.getTileB().getTerrain().getTexture(), padding + getX() + textureSize, getY(), textureSize,
+        batch.draw(domino.getTileA().getTerrain().getTexture(), padding + getX(), yPadding + getY(), textureSize,
                 textureSize);
-        batch.draw(crownOverlay[domino.getTileB().getCrown()], padding + getX() + textureSize, getY(), textureSize,
+        batch.draw(crownOverlay[domino.getTileA().getCrown()], padding + getX(), yPadding + getY(), textureSize,
+                textureSize);
+        batch.draw(domino.getTileB().getTerrain().getTexture(), padding + getX() + textureSize, yPadding + getY(),
+                textureSize,
+                textureSize);
+        batch.draw(crownOverlay[domino.getTileB().getCrown()], padding + getX() + textureSize, yPadding + getY(),
+                textureSize,
                 textureSize);
     }
 

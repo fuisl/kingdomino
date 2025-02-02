@@ -19,10 +19,10 @@ import dev.kingdomino.game.GameTimer;
  * @author fuisl
  */
 public class BackgroundShader {
-    private ShaderProgram backgroundShader;
-    private Mesh screenQuad;
-    private OrthographicCamera camera;
-    private GameTimer gameTimer;
+    private final ShaderProgram backgroundShader;
+    private final Mesh screenQuad;
+    private final OrthographicCamera camera;
+    private final GameTimer gameTimer;
 
     public static HashMap<String, Float> refTable;
     public static HashMap<String, Color> colorTable;
@@ -57,11 +57,11 @@ public class BackgroundShader {
 
         // spin
         backgroundShader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        backgroundShader.setUniformf("u_time", gameTimer.backgroundTime);  // always color bleeding
+        backgroundShader.setUniformf("u_time", gameTimer.backgroundTime); // always color bleeding
         backgroundShader.setUniformf("u_spinTime", gameTimer.backgroundTime);
-        backgroundShader.setUniformf("u_spinAmount", refTable.get("u_spinAmount")); 
-        backgroundShader.setUniformf("u_contrast", refTable.get("u_contrast")); 
-        
+        backgroundShader.setUniformf("u_spinAmount", refTable.get("u_spinAmount"));
+        backgroundShader.setUniformf("u_contrast", refTable.get("u_contrast"));
+
         // color
         BackgroundManager.updateColors();
         backgroundShader.setUniformf("u_colour1", colorTable.get("u_color1"));
@@ -98,10 +98,10 @@ public class BackgroundShader {
     public void changeVertices(int width, int height) {
         // background shader
         float[] bgVertices = new float[] {
-            0, 0, 0, 0, 0,
-            width, 0, 0, 1, 0,
-            width, height, 0, 1, 1,
-            0, height, 0, 0, 1
+                0, 0, 0, 0, 0,
+                width, 0, 0, 1, 0,
+                width, height, 0, 1, 1,
+                0, height, 0, 0, 1
         };
         screenQuad.setVertices(bgVertices);
     }

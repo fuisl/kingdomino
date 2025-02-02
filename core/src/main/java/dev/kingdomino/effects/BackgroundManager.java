@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 
 import dev.kingdomino.game.Ease;
 import dev.kingdomino.game.Ease.EaseType;
@@ -17,17 +19,18 @@ public class BackgroundManager {
     public static final Map<String, Color[]> colorMap = new HashMap<>();
     private static final EventManager eventManager = EventManager.getInstance();
     private static final Map<String, Map<String, Float>> tempTables = new HashMap<>();
+    private static OrthographicCamera sharedCamera;
 
     static {
         // TODO: populate color map
         colorMap.put("default_blue",
-                new Color[] { Color.valueOf("02394A"), Color.valueOf("043565"), Color.valueOf("5158BB") });
+                new Color[] { Color.valueOf("#020608"), Color.valueOf("#12445d"), Color.valueOf("#2382b2") });
         colorMap.put("default_red",
-                new Color[] { Color.valueOf("4A0707"), Color.valueOf("5C0B0B"), Color.valueOf("A61B1B") });
+                new Color[] { Color.valueOf("#1c1a19"), Color.valueOf("#790f14"), Color.valueOf("#9e1b32") });
         colorMap.put("default_green",
-                new Color[] { Color.valueOf("0B4A0B"), Color.valueOf("0B5C0B"), Color.valueOf("1BA61B") });
+                new Color[] { Color.valueOf("#1c2434"), Color.valueOf("#045c4b"), Color.valueOf("#00373a") }); //
         colorMap.put("default_yellow",
-                new Color[] { Color.valueOf("4A4A07"), Color.valueOf("5C5C0B"), Color.valueOf("A6A61B") });
+                new Color[] { Color.valueOf("#103f78"), Color.valueOf("#f09526"), Color.valueOf("#f09526") });
     }
 
     static {
@@ -37,24 +40,27 @@ public class BackgroundManager {
         refTable.put("u_spinAmount", 0.18f); // control the shape of the spin. 0.2f is the sweet spot
         refTable.put("u_contrast", 1.5f); // control contrast
 
+        // refTable for screen shake
+        refTable.put("u_shake", 0.0f);
+
         // init colorTable. current colors for background = u_color1, 2 and 3.
-        colorTable.put("u_color1", Color.valueOf("02394A"));
-        colorTable.put("u_color2", Color.valueOf("043565"));
-        colorTable.put("u_color3", Color.valueOf("5158BB"));
+        colorTable.put("u_color1", Color.valueOf("020608"));
+        colorTable.put("u_color2", Color.valueOf("020608"));
+        colorTable.put("u_color3", Color.valueOf("020608"));
     }
 
     public static void startSpin() {
         Event startSpinning = new Event(TriggerType.EASE, false, false, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.8f, 0.5f, null));
+                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.5f, 0.5f, null));
         eventManager.addEvent(startSpinning.copy(), "background", false);
     }
 
     public static void rewindSpin() {
         Event stopSpinning = new Event(TriggerType.EASE, true, false, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_spinTime", -5.0f, 0.2f, null));
+                new Ease(EaseType.LERP, refTable, "u_spinTime", -5.0f, 0.15f, null));
 
         Event startSpinning = new Event(TriggerType.EASE, false, true, null, null, null, null,
-                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.8f, 0.5f, null));
+                new Ease(EaseType.LERP, refTable, "u_spinTime", 0.5f, 0.35f, null));
 
         eventManager.addEvent(stopSpinning.copy(), "background", false);
         eventManager.addEvent(startSpinning.copy(), "background", false);
@@ -125,6 +131,34 @@ public class BackgroundManager {
         for (Map.Entry<String, Map<String, Float>> entry : tempTables.entrySet()) {
             updateColor(entry.getKey(), entry.getValue());
         }
+    }
+
+    public static void setCamera(OrthographicCamera camera) {
+        sharedCamera = camera;
+    }
+
+    public static void updateCameraShakePosition() {
+        float shake = refTable.get("u_shake");
+
+        float x_random = MathUtils.random(shake) - (shake / 2);
+        float y_random = MathUtils.random(shake) - (shake / 2);
+
+        // update the camera position around [-shake/2, shake/2] for x and y
+        sharedCamera.position.set(sharedCamera.position.x + x_random, sharedCamera.position.y + y_random,
+                sharedCamera.position.z);
+        sharedCamera.update();
+    }
+
+    public static void screenShake() {
+        Event shakeEvent = new Event(TriggerType.EASE, true, false, null, null, null, null,
+                new Ease(EaseType.ELASTIC, refTable, "u_shake", 5.0f, 0.1f, null));
+
+        Event stopShakeEvent = new Event(TriggerType.EASE, false, true, null, null, null, null,
+                new Ease(EaseType.LERP, refTable, "u_shake", 0.0f, 0.1f, null));
+
+        eventManager.addEvent(shakeEvent.copy(), "shake", true);
+        eventManager.addEvent(stopShakeEvent.copy(), "shake", false);
+        // event
     }
 
 }
