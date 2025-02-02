@@ -115,10 +115,10 @@ concludes when each player has filled their grid or can no longer place tiles,
 with scoring determining the winner based on terrain connectivity and crown
 placements.
 
-\begin{figure*}[htbp]
-    \centerline{\includegraphics[width=\textwidth]{assets/kingdomino.jpg}}
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.5\textwidth]{assets/kingdomino.jpg}}
     \caption{Kingdomino Board Game.}\label{fig:kingdomino}
-\end{figure*}
+\end{figure}
 
 \subsection{Formal Description}
 
@@ -235,7 +235,6 @@ faithful and enjoyable digital representation of the original board game.
 
 %======================================================
 \section{Teamwork}
-% 4. TEAMWORK
 % -- Who did what, how the tasks were divided, how you communicated and tracked progress, 
 %    brainstorming sessions, etc.
 
@@ -244,58 +243,20 @@ faithful and enjoyable digital representation of the original board game.
     \caption{Kanban Board implements SCRUM planning technique.}\label{fig:kanban}
 \end{figure}
 
-We ultilize SCRUM (Fig~\ref{fig:kanban}) methodology to manage our project. For
-more details, see the GitHub Project board.
+We divided the project into game logic and GUI, using GitHub Project for tracking and communication. We followed SCRUM methodology (Fig~\ref{fig:kanban}).
 
 \subsection{Roles and Responsibilities}
-% -- Person A, Person B
-For the game logic, Hai Duong Tran was responsible for almost all backend logic
-including the implementation of the tile placement rules, scoring mechanism,
-and the overall game flow. He also integrated the flood-fill algorithm for
-scoring and ensured the game logic adhered to the official Kingdomino rules.
-Moreover, he worked on shader to add an extra visual effect to the game.
+Hai Duong Tran handled backend logic, including tile placement rules, scoring, and game flow. He also integrated the flood-fill algorithm and worked on shaders and effects. Pham Minh Tuan Bui focused on the GUI, rendering game elements with LibGDX, and implemented the event-driven architecture. He also worked on visual aesthetics.
 
-Pham Minh Tuan Bui focused on the graphical user interface (GUI) and user
-interactions. He designed the layout, managed the rendering of game elements
-using the LibGDX framework, and implemented the event-driven architecture to
-handle user inputs and game state updates. Additionally, he worked on the
-visual aesthetics and ensured a smooth user experience.
-
-Even though we had our own responsibilities, we often collaborated on various
-aspects of the project. We held regular meetings to discuss progress,
-brainstorm solutions to challenges, and ensure that our work was aligned. Code
-reviews were conducted to maintain quality and consistency, and we frequently
-pair-programmed to tackle complex problems together. This collaborative
-approach not only enhanced our productivity but also fostered a deeper
-understanding of the project as a whole.
+We collaborated on various aspects, held regular meetings, and conducted code reviews to maintain quality and consistency. This approach enhanced productivity and understanding of the project.
 
 \subsection{Collaboration Tools and Workflow}
-% -- Bug tracking, repository management, code reviews, etc.
-
-We mainly use GitHub Issues and Pull Requests to track bugs and feature
-requests. Each team member created branches for their respective tasks,
-ensuring that the main branch remained stable.
-
-Moreover, we practice code review through GitHub Pull
-Requests\ref{fig:github-pr}. This ensures that all code changes are reviewed by
-other team member before being merged into the main branch. This process helps
-to maintain code quality, catch potential bugs early, and facilitate knowledge
-sharing among team members. Each pull request includes a description of the
-changes, and reviewers provide feedback, request modifications, or approve the
-changes. This collaborative approach to code review has been instrumental in
-maintaining a high standard of code throughout the project.
+We used GitHub Issues and Pull Requests for tracking and code reviews. Each member created branches for their tasks, ensuring main branch stability. Code reviews were conducted via GitHub Pull Requests (Fig~\ref{fig:github-pr}), maintaining code quality and facilitating knowledge sharing. For communication, we used Messenger and in-person meetings, documenting progress via commit messages and digital drafts.
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.48\textwidth]{assets/github-pr.png}}
     \caption{A conversation in one Pull Request.}\label{fig:github-pr}
 \end{figure}
-
-For communication, we relied on Messenger for real-time discussions and meet
-each other at school or guest house for meetings. We documented our progress
-and decisions via commit messages. Other document which included meeting notes,
-design documents, and brainstorming sessions are stored in the form of digital
-draft. This collaborative approach ensured transparency and kept everyone
-aligned with the project's goals.
 
 %======================================================
 \section{Proposed Approaches}
