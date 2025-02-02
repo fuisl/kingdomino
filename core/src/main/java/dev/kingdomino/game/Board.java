@@ -28,21 +28,12 @@ public class Board {
     }
 
     /**
-     * Returns a deep copy of the land tiles.
+     * Retrieves the land of the board.
      * 
-     * @return a 2D array of tiles representing the land.
-     * @see Tile
+     * @return the land of the board.
+     * @see Tiles
      */
     public Tile[][] getLand() {
-        // deep copy
-
-        Tile[][] land = new Tile[9][9];
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                land[i][j] = this.land[i][j];
-            }
-        }
-
         return land;
     }
 
