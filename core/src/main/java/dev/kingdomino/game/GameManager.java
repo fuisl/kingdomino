@@ -10,8 +10,8 @@ import com.badlogic.gdx.controllers.Controllers;
 
 import dev.kingdomino.effects.AudioManager;
 import dev.kingdomino.effects.AudioManager.SoundType;
-
 import dev.kingdomino.effects.BackgroundManager;
+import dev.kingdomino.screen.GameScreen;
 
 // import dev.kingdomino.game.Event.TriggerType;
 
@@ -45,6 +45,8 @@ public class GameManager {
     public static InputDevice currentInputDevice; // use for displaying accordingly
 
     private final AudioManager audioManager = AudioManager.getInstance();
+
+    private final GameScreen gameScreen; // for calling animations
 
     Event scoreSound = new Event(Event.TriggerType.BEFORE, true, true, 0.2f, () -> {
         audioManager.playSound(SoundType.SCORE);
@@ -95,7 +97,8 @@ public class GameManager {
         }
     }
 
-    public GameManager() {
+    public GameManager(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
         // initialize game manager
         eventManager = EventManager.getInstance();
         boardInputHandler = new BoardInputHandler(this);
@@ -180,7 +183,7 @@ public class GameManager {
 
         // test end game with 2 turns. // TODO: remove later
         for (int i = 0; i < 40; i++) {
-        deck.drawCard();
+            deck.drawCard();
         }
 
         // game init for 3 kings (removing 12 dominos)
@@ -268,6 +271,12 @@ public class GameManager {
             // playing placing sound
             int diff = scores.get(currentKing)[2] - tempScoreCurrentKing;
 
+            // highlight score change
+            if (diff != 0) {
+                gameScreen.getTurnOrderRenderManager().animateScoreWrapper();
+            }
+
+            // select sound based on score change
             if (diff >= 3) {
                 eventManager.addEvent(scoreIncreasingSound2.copy(), "sound", false);
                 eventManager.addEvent(scoreSound2.copy(), "sound", false);
@@ -282,8 +291,15 @@ public class GameManager {
                 eventManager.addEvent(scoreSound2.copy(), "sound", false);
             }
 
+            King firstPositionKing = scores.entrySet().iterator().next().getKey();
             // update score var after placing domino
             results();
+
+            // animate first position if changed
+            if (!scores.entrySet().iterator().next().getKey().equals(firstPositionKing)) {
+                gameScreen.getLeaderboardRenderManager().animateFirstPosition();
+            }
+
             if (finalTurn) {
                 choosingDomino = false;
                 currentState = GameState.TURN_END;
@@ -326,7 +342,7 @@ public class GameManager {
     }
 
     private void game_over() {
-        results();
+        results(); // actually redundant -> results() is called in every placeDomino()
 
         currentState = GameState.RESULTS;
     }
