@@ -2,7 +2,9 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 
+import dev.kingdomino.effects.ShakeAction;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.GameManager.GameState;
 import dev.kingdomino.game.King;
@@ -28,6 +31,9 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
     private NinePatchDrawable bezel;
     private NinePatchDrawable whiteBezel;
     private NinePatchDrawable bezelBackground;
+
+    private Table scoreWrapper; // background for the score
+    private Table playerScore; // the actual score text
 
     public TurnOrderRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle header,
             Label.LabelStyle body, NinePatchDrawable bezel, NinePatchDrawable whiteBezel,
@@ -68,14 +74,14 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
                 .fill()
                 .pad(5);
 
-        Table playerScore = new Table();
+        playerScore = new Table();
 
         playerScore.add(new Label("Score", bodyStyle))
                 .pad(5);
 
         playerScore.row();
 
-        Table scoreWrapper = new Table();
+        scoreWrapper = new Table();
         scoreWrapper.setBackground(whiteBezel);
 
         scoreWrapper.add(score);
@@ -159,4 +165,25 @@ public class TurnOrderRenderManager extends AbstractRenderManager {
             nextTurnIndex++;
         }
     }
+
+    public void animateScoreWrapper() {
+        scoreWrapper.setTransform(true);
+
+        // Set the origin to the center of the actor
+        scoreWrapper.setOrigin(Align.center);
+
+        final float originalX = scoreWrapper.getX();
+        final float originalY = scoreWrapper.getY();
+
+        scoreWrapper.addAction(Actions.sequence(
+                Actions.parallel(
+                        Actions.scaleTo(1.25f, 1.25f, 0.05f, Interpolation.linear),
+                        new ShakeAction(0.15f, 10)),
+
+                // reset the scale and position
+                Actions.parallel(
+                        Actions.scaleTo(1f, 1f, 0.05f, Interpolation.linear),
+                        Actions.moveTo(originalX, originalY, 0.05f, Interpolation.linear))));
+    }
+
 }

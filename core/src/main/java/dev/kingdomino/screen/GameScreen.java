@@ -23,8 +23,8 @@ import dev.kingdomino.effects.BackgroundManager;
 import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
-import dev.kingdomino.game.TerrainType;
 import dev.kingdomino.game.GameManager.GameState;
+import dev.kingdomino.game.TerrainType;
 
 /**
  * The main game screen of Kingdomino.
@@ -69,7 +69,7 @@ public class GameScreen extends AbstractScreen {
         super(spriteBatch, assetManager);
         screenViewport = new ScreenViewport();
         stage = new Stage(screenViewport);
-        gameManager = new GameManager();
+        gameManager = new GameManager(this);
 
         // logging GPU info before shader init.
         // TODO move to loading screen, if I managed to get there in time
@@ -290,5 +290,9 @@ public class GameScreen extends AbstractScreen {
         stage.dispose();
         backgroundShader.dispose();
         crtShader.dispose();
+    }
+
+    public TurnOrderRenderManager getTurnOrderRenderManager() {
+        return turnOrderRenderManager;
     }
 }
