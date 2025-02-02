@@ -1,11 +1,16 @@
 package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
 
+import dev.kingdomino.effects.CustomFloatAction;
 import dev.kingdomino.game.Domino;
 import dev.kingdomino.game.DraftInputHandler;
 import dev.kingdomino.game.GameManager;
@@ -62,23 +67,45 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             Table row = new Table();
             row.setBackground(bezel);
 
-            row.add(generateContainer(dominoActors[i]))
+            // Create the container for the domino actor and add the FloatAction.
+            Container<Actor> container = generateContainer(dominoActors[i]);
+            container.setTransform(true);
+            container.addAction(new CustomFloatAction(1.0f, 2.0f));
+
+            // Wrap the container in a Group that we override to propagate size to its
+            // children.
+            Group animatedGroup = new Group() {
+                @Override
+                public void act(float delta) {
+                    super.act(delta);
+                    // Ensure the container always fills the group.
+                    for (Actor child : getChildren()) {
+                        child.setSize(getWidth(), getHeight());
+                        child.setOrigin(Align.center);
+                    }
+                }
+            };
+            animatedGroup.setTransform(true);
+            animatedGroup.setOrigin(Align.center);
+            animatedGroup.addActor(container);
+
+            // Add the animated group to the row.
+            row.add(animatedGroup)
                     .height(Value.percentWidth(0.2f, row))
                     .expandX()
                     .fill();
 
+            // Add the player icon container as before.
             row.add(generateContainer(playerIconActors[i]))
                     .height(Value.percentWidth(0.2f, row))
                     .expandX()
                     .fill();
 
             rows[i] = row;
-
             layout.add(row)
                     .fill()
                     .expandX()
                     .pad(5);
-
             layout.row();
         }
 
@@ -98,8 +125,8 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
             if (this.baseLayout.isVisible())
                 this.baseLayout.setVisible(false);
-                this.baseLayout.clear();
-                this.baseLayout.remove();
+            this.baseLayout.clear();
+            this.baseLayout.remove();
 
             return;
         }
