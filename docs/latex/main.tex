@@ -96,22 +96,23 @@ tile placement validation, turn-based mechanics, and dynamic UI interactions.
 The paper details the design choices, algorithms, and modular structure of the
 system, ensuring efficiency and scalability. Additionally, we evaluate game
 performance through experimental results and discuss future improvements, such
-as AI integration and multiplayer capabilities.
+as AI integration and multiplayer capabilities.\footnote{The source code for the Kingdomino digital adaptation can be found on GitHub at \url{https://github.com/fuisl/kingdomino}.}
 
-The paper is structured as follows: Section II describes the problem and
-provides a formal description of the game mechanics. Section III reviews
-related work and relevant algorithms. Section IV discusses the teamwork and
-collaboration tools used. Section V outlines the proposed approaches, including
-the event-driven architecture and input handling. Section VI details the
-implementation, including game states, tile placement, and scoring mechanisms.
-Section VII presents experimental results and performance analysis. Finally,
-Section VIII concludes the paper and suggests future work.
-
-The source code for the Kingdomino digital adaptation can be found on GitHub at
-\url{https://github.com/fuisl/kingdomino}.
+The paper is structured as follows: Section~\ref{sec:problem_description}
+describes the problem and game mechanics. Section~\ref{sec:related_work}
+reviews related work and algorithms. Section~\ref{sec:teamwork} discusses
+teamwork and collaboration tools. Section~\ref{sec:proposed_approaches}
+outlines the proposed approaches, including the event-driven architecture and
+input handling. Section~\ref{sec:implementation_details} and
+Section~\ref{sec:graphical_enhancement} detail the implementation, including
+game states, tile placement, scoring mechanisms, graphical enhancements, and
+visual effects. Section~\ref{sec:experimental_results} presents experimental
+results and performance analysis. Finally, Section~\ref{sec:conclusions}
+concludes the paper and suggests future work.
 
 %======================================================
 \section{Problem Description}
+\label{sec:problem_description}
 % 2. PROBLEM DESCRIPTION
 % -- Formal description: definitions, examples.
 % -- Description of Kingdomino with examples.
@@ -192,6 +193,7 @@ Gameplay is explain in Appendix~\ref{app:gameplay}.
 
 %======================================================
 \section{Related Work}
+\label{sec:related_work}
 % 3. RELATED WORK
 % -- Discuss any algorithms or approaches that are relevant, 
 %    e.g., fractals, data generation, evolutionary algorithms, etc.
@@ -253,6 +255,7 @@ faithful and enjoyable digital representation of the original board game.
 
 %======================================================
 \section{Teamwork}
+\label{sec:teamwork}
 % -- Who did what, how the tasks were divided, how you communicated and tracked progress, 
 %    brainstorming sessions, etc.
 
@@ -317,6 +320,7 @@ structured release process.
 
 %======================================================
 \section{Proposed Approaches}
+\label{sec:proposed_approaches}
 % 5. PROPOSED APPROACHES
 % -- Input/Output technique.
 % -- Algorithm/Pseudocode.
@@ -554,6 +558,7 @@ focusing on picking the tile that would yield the most point for their board.
 
 %======================================================
 \section{Implementation Details}
+\label{sec:implementation_details}
 % 6. IMPLEMENTATION DETAILS
 % -- Application structure, GUI details, UML/Class Diagram, used libraries, important code snippets.
 
@@ -811,6 +816,8 @@ Below is the actual implementation of the flood-fill algorithm in Kingdomino:
 % -- mainly UI
 
 \section{Graphical Enhancement and Visual Effects}
+% 8. GRAPHICAL ENHANCEMENT AND VISUAL EFFECTS
+\label{sec:graphical_enhancement}
 % -- Describe the interface design, layout, main widgets.
 
 \subsection{Visual and Effects}
@@ -885,6 +892,7 @@ size as large, detailed texture would become inelligible by the CRT Shader.
 
 %======================================================
 \section{Experimental Results}
+\label{sec:experimental_results}
 % 7. EXPERIMENTAL RESULTS, STATISTICAL TESTS, RUNNING SCENARIOS
 % -- Provide tables, charts, and discussion of the experiments you ran.
 
@@ -915,6 +923,7 @@ framerate, input lag event-driven vs. sync update
 
 %======================================================
 \section{Conclusions and Future Work}
+\label{sec:conclusions}
 % 8. CONCLUSIONS AND FUTURE WORK
 % -- Discuss overall findings, reflect on teamwork, 
 %    lessons learned, and possible future improvements.
