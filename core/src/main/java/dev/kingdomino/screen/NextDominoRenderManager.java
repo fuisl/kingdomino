@@ -70,7 +70,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             // Create the container for the domino actor and add the FloatAction.
             Container<Actor> container = generateContainer(dominoActors[i]);
             container.setTransform(true);
-            container.addAction(new CustomFloatAction(1.0f, 2.0f));
+            container.addAction(new CustomFloatAction(1.5f, 1.5f, 0.5f));
 
             // Wrap the container in a Group that we override to propagate size to its
             // children.
