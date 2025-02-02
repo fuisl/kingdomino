@@ -114,7 +114,7 @@ public class GameManager {
         Gdx.input.setInputProcessor(new InputMultiplexer(boardInputProcessor, draftInputProcessor));
 
         // initialize game components
-        deck = new Deck(0);
+        deck = new Deck(); // create deck without seed.
         kings = new King[kingCount];
         boards = new Board[kingCount];
         currentTurn = null;
