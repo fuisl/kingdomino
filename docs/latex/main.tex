@@ -814,20 +814,45 @@ Below is the actual implementation of the flood-fill algorithm in Kingdomino:
 % -- Describe the interface design, layout, main widgets.
 
 \subsection{Visual and Effects}
-Kingdomino's digital adaptation incorporates various visual and audio effects
-to enhance the user experience, making the game feel more responsive and
-engaging. Inspired by the talk ``Juice it or lose it'' by Martin Jonasson \&
-Petri Purho, we aimed to create a game that feels alive and responds to player
-actions with minimal input.
+
+Juicing up a game\cite{reddit:gamejuice} refers to adding small, often subtle, visual and audio effects that enhance the player's experience and make the game feel more responsive and engaging. These enhancements, although not essential to the core gameplay mechanics, play a crucial role in creating a polished and enjoyable user experience. Here are some key reasons why juicing up the game is important:
+
+\begin{itemize}
+    \item \textbf{Enhanced Feedback}: Visual and audio effects provide immediate feedback to the player's actions, making the game feel more responsive. For example, a screen shake effect when an invalid move is made or a sound effect when a tile is placed correctly can significantly improve the player's interaction with the game.
+    \item \textbf{Increased Engagement}: Juicing up the game with dynamic animations, smooth transitions, and appealing visual effects can capture the player's attention and keep them engaged for longer periods. This is particularly important in maintaining player interest and encouraging repeated play.
+    \item \textbf{Improved Aesthetics}: A well-juiced game often looks and feels more polished and professional. The use of shaders, color transitions, and other visual enhancements can elevate the overall aesthetic appeal of the game, making it more attractive to players.
+    \item \textbf{Emotional Impact}: Subtle effects like background music, sound effects, and visual cues can evoke emotions and create a more immersive experience. This emotional connection can enhance the player's enjoyment and satisfaction with the game.
+    \item \textbf{User Experience}: Juicing up the game contributes to a smoother and more intuitive user experience. By providing clear visual and audio cues, players can better understand the game mechanics and navigate the game environment with ease.
+\end{itemize}
+
+In our implementation, juicing up the game involves incorporating shader-based rendering for visual effects, dynamic background transitions, screen shake effects, and carefully designed audio feedback. These enhancements not only make the digital adaptation of the board game more engaging but also ensure that players have a memorable and enjoyable experience.
+
+Kingdomino's digital adaptation incorporates various visual and audio effects to enhance the user experience, making the game feel more responsive and engaging. Inspired by the talk ``Juice it or lose it'' by Martin Jonasson \& Petri Purho\footnote{This is far one of the most inspiring videos I personally found. Check out the video at \url{https://youtu.be/Fy0aCDmgnxg}.}, we aimed to create a game that feels alive and responds to player actions with minimal input.
 
 \subsubsection{Background Effects}
-The \texttt{BackgroundManager} class manages dynamic background effects using
-shader-based rendering. Key features include:
+The \texttt{BackgroundManager} class manages dynamic background effects using shader-based rendering. Key features include:
 \begin{itemize}
     \item \textbf{Color Transitions}: Smooth transitions between different background colors to indicate changes in game states or player turns.
     \item \textbf{Spinning Effects}: Controlled spinning of the background to add a sense of motion and excitement during gameplay.
     \item \textbf{Screen Shake}: A subtle screen shake effect to provide feedback for significant events, such as invalid moves or special actions.
 \end{itemize}
+
+\begin{algorithm}
+    \caption{Shake Algorithm}
+    \begin{algorithmic}
+        \Require{Object, Duration, Magnitude}
+        \Ensure{Object's position is shaken and reset}
+        \State Initialize time to 0
+        \State Record object's original position (originalX, originalY)
+        \While{time is less than duration}
+            \State Increment time by delta
+            \State Calculate currentMagnitude as magnitude scaled by remaining duration
+            \State Generate random offsets (offsetX, offsetY) within currentMagnitude
+            \State Set object's position to (originalX + offsetX, originalY + offsetY)
+        \EndWhile
+        \State Reset object's position to (originalX, originalY)
+    \end{algorithmic}
+\end{algorithm}
 
 \subsubsection{Audio Effects}
 The \texttt{AudioManager} class handles the game's audio effects, providing
