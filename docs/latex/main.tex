@@ -915,30 +915,26 @@ Our findings are as follow:
 \end{figure}
 
 The CPU usage spike at the start of the game is normal, as the game is loading all needed assets from disk to memory, as well as initializing its classes.
-
-% going to write in very simple term here, will rewrite this part later
-
-Memory usage graph show we are allocating a lot of objects
-Most of these object are not referenced, allowing garbage collector to remove them
+The memory usage graph suggested that the application is allocating many objects over time, causing the heap usage to increase.
+Most of these objects were not referenced, as shown when the garbage collector were running, the heap usage go back to previous normal level.
 
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.48\textwidth]{assets/memory-tree.png}}
     \caption{Memory usage of game classes, sorted by live bytes at the end of the profiling session.}\label{fig:memory-tree}
 \end{figure}
 
-Show Event, Ease and Position as main culprit
-Conclude that it is not bad as 3 mins garbage collection cycle is all good
-Still is a good thing to optimize as we finalize the application
+Our data suggested that the Event, Ease and Position class are causing the problem.
+However the performance impact is minimal as the garbage collector is only invoked at about once every two minutes.
 
 \subsubsection{CPU Usage}
 
-% figure
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/cpu-time-tree.png}}
+    \caption{CPU time usage of game method, sorted descending}\label{fig:cpu-time-tree}
+\end{figure}
 
-Hotspot at expected location
-Low CPU time per call, suggesting that our implementation are efficient
-
-% end of "simple term" area
-
+The CPU time usage of the game's method is generally correlated to the invocation count, with high usage correspond to high CPU time consumption.
+The time used per call is minimal, suggesting that our implementation is efficient.
 
 \subsection{Correctness and Scalability}
 % -- Describe your environment, parameter choices, etc.
