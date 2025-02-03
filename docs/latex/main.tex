@@ -802,30 +802,25 @@ Below is the actual implementation of the flood-fill algorithm in Kingdomino:
 % -- Provide an overview of classes, relationships. 
 %    Reference the figure in text.
 
-% Surely this absolute unit of an image wont break the entire pdf
-
-lorem ipsum bla bla bla
-
 \begin{figure}[htbp]
     \centerline{\includegraphics[width=0.5\textwidth]{assets/Model.png}}
     \caption{Class diagram of Kingdomino implementation.}\label{fig:kingdomino-class}
 \end{figure}
-
-% It actually did not break the pdf. Wow.
 
 \subsection{Used Libraries and Environment}
 % -- Mention languages, frameworks, libraries, operating systems, version details, etc.
 
 We incoperated many different software and libraries in the creation of our game:
 
-\begin{enumerate}
+\begin{itemize}
     \item LibGDX as our game library.
     \item Textures are drawn using GNU Image Manipulation Program.
     \item Texture Atlas are generated with GDX Texture Packer.
     \item We used Gradle to manage the build and run process during development.
-    \item Distributable version of our game are built by Construo, a Gradle plugin.
     \item Shader-based effects are written in OpenGL.
-\end{enumerate}
+    \item Distributable version of our game are built by Construo, a Gradle plugin.
+    \item Our distributable are built automatically every time there is a change in our codebase using Github Action.
+\end{itemize}
 
 %======================================================
 % -- mainly UI
