@@ -218,10 +218,10 @@ Kingdomino ensures accurate and performant scoring calculations, even as the
 board becomes increasingly complex during gameplay.
 
 The game is designed using an event-driven architecture\cite{wiki:eventdriven,
-    wiki:floodfill}, where interactions, where interactions such as tile placement
+    wiki:floodfill}, where interactions such as tile placement
 and scoring updates are managed asynchronously through an EventManager. This
 approach is prevalent in modern game frameworks and engines, such as LibGDX,
-Unity, and Unreal Engine, and ensures a clear separation between game logic and
+Unity\cite{unity}, and Unreal Engine\cite{unreal}, and ensures a clear separation between game logic and
 user input. By decoupling these components, the design achieves improved
 modularity and scalability, enabling future enhancements such as AI integration
 or multiplayer features. The intention was to implement Entity-Component-System
@@ -258,7 +258,7 @@ faithful and enjoyable digital representation of the original board game.
 %    brainstorming sessions, etc.
 
 We divided the project into backend (game logic) and frontend (GUI), using
-GitHub ecosystem for tracking and communication. We also followed SCRUM
+GitHub\cite{github:github} ecosystem for tracking and communication. We also followed SCRUM
 planning techniques.\footnote{see our initial planning on GitHub Project at
     \url{https://github.com/users/fuisl/projects/15}}
 
@@ -282,17 +282,11 @@ maintain quality and consistency. This approach enhanced productivity and
 understanding of the project.
 
 \subsection{Collaboration Tools and Workflow}
-Most of our communication happened on Github Issues and Pull Requests. The
-tools are used for tracking and code reviews. Each member created branches for
-their tasks, ensuring main branch stability. Code reviews were conducted via
-GitHub Pull Requests (Fig~\ref{fig:github-pr}), maintaining code quality and
-facilitating knowledge sharing. For communication, we used Messenger and
-in-person meetings, documenting progress via commit messages and digital
-drafts.
+We communicated primarily through GitHub Issues and Pull Requests for tracking and code reviews. Each member worked on separate branches, ensuring main branch stability. Code reviews were conducted via Pull Requests (Fig~\ref{fig:github-pr}), maintaining code quality. We also used Messenger and in-person meetings for communication, documenting progress through commit messages and digital drafts.
 
 \subsection{Gitflow Workflow}
-We adopted the Gitflow workflow for version control, which is an
-industry-standard branching model for Git. This approach helps manage the
+We adopted the Gitflow workflow\cite{atlassian:gitflow} for version control, which is an
+industry-standard branching model for Git\cite{wiki:git}. This approach helps manage the
 development process by organizing branches and ensuring a clear path from
 development to production.
 
@@ -354,13 +348,13 @@ Each event has attributes such as blocking, blockable, complete, and delay, allo
 The \texttt{EventManager} is the central hub for executing game events,
 maintaining concurrent queues for:
 \begin{itemize}
-    \item \textbf{Base}: Core gameplay logic (turn transitions, score updates).
-    \item \textbf{Input}: Player interactions (movement, rotation, placement).
-    \item \textbf{Background}: Visual effects and animations.
-    \item \textbf{Sound}: Audio effects (movement, tile placement, invalid moves).
+    \item \textbf{Base}: Core gameplay logic.
+    \item \textbf{Input}: Player interactions.
+    \item \textbf{Background}: Visual effects.
+    \item \textbf{Sound}: Audio effects.
     \item \textbf{Other}: Miscellaneous actions.
 \end{itemize}
-The event manager ensures concurrency safety using \texttt{ConcurrentLinkedQueue},
+The event manager ensures concurrency safety using \texttt{ConcurrentLinkedQueue}\cite{oracle:concurrentlinkedqueue,stackoverflow:concurrentlinkedqueue},
 preventing race conditions when processing multiple asynchronous actions.\footnote{The event system may leak memory due to the creation of new events and their addition to the queue, but this is mitigated by garbage collection and the low trigger rate.}
 
 \subsubsection{GameTimer}
@@ -374,7 +368,7 @@ functions.\footnote{The GameTimer accumulates time without resetting, which can
 
 \subsubsection{Ease}
 The \texttt{Ease} class facilitates smooth animations for background effects,
-screen transitions, and UI enhancements. It supports different interpolation
+screen transitions, and UI enhancements. It supports different interpolation\cite{wiki:interpolation}
 methods:
 \begin{itemize}
     \item \textbf{LERP (Linear Interpolation)}: Gradually changes a value over time.
@@ -396,18 +390,14 @@ the system.
     \caption{Interfaces between user and game world.}\label{fig:interaction}
 \end{figure}
 
-\subsubsection{AbstractInputController}
-The \texttt{AbstractInputController} class handles input from game controllers.
+\subsubsection{InputController}
+\texttt{AbstractInputController} class handles input from game controllers.
 It captures axis movements and button presses, translating them into actions
 such as moving, rotating, placing, or discarding a domino. The controller input
 is processed with a dead zone to ignore small, unintended movements, ensuring
 precise control.
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/AbstractInputController.java
-package dev.kingdomino.game;
-
-import com.badlogic.gdx.controllers.Controller;
-
 public abstract class AbstractInputController implements ControllerListener {
     @Override
     public boolean buttonDown(...) { return handleStatus; }
@@ -420,8 +410,8 @@ public abstract class AbstractInputController implements ControllerListener {
 }
 \end{lstlisting}
 
-\subsubsection{AbstractInputProcessor}
-The \texttt{AbstractInputProcessor} class implements the
+\subsubsection{InputProcessor}
+\texttt{AbstractInputProcessor} class implements the
 \texttt{InputProcessor} interface with all input events from keyboard. It is
 being rejected by default. Specific input events can be handled by extending
 this class and overriding the relevant methods.
@@ -484,12 +474,12 @@ public class BoardInputHandler {
 \end{lstlisting}
 
 To get the event from the input, each input has to translate the keycode into a
-corresponding action using the /texttt{translateKeycodeToAction} method, which
+corresponding action using the \texttt{translateKeycodeToAction} method, which
 maps specific key presses to game actions such as moving, placing, or
 discarding a domino.
 
 Simmilarly, \texttt{DraftInputHandler} class handles translated input events
-for selecting next dominoes.
+for selecting next dominoes with its own set of actions.
 
 \begin{lstlisting}[language=Java]
 // filepath: /e:/projects/kingdomino/core/src/main/java/dev/kingdomino/game/DraftInputHandler.java
@@ -522,19 +512,21 @@ The input handling system in Kingdomino features deferred execution, where actio
 \begin{algorithm}
     \caption{Handling Movement Events}
     \begin{algorithmic}
-        \Require Player input (WASD keys or joystick)
-        \Ensure Updated domino position
-        \State Capture player input
+        \Require{Player input (WASD keys or joystick)}
+        \Ensure{Updated domino position}
+        \State{Capture player input}
         \If{Input is valid}
-            \State Create a move event with delay for smooth input
-            \State Add event to event manager queue
-            \State Play sound effect for invalid move
-            \State Trigger screen shake effect
-        \EndIf
+            \State{Create a move event with delay for smooth input}
+            \State{Add event to event manager queue}
+            \State{Play sound effect for invalid move}
+            \State{Trigger screen shake effect}
+        \EndIf{}
     \end{algorithmic}
 \end{algorithm}
 
 \subsection{User Interface}
+
+The user interface (fig~\ref{fig:ui}) (UI) of Kingdomino is designed for intuitive and engaging gameplay. It includes the game board, player information, and interactive controls, ensuring all necessary information is easily accessible. This section details the design and implementation of the UI components, including layout design, main widgets, and user interaction.
 
 \subsubsection{User Interface Layout Design}
 
@@ -582,7 +574,7 @@ Each state transitions to the next based on player actions and game logic. The
 following diagram illustrates the state transitions:
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[width=0.55\textwidth]{assets/states.png}}
+    \centerline{\includegraphics[width=0.50\textwidth]{assets/states.png}}
     \caption{Game State Transitions.}\label{fig:game_states}
 \end{figure}
 
@@ -853,6 +845,16 @@ shaders are used: the CRT shader and the background shader. The shader codes
 are an adaptation of existing shaders of Balatro\cite{wiki:balatro} which
 adapted from Löve2D written in Lua to LibGDX Framework using with Java.
 
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/ui.png}}
+    \caption{Final GUI with shaders (background and CRT overlay) on.}\label{fig:ui}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=0.48\textwidth]{assets/UI-shaderoff.png}}
+    \caption{Final GUI without shaders.}\label{fig:ui-shaderoff}
+\end{figure}
+
 \paragraph{CRT Shader}
 The CRT shader simulates the appearance of an old CRT monitor, adding effects
 such as distortion, scanlines, noise, and bloom. It consists of a vertex shader
@@ -975,11 +977,51 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 %======================================================
 \appendices%
 \section{Gameplay Mechanic}\label{app:gameplay}
-% -- Provide additional content that supports the main text.
 
-%======================================================
-% -- Follow the IEEE reference style
-% -- Cite references in text, e.g., [1], [2], etc.
+Kingdomino is a strategic tile placement game where players aim to construct the most prosperous kingdom by selecting and placing tiles representing various terrain types. The game is played over a series of rounds, with each player taking turns to select and place tiles. Below is a detailed explanation of the gameplay mechanics based on the given game rules.
+
+\subsection{Setup}
+1. Each player receives a starting tile and a king token.
+2. Shuffle the domino tiles and place them in a draw pile.
+3. Draw the first set of tiles equal to the number of players and arrange them in ascending order.
+4. Randomly determine the player order for the first round.
+
+\subsection{Turn Sequence}
+Each round consists of the following phases:
+
+\subsubsection{Tile Selection}
+1. Players take turns selecting a tile from the available set.
+2. The player with the lowest-numbered tile from the previous round selects first.
+3. Place the selected tile in front of the player and position the king token on it.
+
+\subsubsection{Tile Placement}
+1. Players place their selected tile on their 5$\times$5 grid.
+2. Tiles must be placed adjacent to an existing tile, with at least one section matching the terrain type of an adjacent tile.
+3. If a tile cannot be placed, it is discarded.
+
+\subsubsection{Next Round Preparation}
+1. Draw a new set of tiles equal to the number of players and arrange them in ascending order.
+2. Players select tiles for the next round based on the order of their current tiles.
+
+\subsection{Scoring}
+1. At the end of the game, players calculate their scores based on the connected terrain groups and crowns.
+2. Points are calculated as the product of the number of connected tiles of the same terrain and the number of crowns within the connected group.
+3. Bonuses include:
+   \begin{itemize}
+       \item +10 points for placing the central castle at the grid's center.
+       \item +5 points for completing a full grid.
+   \end{itemize}
+
+\subsection{Game End}
+1. The game ends when all tiles have been placed or discarded.
+2. The player with the highest score wins the game.
+
+\subsection{Example of Gameplay}
+Consider a two-player game:
+1. Player A selects a tile with a forest and a crown, placing it adjacent to their starting tile.
+2. Player B selects a tile with a lake and a meadow, placing it adjacent to their starting tile.
+3. In the next round, Player B selects first due to having the lower-numbered tile.
+4. The game continues until all tiles are placed, and scores are calculated based on connected terrain groups and crowns.
 
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
