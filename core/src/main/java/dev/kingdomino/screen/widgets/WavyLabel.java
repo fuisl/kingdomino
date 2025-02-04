@@ -1,4 +1,4 @@
-package dev.kingdomino.screen;
+package dev.kingdomino.screen.widgets;
 
 import java.util.Random;
 

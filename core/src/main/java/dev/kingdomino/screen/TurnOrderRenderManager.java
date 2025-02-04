@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import dev.kingdomino.effects.actions.ShakeAnimation;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.GameManager.GameState;
+import dev.kingdomino.screen.widgets.WavyLabel;
 import dev.kingdomino.game.King;
 import dev.kingdomino.game.Turn;
 

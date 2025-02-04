@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import dev.kingdomino.game.GameManager;
+import dev.kingdomino.screen.widgets.PlayerIconActor;
 
 /**
  * Defines shared implementation detail for RenderManager classes.

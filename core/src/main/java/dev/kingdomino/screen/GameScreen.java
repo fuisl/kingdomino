@@ -24,6 +24,7 @@ import dev.kingdomino.effects.BackgroundShader;
 import dev.kingdomino.effects.CRTShader;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.GameManager.GameState;
+import dev.kingdomino.screen.widgets.MainBoardActor;
 import dev.kingdomino.game.TerrainType;
 
 /**
