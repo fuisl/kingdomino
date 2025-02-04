@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
+import dev.kingdomino.screen.widgets.SideBoardActor;
+import dev.kingdomino.screen.widgets.WavyLabel;
 
 /**
  * Manage the Actors of the right-side panel of the screen.

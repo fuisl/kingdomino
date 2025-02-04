@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Align;
 import dev.kingdomino.effects.actions.ShakeAnimation;
 import dev.kingdomino.game.GameManager;
 import dev.kingdomino.game.King;
+import dev.kingdomino.screen.widgets.WavyLabel;
 
 /**
  * A RenderManager specialize in handling the Leaderboard to the left of the
