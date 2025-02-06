@@ -1,5 +1,8 @@
 package dev.kingdomino.game;
 
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
+
 import dev.kingdomino.effects.AudioManager;
 import dev.kingdomino.effects.AudioManager.SoundType;
 import dev.kingdomino.game.Event.TriggerType;
@@ -107,6 +110,7 @@ public class DraftInputHandler extends AbstractInputProcessor {
             return false;
         }
         Event e = null;
+        Event vibration = null;
 
         switch (action) {
             case MOVE_UP:
@@ -120,6 +124,7 @@ public class DraftInputHandler extends AbstractInputProcessor {
             case SELECT_DOMINO:
                 audioManager.playSound(SoundType.CONFIRMSELECTING);
                 e = createSelectDominoEvent();
+                vibration = createVibrationEvent();
                 break;
             default:
                 break;
@@ -128,6 +133,10 @@ public class DraftInputHandler extends AbstractInputProcessor {
         if (e != null) {
             eventManager.addEvent(e, "base", false);
             updated = true;
+        }
+
+        if (vibration != null && GameManager.currentInputDevice == InputDevice.CONTROLLER) {
+            eventManager.addEvent(vibration, "effects", false);
         }
 
         return true;
@@ -206,6 +215,23 @@ public class DraftInputHandler extends AbstractInputProcessor {
                             break;
                     }
                     updated = true;
+                },
+                null,
+                null,
+                null);
+    }
+
+    private Event createVibrationEvent() {
+        return new Event(
+                TriggerType.IMMEDIATE,
+                false,
+                true,
+                0.5f,
+                () -> {
+                    Controller controller = Controllers.getCurrent();
+                    if (controller != null) {
+                        controller.startVibration(100, 1f);
+                    }
                 },
                 null,
                 null,
