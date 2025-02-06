@@ -2,15 +2,13 @@ package dev.kingdomino.screen;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.Align;
 
-import dev.kingdomino.effects.CustomFloatAction;
+import dev.kingdomino.effects.actions.FloatingAnimation;
 import dev.kingdomino.game.Domino;
 import dev.kingdomino.game.DraftInputHandler;
 import dev.kingdomino.game.GameManager;
@@ -25,18 +23,18 @@ import dev.kingdomino.game.Turn;
  * @author LunaciaDev
  */
 public class NextDominoRenderManager extends AbstractRenderManager {
-    private final DominoActor[] dominoActors;
-    private final DraftInputHandler draftInputHandler;
-    private final Label.LabelStyle headerStyle;
-    private final NinePatchDrawable bezel;
-    private final NinePatchDrawable whiteBezel;
-    private final NinePatchDrawable bezelBackground;
-    private final Table[] rows;
+    private DominoActor[] dominoActors;
+    private DraftInputHandler draftInputHandler;
+    private Label.LabelStyle headerStyle;
+    private NinePatchDrawable bezel;
+    private NinePatchDrawable whiteBezel;
+    private NinePatchDrawable bezelBackground;
+    private Table[] rows;
     private Table baseLayout;
 
-    public NextDominoRenderManager(final GameManager gameManager, final TextureRegion[] kingAvatar, final Label.LabelStyle headerStyle,
-            final TextureRegion[] crownOverlay, final NinePatchDrawable bezel, final NinePatchDrawable whiteBezel,
-            final NinePatchDrawable bezelBackground) {
+    public NextDominoRenderManager(GameManager gameManager, TextureRegion[] kingAvatar, Label.LabelStyle headerStyle,
+            TextureRegion[] crownOverlay, NinePatchDrawable bezel, NinePatchDrawable whiteBezel,
+            NinePatchDrawable bezelBackground) {
 
         super(gameManager, kingAvatar);
 
@@ -57,57 +55,40 @@ public class NextDominoRenderManager extends AbstractRenderManager {
 
     @Override
     public Table getLayout() {
-        final Table layout = new Table();
+        Table layout = new Table();
         layout.setBackground(bezelBackground);
 
-        final WavyLabel title = new WavyLabel("Next Dominoes", headerStyle);
+        WavyLabel title = new WavyLabel("Next Dominoes", headerStyle);
         layout.add(title).pad(5);
         layout.row();
 
         for (int i = 0; i < kingCount; i++) {
-            final Table row = new Table();
+            Table row = new Table();
             row.setBackground(bezel);
 
-            // Create the container for the domino actor and add the FloatAction.
-            final Container<Actor> container = generateContainer(dominoActors[i]);
-            container.setTransform(true);
-            container.addAction(new CustomFloatAction(1.5f, 1.5f, 0.5f));
+            Container<Actor> temp = generateContainer(dominoActors[i]);
 
-            // Wrap the container in a Group that we override to propagate size to its
-            // children.
-            // TODO: This is a workaround for the container not resizing its children @LunaciaDev knows how to fix.
-            final Group animatedGroup = new Group() {
-                @Override
-                public void act(final float delta) {
-                    super.act(delta);
-                    // Ensure the container always fills the group.
-                    for (final Actor child : getChildren()) {
-                        child.setSize(getWidth(), getHeight());
-                        child.setOrigin(Align.center);
-                    }
-                }
-            };
-            animatedGroup.setTransform(true);
-            animatedGroup.setOrigin(Align.center);
-            animatedGroup.addActor(container);
-
-            // Add the animated group to the row.
-            row.add(animatedGroup)
+            row.add(temp)
                     .height(Value.percentWidth(0.2f, row))
                     .expandX()
                     .fill();
+            
+            temp.setTransform(true);
+            temp.setOrigin(temp.getWidth()/2, temp.getHeight()/2);
+            temp.addAction(new FloatingAnimation(3f, 1f, 1f));
 
-            // Add the player icon container as before.
             row.add(generateContainer(playerIconActors[i]))
                     .height(Value.percentWidth(0.2f, row))
                     .expandX()
                     .fill();
 
             rows[i] = row;
+
             layout.add(row)
                     .fill()
                     .expandX()
                     .pad(5);
+
             layout.row();
         }
 
@@ -119,7 +100,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
     }
 
     @Override
-    public void act(final float delta) {
+    public void act(float delta) {
         if (gameManager.isFinalTurn()) {
             // Hide the domino picker when we are on the last turn
 
@@ -131,13 +112,13 @@ public class NextDominoRenderManager extends AbstractRenderManager {
             return;
         }
 
-        final Turn nextTurn = gameManager.getNextTurn();
+        Turn nextTurn = gameManager.getNextTurn();
 
         if (nextTurn == null)
             return;
 
-        final Domino[] nextTurnDomino = nextTurn.getDraft();
-        final King[] nextTurnPick = nextTurn.getKings();
+        Domino[] nextTurnDomino = nextTurn.getDraft();
+        King[] nextTurnPick = nextTurn.getKings();
 
         for (int i = 0; i < kingCount; i++) {
             dominoActors[i].setDomino(nextTurnDomino[i]);
@@ -155,7 +136,7 @@ public class NextDominoRenderManager extends AbstractRenderManager {
         if (gameManager.getCurrentState() != GameState.TURN_CHOOSING)
             return;
 
-        final int currentSelection = draftInputHandler.getSelectionIndex();
+        int currentSelection = draftInputHandler.getSelectionIndex();
 
         rows[currentSelection].setBackground(whiteBezel);
     }

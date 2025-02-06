@@ -26,6 +26,7 @@ public class DominoActor extends Actor {
         this.crownOverlay = crownOverlay;
     }
 
+    @Override
     public void draw(Batch batch, float parentAlpha) {
         /**
          * Since the domino is drawn cell-by-cell, we need to figure out the position of
