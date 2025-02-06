@@ -1,5 +1,8 @@
 package dev.kingdomino.game;
 
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
+
 import dev.kingdomino.effects.AudioManager;
 import dev.kingdomino.effects.BackgroundManager;
 import dev.kingdomino.game.Event.TriggerType;
@@ -100,6 +103,7 @@ public class BoardInputHandler {
      */
     public boolean keyUp(Action action) {
         eventManager.clearQueue("input", false);
+        eventManager.clearQueue("sound", false);
         reset();
         return true;
     }
@@ -117,78 +121,89 @@ public class BoardInputHandler {
         update(); // update states
 
         Event e = null;
+        Event soundEvent = null;
+        Event vibration = null;
+
         switch (action) {
             case MOVE_UP: {
-                audioManager.playSound(AudioManager.SoundType.MOVING);
+                soundEvent = createSoundEvent(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.UP)) {
                     e = createMoveEvent(Direction.UP);
                 } else {
-                    audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
+                    vibration = createVibrationEvent();
                     BackgroundManager.screenShake();
                 }
                 break;
             }
             case MOVE_DOWN: {
-                audioManager.playSound(AudioManager.SoundType.MOVING);
+                soundEvent = createSoundEvent(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.DOWN)) {
                     e = createMoveEvent(Direction.DOWN);
                 } else {
-                    audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
+                    vibration = createVibrationEvent();
                     BackgroundManager.screenShake();
                 }
                 break;
             }
             case MOVE_LEFT: {
-                audioManager.playSound(AudioManager.SoundType.MOVING);
+                soundEvent = createSoundEvent(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.LEFT)) {
                     e = createMoveEvent(Direction.LEFT);
                 } else {
-                    audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
+                    vibration = createVibrationEvent();
                     BackgroundManager.screenShake();
                 }
                 break;
             }
             case MOVE_RIGHT: {
-                audioManager.playSound(AudioManager.SoundType.MOVING);
+                soundEvent = createSoundEvent(AudioManager.SoundType.MOVING);
                 if (canMove(Direction.RIGHT)) {
                     e = createMoveEvent(Direction.RIGHT);
                 } else {
-                    audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
+                    vibration = createVibrationEvent();
                     BackgroundManager.screenShake();
                 }
                 break;
             }
             case ROTATE_CLOCKWISE: {
-                audioManager.playSound(AudioManager.SoundType.ROTATING);
+                soundEvent = createSoundEvent(AudioManager.SoundType.ROTATING);
                 if (canRotate(true)) {
                     e = createRotateEvent(true);
                 } else {
-                    audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
+                    vibration = createVibrationEvent();
                     BackgroundManager.screenShake();
                 }
                 break;
             }
             case ROTATE_COUNTERCLOCKWISE: {
-                audioManager.playSound(AudioManager.SoundType.ROTATING);
+                soundEvent = createSoundEvent(AudioManager.SoundType.ROTATING);
                 if (canRotate(false)) {
                     e = createRotateEvent(false);
                 } else {
-                    audioManager.playSound(AudioManager.SoundType.CANCEL);
+                    soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
+                    vibration = createVibrationEvent();
                     BackgroundManager.screenShake();
                 }
                 break;
             }
             case PLACE_DOMINO: {
                 BackgroundManager.screenShake();
-                audioManager.playSound(AudioManager.SoundType.PLACING);
-                if (!keylocked) {
+                vibration = createVibrationEvent();
+                soundEvent = createSoundEvent(AudioManager.SoundType.PLACING);
+                // if (!keylocked) {
                     e = createPlaceDominoEvent();
-                }
+                // }
                 break;
             }
             case DISCARD_DOMINO: {
                 BackgroundManager.screenShake();
-                audioManager.playSound(AudioManager.SoundType.CANCEL);
+                vibration = createVibrationEvent();
+                soundEvent = createSoundEvent(AudioManager.SoundType.CANCEL);
                 e = createDiscardDominoEvent();
                 break;
             }
@@ -199,6 +214,13 @@ public class BoardInputHandler {
         if (e != null) {
             eventManager.addEvent(e.copy(), "input", false);
             updated = true;
+        }
+        if (soundEvent != null) {
+            eventManager.addEvent(soundEvent, "sound", false);
+        }
+
+        if (vibration != null && GameManager.currentInputDevice == InputDevice.CONTROLLER) {
+            eventManager.addEvent(vibration, "effects", false);
         }
 
         return true; // returning true indicates the event was handled
@@ -310,7 +332,7 @@ public class BoardInputHandler {
                         audioManager.playSound(AudioManager.SoundType.HIGHLIGHT);
                         eventManager.addEvent(invalidEffect.copy(), "input", false);
                         valid = false;
-                        keylocked = true;
+                        // keylocked = true;
                     }
                 },
                 null,
@@ -338,6 +360,45 @@ public class BoardInputHandler {
                 null);
     }
 
+    /**
+     * Creates a sound event.
+     * 
+     * @param soundType the type of sound to play
+     * @return the sound event
+     */
+    private Event createSoundEvent(AudioManager.SoundType soundType) {
+        float moveCooldown = 0.0f;
+        if (GameManager.currentInputDevice == InputDevice.CONTROLLER) {
+            moveCooldown = 0.15f;
+        }
+        return new Event(
+                TriggerType.BEFORE,
+                true,
+                true,
+                moveCooldown,
+                () -> audioManager.playSound(soundType),
+                null,
+                null,
+                null);
+    }
+
+    private Event createVibrationEvent() {
+        return new Event(
+                TriggerType.IMMEDIATE,
+                false,
+                true,
+                0.5f,
+                () -> {
+                    Controller controller = Controllers.getCurrent();
+                    if (controller != null) {
+                        controller.startVibration(100, 1f);
+                    }
+                },
+                null,
+                null,
+                null);
+    }
+
     Event invalidEffect = new Event(TriggerType.BEFORE, true, false, 0.5f, () -> {
         Domino temp = currentDomino.copy();
         Event blink_x = new Event(TriggerType.BEFORE, true, true, 0.5f, () -> {
@@ -352,7 +413,7 @@ public class BoardInputHandler {
         Event blink_back = new Event(TriggerType.IMMEDIATE, false, true, null, () -> {
             gameManager.setCurrentDomino(temp);
             updated = true;
-            keylocked = false;
+            // keylocked = false;
         }, null, null, null);
         blink_back.name = "blink_back";
 
